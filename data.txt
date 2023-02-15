@@ -1,4 +1,4 @@
-const data =
+const ORGCHART_DATA =
 	{
 		"wilma.diaz": {
 			"id": "wilma.diaz",

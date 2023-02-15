@@ -1,7 +1,7 @@
 const cacheName = 'vanillaOrgChart_v4';
 const assets = [
 	"index.html",
-	"link_to_data.txt.js",
+	"data.js",
 	"photos/_default_.webp",
 	"https://fonts.googleapis.com/css2?family=Manrope:wght@300&display=swap",
 	"https://fonts.googleapis.com/css2?family=Manrope:wght@300;800&display=swap"

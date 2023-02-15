@@ -582,9 +582,9 @@
 				lastUnsavedId = person_id;
 			}
 			document.title = "OrgChart:" + getFullName( person_id );
-			document.getElementById( "root" ).innerHTML = personTemplate( data[ person_id ] );
-			document.getElementById( "UpToManager" ).innerHTML = render( data[ person_id ], upTemplate );
-			setUpToManagerColor( data[ person_id ] );
+			document.getElementById( "root" ).innerHTML = personTemplate( ORGCHART_DATA[ person_id ] );
+			document.getElementById( "UpToManager" ).innerHTML = render( ORGCHART_DATA[ person_id ], upTemplate );
+			setUpToManagerColor( ORGCHART_DATA[ person_id ] );
 			lastHash = document.location.hash;
 		}
 
@@ -604,7 +604,7 @@
 			if( person_id && person_id [ 0 ] )
 			{
 				person_id = person_id[ 0 ].replace( "person=", "" );
-				if( data[ person_id ] )
+				if( ORGCHART_DATA[ person_id ] )
 				{
 					startingPerson = person_id;
 				}
@@ -714,7 +714,7 @@ ${ person[ "Mobile phone" ] ? `
 
 
 							</div>
-							${ person.directs && person.level < maxDepth ? `<ol class="level_${ person.level }"> ${ render( person.directs.map( person_id => data[ person_id ] ), nestedPersonTemplate ) } </ol>` : "" }
+							${ person.directs && person.level < maxDepth ? `<ol class="level_${ person.level }"> ${ render( person.directs.map( person_id => ORGCHART_DATA[ person_id ] ), nestedPersonTemplate ) } </ol>` : "" }
 						</li>
 					`;
 	</script>
@@ -742,7 +742,7 @@ ${ person[ "Mobile phone" ] ? `
 								<span class="jobTitle" title="${ person[ 'Job Title' ] }">${ getRole( person ) }</span>
 
 							</div>
-							${ person.directs && person.level < maxDepth ? `<ol class="level_${ person.level }"> ${ render( person.directs.map( person_id => data[ person_id ] ), nestedPersonTemplate ) } </ol>` : "" }
+							${ person.directs && person.level < maxDepth ? `<ol class="level_${ person.level }"> ${ render( person.directs.map( person_id => ORGCHART_DATA[ person_id ] ), nestedPersonTemplate ) } </ol>` : "" }
 						</li>
 					`;
 	</script>
@@ -776,7 +776,7 @@ ${ person[ "Mobile phone" ] ? `
 			{
 				for( let i = 0; person.directs.length > i; i++ )
 				{
-					const directReport = data [ person.directs[ i ] ];
+					const directReport = ORGCHART_DATA [ person.directs[ i ] ];
 					directReport.level = person.level + 1;
 				}
 			}
@@ -806,13 +806,13 @@ ${ person[ "Mobile phone" ] ? `
 		{
 			if( person_id )
 			{
-				let root = data[ person_id ];
+				let root = ORGCHART_DATA[ person_id ];
 				if( root.level === 1 )
 				{
-					root = data[ data[ person_id ].id ];
+					root = ORGCHART_DATA[ ORGCHART_DATA[ person_id ].id ];
 					if( !root )
 					{
-						root = data[ person_id ];
+						root = ORGCHART_DATA[ person_id ];
 					}
 				}
 				root.level = null;
@@ -824,7 +824,7 @@ ${ person[ "Mobile phone" ] ? `
 
 		function getFullName( person_id )
 		{
-			const person = data[ person_id ];
+			const person = ORGCHART_DATA[ person_id ];
 			return ( person[ "Preferred first name" ] || person[ "First name" ] || person.name ) + " " + person[ "Last name" ];
 		}
 
@@ -837,7 +837,7 @@ ${ person[ "Mobile phone" ] ? `
 		function isCurrentEmployee( person_id )
 		{
 			let isCurrentEmployee = true;
-			const person = data[ person_id ];
+			const person = ORGCHART_DATA[ person_id ];
 			if( person )
 			{
 				const endDate = person[ "End date" ];
@@ -852,7 +852,7 @@ ${ person[ "Mobile phone" ] ? `
 		function isContractor( person_id )
 		{
 			let isCurrentEmployee = false;
-			const person = data[ person_id ];
+			const person = ORGCHART_DATA[ person_id ];
 			const type = person[ "Employee type" ];
 			if( type === "Contractor" )
 			{
@@ -942,7 +942,7 @@ ${ person[ "Mobile phone" ] ? `
 			let oldMaxDepth = maxDepth;
 			maxDepth = 1;
 			document.getElementById( 'detailView' ).style.display = "block";
-			document.getElementById( 'detailView' ).innerHTML = render( data[ person_id ], personTemplate );
+			document.getElementById( 'detailView' ).innerHTML = render( ORGCHART_DATA[ person_id ], personTemplate );
 			maxDepth = oldMaxDepth;
 		}
 	</script>
@@ -1086,7 +1086,7 @@ ${ person[ "Mobile phone" ] ? `
 
 		function previewPerson( person_id )
 		{
-			const person = data[ person_id ];
+			const person = ORGCHART_DATA[ person_id ];
 			if( person )
 			{
 				initializeLevels( person );
@@ -1158,6 +1158,7 @@ ${ person[ "Mobile phone" ] ? `
 	</ol>
 </div>
 <script id="The_symlinked_data_to_make_it_all_work" src="link_to_data.txt.js"></script>
+<script id="data_to_make_it_all_work" src="data.js"></script>
 <img src="photos/_default_.webp" style="display: none;" alt=""/>
 </body>
 </html>
