@@ -488,7 +488,7 @@
         }
 	</style>
 	<script id="serviceworker_for_PWA">
-		const PROGRESSIVE_WEB_APP = false;  // it can be a pain to develop with PWA mode active
+		const PROGRESSIVE_WEB_APP = true;  // it can be a pain to develop with PWA mode active
 		if( PROGRESSIVE_WEB_APP && "serviceWorker" in navigator )
 		{
 			window.addEventListener( "load", function()
