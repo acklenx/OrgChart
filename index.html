@@ -1,10 +1,1235 @@
-hello google
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-84EYJTZXD5"></script>
-<script>
-	window.dataLayer = window.dataLayer || [];
-	function gtag(){dataLayer.push(arguments);}
-	gtag('js', new Date());
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html lang="en">
+<head>
+	<title>Vanilla JS Organization Chart</title>
 
-	gtag('config', 'G-84EYJTZXD5');
-</script>
+	<link rel="manifest" href="/manifest.json"/>
+	<link href="./images/orgchart_192x192.png" rel="apple-touch-icon" type="image/png"/>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="robots" content="noindex,nofollow"/>
+	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'"/>
+	<meta http-equiv="Content-Security-Policy" content="object-src 'none'"/>
+	<meta name="theme-color" content="white"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<meta name="version" content="1.28"/>
+	<meta name="description"
+		  content="This is an organizational chart for viewing all the people that you supply in a json data file.  You can save this page locally on your computer and run it later."/>
+	<style id="Flavor_CSS_to_make_it_look_nice">
+        body {
+            font-family: 'Helvetica Neue', arial, sans-serif;
+            color: #1D252C; /* GL Black */
+            margin: 0;
+        }
+
+        #orgChartView {
+            margin: 10px
+        }
+
+        div#UpToManager,
+        div.manager_undefined,
+        div.manager_true {
+            border: solid #dcdee0 2px;
+            border-radius: 10px !important;
+        }
+
+        div#UpToManager,
+        .topPerson .nestedPerson div.manager_undefined,
+        .topPerson .nestedPerson div.manager_true {
+            cursor: pointer;
+        }
+
+        .topPerson div.manager_undefined,
+        .topPerson div.manager_true {
+            cursor: default;
+        }
+
+        span.link:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+
+        body, table {
+            font-size: 16px;
+            color: #1D252C;
+        }
+
+        thead th {
+            font-size: 20px;
+        }
+
+        thead td {
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .suppressPointerEvents * {
+            pointer-events: none;
+        }
+
+        #UpToManager {
+        / / width: 500 px;
+            font-weight: bold;
+            font-size: 20px;
+            background-color: #f3f3f4;
+            min-height: 20px;
+        }
+
+        /*#UpToManager.survived_false {*/
+        /*    background-color: red;*/
+        /*}*/
+
+
+        .manager {
+            margin: -10px;
+            padding-top: 10px;
+            height: 35px;
+        }
+
+	</style>
+	<style id="Org_Chart_Layout_Magic">
+        /* OrgChart CSS Base: Reference https://www.cssscript.com/responsive-hierarchical-organization-chart-pure-css/ */
+        ol.organizational-chart,
+        ol.organizational-chart ol,
+        ol.organizational-chart li,
+        ol.organizational-chart li > div {
+            position: relative;
+        }
+
+        ol.organizational-chart,
+        ol.organizational-chart ol {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        ol.organizational-chart {
+            text-align: center;
+        }
+
+        ol.organizational-chart ol {
+            padding-top: 1em;
+        }
+
+        /* the connector line */
+        ol.organizational-chart ol:before,
+        ol.organizational-chart ol:after,
+        ol.organizational-chart li:before,
+        ol.organizational-chart li:after,
+        ol.organizational-chart > li > div:before,
+        ol.organizational-chart > li > div:after {
+            /* all connectors */
+            background-color: #b7a6aa;
+            content: "";
+            position: absolute;
+        }
+
+        ol.organizational-chart ol > li {
+            padding: 1em 0 0 1em;
+        }
+
+        ol.organizational-chart > li ol:before {
+            height: 1.2em;
+            left: 50%;
+            top: 0;
+            width: 3px;
+        }
+
+        ol.organizational-chart > li ol:after {
+            /* horizontal connector */
+            height: 3px;
+            left: 3px;
+            top: 1em;
+            width: 50%;
+        }
+
+        ol.organizational-chart > li ol > li:not(:last-of-type):before {
+            height: 3px;
+            left: 0;
+            top: 2em;
+            width: 1em;
+        }
+
+        ol.organizational-chart > li ol > li:not(:last-of-type):after {
+            height: 100%;
+            left: 0;
+            top: 0;
+            width: 3px;
+        }
+
+        ol.organizational-chart > li ol > li:last-of-type:before {
+            height: 3px;
+            left: 0;
+            top: 2em;
+            width: 1em;
+        }
+
+        ol.organizational-chart > li ol > li:last-of-type:after {
+            height: 2em;
+            left: 0;
+            top: 0;
+            width: 3px;
+        }
+
+        ol.organizational-chart li > div {
+            background-color: #fff;
+            border-radius: 3px;
+            min-height: 2em;
+            padding: 0.5em;
+        }
+
+        /*** PRIMARY ***/
+        ol.organizational-chart > li > div {
+
+            background-color: #8dccad;
+            margin-right: 1em;
+        }
+
+
+        ol.organizational-chart > li > div + div {
+            margin-top: 1em;
+        }
+
+        ol.organizational-chart > li > div + div:after {
+            right: -1em;
+            top: -1em;
+            width: 3px;
+        }
+
+        /*** SECONDARY ***/
+        ol.organizational-chart > li > ol:before {
+            /* descender */
+            left: inherit;
+        }
+
+        ol.organizational-chart > li > ol:after {
+            /* horizontal connector */
+            left: 0;
+        }
+
+
+        ol.organizational-chart > li > ol > li > div {
+            background-color: #f3f3f4;
+        }
+
+        /* topPerson ol.organizational-chart */
+        /*ol.organizational-chart > li.topPerson > div.survived_false {*/
+        /*    background-color: red;*/
+        /*}*/
+        /*
+				ol.organizational-chart > li.topPerson > ol > li > div.survived_false,
+				ol.organizational-chart > li.topPerson > ol > li > ol > li > div.survived_false,
+				ol.organizational-chart > li.topPerson > ol > li > ol > li > ol > li > div.survived_false,
+				ol.organizational-chart > li.topPerson > ol > li > ol > li > ol > li > ol > li > div.survived_false {
+					background-color: red;
+				}
+
+		  */
+        /* topPerson ol.organizational-chart */
+        ol.organizational-chart > li > div.contractor_true,
+        ol.organizational-chart > li > ol > li > div.contractor_true,
+        ol.organizational-chart > li > ol > li > ol > li > div.contractor_true,
+        ol.organizational-chart > li > ol > li > ol > li > ol > li > div.contractor_true,
+        ol.organizational-chart > li > ol > li > ol > li > ol > li > ol > li > div.contractor_true {
+            background-color: #c2c2c2;
+        }
+
+        /*** TERTIARY ***/
+        ol.organizational-chart > li > ol > li > ol > li > div {
+            background-color: #f3f3f4;
+        }
+
+        /*** QUATERNARY ***/
+        ol.organizational-chart > li > ol > li > ol > li > ol > li > div {
+            background-color: #f3f3f4;
+        }
+
+        /*** QUINARY ***/
+        ol.organizational-chart > li > ol > li > ol > li > ol > li > ol > li > div {
+            background-color: #f3f3f4;
+        }
+
+
+        /* OrgChart CSS Response Screen: Reference https://www.cssscript.com/responsive-hierarchical-organization-chart-pure-css/ */
+
+        @media only screen and (max-width: 64em) {
+            .largePhoto {
+                width: 100px !important;
+                height: 100px !important;
+            }
+        }
+
+        @media only screen and (min-width: 64em) {
+            ol.organizational-chart {
+                margin-left: -1em;
+                margin-right: -1em;
+            }
+
+            ol.organizational-chart li div.topPersonDiv {
+                width: 500px;
+            }
+
+            #UpToManager {
+                width: 500px;
+            }
+
+            /* PRIMARY */
+            ol.organizational-chart > li > div {
+                display: inline-block;
+                float: none;
+                margin: 0 1em 1em 1em;
+                vertical-align: bottom;
+            }
+
+            ol.organizational-chart > li > div:only-of-type {
+                margin-bottom: 0;
+            }
+
+            ol.organizational-chart > li > div:before,
+            ol.organizational-chart > li > div:after {
+                bottom: -1em !important;
+                top: inherit !important;
+            }
+
+            ol.organizational-chart > li > div:before {
+                /* right side horizontal connector */
+                height: 1em !important;
+                left: 50% !important;
+                width: 3px !important;
+            }
+
+            ol.organizational-chart > li > div:only-of-type:after {
+                display: none;
+            }
+
+            ol.organizational-chart > li > div:first-of-type:not(:only-of-type):after,
+            ol.organizational-chart > li > div:last-of-type:not(:only-of-type):after {
+                bottom: -1em;
+                height: 3px;
+                width: calc(50% + 1em + 3px);
+            }
+
+            ol.organizational-chart > li > div:first-of-type:not(:only-of-type):after {
+                left: calc(50% + 3px);
+            }
+
+            ol.organizational-chart > li > div:last-of-type:not(:only-of-type):after {
+                left: calc(-1em - 3px);
+            }
+
+            ol.organizational-chart > li > div + div:not(:last-of-type):after {
+                height: 3px;
+                left: -2em;
+                width: calc(100% + 4em);
+            }
+
+            /* SECONDARY */
+            ol.organizational-chart > li > ol {
+                display: flex;
+                flex-wrap: nowrap;
+            }
+
+            ol.organizational-chart > li > ol:before,
+            ol.organizational-chart > li > ol > li:before {
+                height: 1em !important;
+                left: 50% !important;
+                top: 0 !important;
+                width: 3px !important;
+            }
+
+            ol.organizational-chart > li > ol:after {
+                display: none;
+            }
+
+            ol.organizational-chart > li > ol > li {
+                flex-grow: 1;
+                padding-left: 1em;
+                padding-right: 1em;
+                padding-top: 1em;
+            }
+
+            ol.organizational-chart > li > ol > li:only-of-type {
+                padding-top: 0;
+            }
+
+            ol.organizational-chart > li > ol > li:only-of-type:before,
+            ol.organizational-chart > li > ol > li:only-of-type:after {
+                display: none;
+            }
+
+            ol.organizational-chart > li > ol > li:first-of-type:not(:only-of-type):after,
+            ol.organizational-chart > li > ol > li:last-of-type:not(:only-of-type):after {
+                height: 3px;
+                top: 0;
+                width: 50%;
+            }
+
+            ol.organizational-chart > li > ol > li:first-of-type:not(:only-of-type):after {
+                left: 50%;
+            }
+
+            ol.organizational-chart > li > ol > li:last-of-type:not(:only-of-type):after {
+                left: 0;
+            }
+
+            ol.organizational-chart > li > ol > li + li:not(:last-of-type):after {
+                height: 3px;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+
+        ol.level_3,
+        ol.level_4,
+        ol.level_5 {
+            display: none;
+        }
+
+
+	</style>
+	<style id="Previously_Inline_Styles">
+        .center {
+            text-align: center;
+        }
+
+        .left {
+            text-align: left;
+        }
+
+        .largePhoto {
+            margin: 1em 0 1em 2em;
+        }
+
+
+        .orgChartViewContainer {
+            position: absolute;
+            left: 20px;
+            top: 110px;
+            height: 600px;
+            margin-top: -50px;
+            overflow: hidden;
+        }
+
+
+        ol.organizational-chart li div.topPersonDiv {
+            padding: 2px;
+            margin: 0;
+        }
+
+
+        .organizational-chart {
+            margin-top: 150px;
+        }
+
+        #orgChartView {
+            top: 85px;
+            position: relative;
+        }
+
+        #searchArea {
+            margin-top: 0;
+        }
+
+        .jobTitle,
+        ol.organizational-chart li div.nestedPersonDiv .jobTitle {
+            font-size: 12px;
+            font-style: italic;
+            font-weight: normal;
+        }
+
+        div.nestedSearchDiv {
+            padding: 2px;
+            min-height: 53px;
+            margin: 10px;
+            width: 400px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        ol.organizational-chart li div.nestedPersonDiv {
+            padding: 2px;
+            min-height: 53px;
+        }
+
+        .smallPhoto {
+            float: left;
+            border-radius: 50px;
+            margin: 2px;
+        " height=" 50 " width=" 50
+        }
+
+        #searchArea {
+            position: absolute;
+            margin: 0 20px;
+            background-color: #d881fe;
+            z-index: 2;
+            padding: 15px;
+            border-radius: 20px;
+        }
+
+        #detailView {
+            font-size: 90%;
+            width: 90%;
+
+        }
+
+        #detailView table {
+            font-size: 90%;
+
+
+        }
+
+        #detailView .largePhoto {
+            height: 100px;
+            width: 100px;
+        }
+	</style>
+	<script id="serviceworker_for_PWA">
+		const PROGRESSIVE_WEB_APP = true;  // it can be a pain to develop with PWA mode active
+		if( PROGRESSIVE_WEB_APP && "serviceWorker" in navigator )
+		{
+			window.addEventListener( "load", function()
+			{
+				navigator.serviceWorker
+					.register( "serviceWorker.js" );
+			} );
+		}
+	</script>
+
+
+	<script id="Main_script">
+		let maxDepth = 3;
+
+		function init()
+		{
+			const oStyle = getComputedStyle( document.getElementById( "UpToManager" ) );
+			if( oStyle.width !== "500px" )
+			{
+				maxDepth = 2;
+			}
+
+			loadPerson();
+			document.getElementById( "searchText" ).focus();
+			logInit();
+		}
+
+		const getCookieValue = ( name ) => (
+			document.cookie.match( '(^|;)\\s*' + name + '\\s*=\\s*([^;]+)' )?.pop() || ''
+		);
+
+		function getVisitorId()
+		{
+			let visitorId = getCookieValue( "visitor" );
+			if( !visitorId )
+			{
+				visitorId = "visitor_" + Math.floor( Math.random() * 10000000 );
+				document.cookie = "visitor=" + visitorId + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; SameSite=Strict; Secure";
+			}
+			return visitorId;
+		}
+
+		function logInit()
+		{
+			const visitorId = getVisitorId();
+			const logData = {
+				"form-name": "orgchart",
+				"visitorId": visitorId,
+				"location": document.location.href,
+				"referrer": document.referrer,
+				"Cookies: ": document.cookie,
+				"Language: ": navigator.language,
+				"Platform: ": navigator.platform,
+				"User Agent: ": navigator.userAgent,
+				"Connection Speed: ": navigator.connectionSpeed
+			};
+			submitForm( logData );
+			setTimeout(function(){
+				lazyUpdateLogData( visitorId );
+			}, 3000 )
+
+			function lazyUpdateLogData(visitorId)
+			{
+				fetch( "https://ipapi.co/json/" )
+					.then( response => response.json() )
+					.then( ( responseJson =>
+					{
+						responseJson.visitorId = visitorId
+						console.log( responseJson );
+						submitForm( logData )
+					} ) );
+			}
+			console.log( "log init complete", document.cookie );
+		}
+		function submitForm( logData )
+		{
+			console.log( "submmitting log data", logData)
+			fetch( "/", {
+				method: "POST",
+				headers: { "Content-Type": "application/x-www-form-urlencoded" },
+				body: encode( logData )
+			} )
+				.then( () => console.log( "log summitted!" ) )
+				.catch( ( error ) => console.log( "ERROR ERROR ERROR ERROR (posting to netlify)",error ) );
+
+			function encode( data )
+			{
+				return Object.keys( data )
+					.map(
+						( key ) =>
+							encodeURIComponent( key ) + "=" + encodeURIComponent( data[ key ] )
+					)
+					.join( "&" );
+			}
+
+		}
+	</script>
+	<script id="Template_literal_functions_(the_magic)">
+		function htmlTemplate( literals, ...vars )
+		{
+			let raw = literals.raw,
+				result = '',
+				i = 1,
+				len = arguments.length,
+				str,
+				variable;
+
+			while( i < len )
+			{
+				str = raw[ i - 1 ];
+				variable = vars[ i - 1 ];
+				result += str + variable;
+				i++;
+			}
+			result += raw[ raw.length - 1 ];
+			return result;
+		}
+
+		function render( data, template )
+		{
+			if( !template )
+			{
+				return;
+			}
+			if( typeof data === 'string' )
+			{
+				// Handle primitive type:
+				return template( data );
+			}
+			else if( typeof data === 'object' && !Array.isArray( data ) )
+			{
+				// Handle object:
+				return template( data );
+			}
+			else if( Array.isArray( data ) )
+			{
+				// Handle array:
+				return data.map( item => template( item ) ).join( '' );
+			}
+		}
+	</script>
+	<script id="up">
+		const upTemplate = ( person ) => htmlTemplate`<div class="manager" onclick="makeRoot( '${ person[ "Reports To ID" ] }' )">${ person[ "Reports To Full Name" ] }</div>`;
+	</script>
+	<script id="init">
+		const defaultPerson = "isabella.gray";
+		let lastUnsavedId = null;
+		let lastHash = document.location.hash;
+
+		function loadPerson( person_id, removeFromHistory )
+		{
+			showSearch();
+			document.getElementById( "orgChartView" ).style.display = "block";
+			person_id = person_id || getStartingPersonFromUrl() || defaultPerson;
+			if( !removeFromHistory )
+			{
+				document.location.hash = "person=" + person_id;
+				lastUnsavedId = null;
+			}
+			else
+			{
+				lastUnsavedId = person_id;
+			}
+			document.title = "OrgChart:" + getFullName( person_id );
+			document.getElementById( "root" ).innerHTML = personTemplate( ORGCHART_DATA[ person_id ] );
+			document.getElementById( "UpToManager" ).innerHTML = render( ORGCHART_DATA[ person_id ], upTemplate );
+			setUpToManagerColor( ORGCHART_DATA[ person_id ] );
+			lastHash = document.location.hash;
+		}
+
+		function setUpToManagerColor( person )
+		{
+			const bIsCurrentEmployee = isCurrentEmployee( person[ "Reports To ID" ] );
+			document.getElementById( "UpToManager" ).classList.remove( "survived_true" );
+			document.getElementById( "UpToManager" ).classList.remove( "survived_false" );
+			document.getElementById( "UpToManager" ).classList.add( "survived_" + bIsCurrentEmployee );
+		}
+
+		function getStartingPersonFromUrl()
+		{
+			let startingPerson = null;
+			let sUrl = document.location.hash;
+			let person_id = sUrl.match( /person=([^&]*)/gi );
+			if( person_id && person_id [ 0 ] )
+			{
+				person_id = person_id[ 0 ].replace( "person=", "" );
+				if( ORGCHART_DATA[ person_id ] )
+				{
+					startingPerson = person_id;
+				}
+			}
+			return startingPerson;
+		}
+
+
+		function hideImage( oImage )
+		{
+			oImage.style.display = 'none';
+		}
+	</script>
+	<script id="person">
+		const personTemplate = ( person ) =>
+			htmlTemplate`
+						<!--suppress ALL -->
+<li class="topPerson">
+							<div id="${ initializeLevels( person ) }"
+								 class="topPersonDiv manager_${ person.directs && person.directs.length > 0 }
+								 survived_${ isCurrentEmployee( person.id ) }
+								 contractor_${ isContractor( person.id ) }
+								 ">
+								<table border="0" cellpadding="0" cellspacing="0" width="100%">
+									<thead>
+										<tr>
+											<th colspan="3" class="center">
+												${ getFullName( person.id ) }
+											</th>
+										</tr>
+										<tr>
+											<td colspan="3" class="center" class="center">
+												${ person[ "Job Title" ] }
+											</td>
+										</tr>
+									</thead>
+									<tbody>
+
+										<tr>
+											<td rowspan="3" width="1"><img src="${ getPhotoUrl( person.id, 'medium' ) }"
+																		   class="largePhoto"
+																		   height="200"
+																		   width="200"
+																		   alt="a photograph of ${ getFullName( person.id ) }"  onerror="hideImage(this)"/>
+											</td>
+											<td rowspan="3" width="5%">&nbsp;</td>
+										</tr>
+
+										<tr>
+											<td>
+											</td>
+										</tr>
+										<tr>
+											<td class="left">
+
+												<div title="${ person[ "Start date" ] }">
+												Higher Standards for
+												</div>
+												${ getRelativeTime( person[ "Start date" ] ) }
+
+												<div>Department:
+													 ${ person[ "Department" ] }
+												</div>
+
+												${ person[ "Division" ] ? `
+												<div>Division:
+													 ${ person[ "Division" ] }
+												</div>
+` : `` }
+
+
+
+												<div>Email:
+													<a href="mailto:${ person.Email }" target="_blank" rel="noreferrer">${ person.Email }</a>
+												</div>
+${ person[ "Mobile phone" ] ? `
+												<div>Phone:
+													 ${ person[ "Mobile phone" ] }
+												</div>
+` : `` }
+												<div>Location:
+													 ${ person[ "Office Locations" ] }
+												</div>
+
+
+
+												<div>&nbsp;</div>
+
+
+<!--												<div>Email</div>-->
+<!--												<div>Phone</div>-->
+<!--												<div>Employment Status</div>-->
+<!--												<div>End Date</div>-->
+<!--												<div>GitHub</div>-->
+<!--												<div>Jira</div>-->
+<!--												<div>OpsGenie</div>-->
+<!--												<div>Blameless</div>-->
+
+
+											</td>
+
+										</tr>
+									</tbody>
+
+
+								</table>
+
+
+							</div>
+							${ person.directs && person.level < maxDepth ? `<ol class="level_${ person.level }"> ${ render( person.directs.map( person_id => ORGCHART_DATA[ person_id ] ), nestedPersonTemplate ) } </ol>` : "" }
+						</li>
+					`;
+	</script>
+	<script id="nestedPerson">
+		const nestedPersonTemplate = ( person ) =>
+			htmlTemplate`
+						<!--suppress ALL -->
+<li class="nestedPerson">
+							<div onclick="${ initializeLevels( person ) };makeRoot( '${ person.id }' ); hide();"
+								 onmouseover="showDetails( '${ person.id }' ); hideSearchResults();"
+								 onmouseout="hide()"
+								 class="manager_${ person.directs && person.directs.length > 0 }
+								 survived_${ isCurrentEmployee( person.id ) }
+								 contractor_${ isContractor( person.id ) }
+								 suppressPointerEvents nestedPersonDiv">
+
+								<img src="${ getPhotoUrl( person.id, '50x50' ) }"
+									 alt="Small photograph of ${ getFullName( person.id ) }"
+									 class="smallPhoto"
+									 height="50" width="50"
+									  onerror="hideImage(this)"/>
+
+								<strong>${ getFullName( person.id ) }</strong>
+								<br/>
+								<span class="jobTitle" title="${ person[ 'Job Title' ] }">${ getRole( person ) }</span>
+
+							</div>
+							${ person.directs && person.level < maxDepth ? `<ol class="level_${ person.level }"> ${ render( person.directs.map( person_id => ORGCHART_DATA[ person_id ] ), nestedPersonTemplate ) } </ol>` : "" }
+						</li>
+					`;
+	</script>
+	<script id="singleSearchResult">
+		const searchResultTemplate = ( person ) =>
+			htmlTemplate`
+							<!--suppress HtmlDeprecatedAttribute -->
+<div onmouseover="previewPerson( '${ person.id }' )"
+								 class="nestedSearchDiv manager_${ person.directs && person.directs.length > 0 } suppressPointerEvents"
+								 onclick="hideSearchResults();">
+
+								<img src="${ getPhotoUrl( person.id, 'thumbnail' ) }"
+									 alt="Small photograph of ${ getFullName( person.id ) }"
+									 class="smallPhoto"
+									 height="50" width="50" onerror="hideImage(this)" />
+
+								<strong>${ getFullName( person.id ) }</strong>
+								<br/>
+								<span class="jobTitle" >${ person[ "Job Title" ] }</span>
+							</div>
+					`;
+	</script>
+	<script id="Template_helper_convenience_functions_for_our_data_and_navigation">
+		function initializeLevels( person )
+		{
+			if( !person.level )
+			{
+				person.level = 1;
+			}
+			if( person.directs )
+			{
+				for( let i = 0; person.directs.length > i; i++ )
+				{
+					const directReport = ORGCHART_DATA [ person.directs[ i ] ];
+					directReport.level = person.level + 1;
+				}
+			}
+			return "";
+		}
+
+		const LOG_ME = true;
+
+		function logme( args, more )
+		{
+			if( LOG_ME === true )
+			{
+				let sMessage = args.callee.caller.name + "()." + args.callee.name + "( " + [ ...args ] + " )";
+				if( more )
+				{
+					sMessage += "\n\n";
+					console.log( sMessage, args.callee );
+				}
+				else
+				{
+					console.log( sMessage );
+				}
+			}
+		}
+
+		function makeRoot( person_id, removeFromHistory )
+		{
+			if( person_id )
+			{
+				let root = ORGCHART_DATA[ person_id ];
+				if( root.level === 1 )
+				{
+					root = ORGCHART_DATA[ ORGCHART_DATA[ person_id ].id ];
+					if( !root )
+					{
+						root = ORGCHART_DATA[ person_id ];
+					}
+				}
+				root.level = null;
+				loadPerson( person_id, removeFromHistory );
+				document.body.scrollTop = 0; // For Safari
+				document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+			}
+		}
+
+		function getFullName( person_id )
+		{
+			const person = ORGCHART_DATA[ person_id ];
+			return ( person[ "Preferred first name" ] || person[ "First name" ] || person.name ) + " " + person[ "Last name" ];
+		}
+
+		function getPhotoUrl( person_id, sSizePath )
+		{
+			sSizePath = "";  // like: "medium/" or "50x50/" or "thumbnail/"
+			return "./photos/" + sSizePath + person_id + ".jpg";
+		}
+
+		function isCurrentEmployee( person_id )
+		{
+			let isCurrentEmployee = true;
+			const person = ORGCHART_DATA[ person_id ];
+			if( person )
+			{
+				const endDate = person[ "End date" ];
+				if( endDate )
+				{
+					isCurrentEmployee = false;
+				}
+			}
+			return isCurrentEmployee;
+		}
+
+		function isContractor( person_id )
+		{
+			let isCurrentEmployee = false;
+			const person = ORGCHART_DATA[ person_id ];
+			const type = person[ "Employee type" ];
+			if( type === "Contractor" )
+			{
+				isCurrentEmployee = true;
+			}
+			return isCurrentEmployee;
+		}
+
+		function getRole( person )
+		{
+			let sRole = "";
+			let sTeam = person[ "Teams" ];
+			if( person.directs && person.directs.length > 0 && sTeam && sTeam !== "" )
+			{
+				if( sTeam === "CTO Team" )
+				{
+					sRole = person[ "Job Title" ].replace( /^VP,? /, "" );
+				}
+				else
+				{
+					sRole = sTeam;
+				}
+			}
+			else
+			{
+				sRole += person[ "Job Title" ];
+			}
+			return sRole;
+		}
+
+		function getRelativeTime( date )
+		{
+			const startDate = new Date( date );
+			const ago = ( new Date() - startDate ) / 2629800000; // 2629800000 ms in a month
+			let yearsAgo = ago / 12;  // 2629800000 ms in a month
+			let sYearsAgo = "";
+
+			if( yearsAgo >= 1 )
+			{
+				sYearsAgo = Math.floor( yearsAgo ) + " Year";
+				if( sYearsAgo !== "1 Year" )
+				{
+					sYearsAgo += "s";
+				}
+				let monthsAgo = Math.floor( ( ago % 12 ) ) + " month";  // 2880000ms in a month
+				if( monthsAgo !== "1 month" )
+				{
+					monthsAgo += "s";
+				}
+				sYearsAgo += " " + monthsAgo;
+			}
+			else
+			{
+				let monthsAgo = ( ago % 12 );  // 2880000ms in a month
+				let sMonthsAgo = Math.floor( monthsAgo ) + " month";  // 2880000ms in a month
+				if( monthsAgo >= 1 )
+				{
+					if( sMonthsAgo !== "1 month" )
+					{
+						sMonthsAgo += "s";
+					}
+					sYearsAgo += sMonthsAgo;
+				}
+				else
+				{
+					let daysAgo = ( new Date() - startDate ) / 86400000; // / 8640000ms/day = (1000ms * 60s * 60h * 24d)
+					let sDaysAgo = Math.ceil( daysAgo ) + " day";
+					if( sDaysAgo !== "1 day" )
+					{
+						sDaysAgo += "s";
+					}
+					sYearsAgo += sDaysAgo;
+				}
+
+			}
+
+			return sYearsAgo;
+		}
+
+		function hide()
+		{
+			document.getElementById( 'detailView' ).style.display = "none";
+		}
+
+		function showDetails( person_id )
+		{
+			let oldMaxDepth = maxDepth;
+			maxDepth = 1;
+			document.getElementById( 'detailView' ).style.display = "block";
+			document.getElementById( 'detailView' ).innerHTML = render( ORGCHART_DATA[ person_id ], personTemplate );
+			maxDepth = oldMaxDepth;
+		}
+	</script>
+	<script id="search_functions" async="async">
+		function search( sText, sType )
+		{
+			if( sText.length === 0 )
+			{
+				return;
+			}
+			const people = data;
+			const searchString = new RegExp( sText, "i" );
+			const oMatches = {};
+			switch( sType )
+			{
+				case "name" :
+					searchName( searchString );
+					break;
+
+				case "team" :
+					searchTeam( searchString );
+					break;
+
+				case "title" :
+					searchJobTitle( searchString );
+					break;
+			}
+			showResults();
+
+			function showResults()
+			{
+				document.getElementById( "searchResults" ).innerHTML = "";
+				for( let person in oMatches )
+				{
+					document.getElementById( "searchResults" ).innerHTML += render( oMatches [ person ], searchResultTemplate );
+				}
+			}
+
+			function searchTeam( searchString )
+			{
+				let iMatches = 0;
+				for( const person_id in people )
+				{
+					const person = people[ person_id ];
+					if( searchString.test( person[ "Department" ] ) || searchString.test( person[ "Division" ] ) || searchString.test( person[ "Teams" ] ) )
+					{
+						if( iMatches < 20 )
+						{
+							iMatches++;
+							oMatches[ person_id ] = person;
+						}
+						else
+						{
+							break;
+						}
+					}
+				}
+				return iMatches;
+			}
+
+			function searchJobTitle()
+			{
+				let iMatches = 0;
+				for( const person_id in people )
+				{
+					const person = people[ person_id ];
+					if( searchString.test( person[ "Job Title" ] ) )
+					{
+						if( iMatches < 20 )
+						{
+							iMatches++;
+							oMatches[ person_id ] = person;
+						}
+						else
+						{
+							break;
+						}
+					}
+				}
+				return iMatches;
+			}
+
+			function isInList( aList )
+			{
+				let results = false;
+				if( aList )
+				{
+					for( let i = 0; aList.length > i; i++ )
+					{
+
+						const sListItem = aList[ i ];
+						if( searchString.test( sListItem ) )
+						{
+							results = true;
+							break;
+						}
+					}
+				}
+				return results;
+			}
+
+			function searchName()
+			{
+				let iMatches = 0;
+				for( const person_id in people )
+				{
+					const person = people[ person_id ];
+					if( searchString.test( person[ "First name" ] ) ||
+						searchString.test( person[ "Preferred first name" ] ) ||
+						searchString.test( person[ "Last name" ] ) ||
+						searchString.test( person[ "id" ] ) ||
+						searchString.test( ( person[ "First name" ] + " " + person[ "Last name" ] ) ) ||
+						searchString.test( ( person[ "Preferred first name" ] + " " + person[ "Last name" ] ) )
+					)
+					{
+						if( iMatches < 20 )
+						{
+							iMatches++;
+							oMatches[ person_id ] = person;
+						}
+						else
+						{
+							break;
+						}
+					}
+				}
+				return iMatches;
+			}
+		}
+
+		function showSearchResults()
+		{
+			const oSearchResults = document.getElementById( 'searchResults' );
+			oSearchResults.style.display = 'block';
+			if( event.keyCode === 13 )
+			{
+				oSearchResults.children[ 0 ].onmouseover( null );
+				hideSearchResults();
+			}
+		}
+
+		function previewPerson( person_id )
+		{
+			const person = ORGCHART_DATA[ person_id ];
+			if( person )
+			{
+				initializeLevels( person );
+				makeRoot( person.id, true );
+				hide();
+			}
+		}
+
+		function showSearch()
+		{
+			document.getElementById( 'searchArea' ).style.display = 'block';
+		}
+
+		function hideSearchResults()
+		{
+			document.getElementById( 'searchResults' ).style.display = 'none';
+			const newHash = "person=" + lastUnsavedId;
+			if( newHash && newHash !== "person=null" && ( "#" + newHash ) !== ( document.location.hash ) )
+			{
+				lastHash = "#" + newHash;
+				document.location.hash = newHash;
+			}
+			setTimeout( function()
+						{
+							document.getElementById( 'searchResults' ).style.display = 'none';
+						}, 10 );  // does this need to be async?
+		}
+	</script>
+</head>
+
+<body onload="init()">
+<div id="searchArea" onclick="showSearchResults()">
+	<form name="SearchForm">
+		<label>
+			Search:
+			<input type="text" placeholder="Search" name="searchText" id="searchText"
+				   onkeyup="search( this.form.searchText.value, this.form.type.value );showSearchResults()"></label>
+		<label>For:
+			<select name="type" onchange="search( this.form.searchText.value, this.form.type.value)">
+				<option value="name" selected="selected">Name</option>
+				<option value="team">Team</option>
+				<option value="title">Job Title</option>
+			</select>
+		</label>
+		<button onclick="search(this.form.searchText.value, this.form.type.value); showSearchResults();return false;">
+			Search
+		</button>
+		<div id="searchResults">
+			<div></div>
+		</div>
+	</form>
+</div>
+
+<div id="orgChartView" onclick="hideSearchResults(); showSearch()">
+	<div class="orgChartViewContainer">
+		<div id="detailView"></div>
+	</div>
+	<ol class="organizational-chart">
+		<li>
+			<div id="UpToManager"></div>
+			<ol class="organizational-chart" id="root">
+				<li>
+					<div>
+						<h1>Org Chart</h1>
+					</div>
+				</li>
+			</ol>
+		</li>
+	</ol>
+</div>
+<!--<script id="The_symlinked_data_to_make_it_all_work" src="link_to_data.txt.js"></script>-->
+<script id="data_to_make_it_all_work" src="data.js"></script>
+<img src="photos/_default_.webp" style="display: none;" alt=""/>
+</body>
+</html>
