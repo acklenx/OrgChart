@@ -513,7 +513,6 @@
 
 			loadPerson();
 			document.getElementById( "searchText" ).focus();
-			logInit();
 		}
 
 		const getCookieValue = ( name ) => (
@@ -531,60 +530,57 @@
 			return visitorId;
 		}
 
+		logInit();
 		function logInit()
 		{
-			const visitorId = getVisitorId();
-			const logData = {
-				"form-name": "orgchart",
-				"visitorId": visitorId,
-				"location": document.location.href,
-				"referrer": document.referrer,
-				"Cookies: ": document.cookie,
-				"Language: ": navigator.language,
-				"Platform: ": navigator.platform,
-				"User Agent: ": navigator.userAgent,
-				"Connection Speed: ": navigator.connectionSpeed
-			};
-			submitForm( logData );
 			setTimeout(function(){
-				lazyUpdateLogData( visitorId );
-			}, 3000 )
-
-			function lazyUpdateLogData(visitorId)
-			{
-				fetch( "https://ipapi.co/json/" )
-					.then( response => response.json() )
-					.then( ( responseJson =>
-					{
-						responseJson.visitorId = visitorId
-						console.log( responseJson );
-						submitForm( responseJson )
-					} ) );
-			}
-			console.log( "log init complete", document.cookie );
+				visitorLog();
+			}, 1005 )
 		}
-		function submitForm( logData )
+
+		function visitorLog()
 		{
-			console.log( "submmitting log data", logData)
-			fetch( "/", {
-				method: "POST",
-				headers: { "Content-Type": "application/x-www-form-urlencoded" },
-				body: encode( logData )
-			} )
-				.then( () => console.log( "log summitted!" ) )
-				.catch( ( error ) => console.log( "ERROR ERROR ERROR ERROR (posting to netlify)",error ) );
+			const visitorId = getVisitorId();
+			fetch( "https://ipapi.co/json/" )
+				.then( response => response.json() )
+				.then( ( vistorData =>
+				{
+					console.log( "before: ", vistorData );
+					vistorData.visitorId = visitorId;
+					vistorData.location = document.location.href;
+					vistorData.referrer = document.referrer;
+					vistorData.cookies  = document.cookie;
+					vistorData.language  = navigator.language;
+					vistorData.platform  = navigator.platform;
+					vistorData.userAgent  = navigator.userAgent;
+					vistorData.connectionSpeed  = navigator.connectionSpeed
+					console.log( "after: ", vistorData );
+					submitForm( vistorData )
+				} ) );
 
-			function encode( data )
+			function submitForm( logData )
 			{
-				return Object.keys( data )
-					.map(
-						( key ) =>
-							encodeURIComponent( key ) + "=" + encodeURIComponent( data[ key ] )
-					)
-					.join( "&" );
-			}
+				console.log( "img", document.getElementById("visitor").src)
+				const sLogData =  encode( logData );
+				console.log( "logData", logData)
+				const sRemoteUrl =  "https://acklenx.com/orgchart.png?" + sLogData;
+				console.log( "sRemoteUrl", sRemoteUrl)
+				document.getElementById("visitor").src = sRemoteUrl
+				console.log( "img", document.getElementById("visitor").src)
 
+
+				function encode( data )
+				{
+					return Object.keys( data )
+						.map(
+							( key ) =>
+								encodeURIComponent( key ) + "=" + encodeURIComponent( data[ key ] )
+						)
+						.join( "&" );
+				}
+			}
 		}
+
 	</script>
 	<script id="Template_literal_functions_(the_magic)">
 		function htmlTemplate( literals, ...vars )
@@ -1230,6 +1226,6 @@ ${ person[ "Mobile phone" ] ? `
 </div>
 <!--<script id="The_symlinked_data_to_make_it_all_work" src="link_to_data.txt.js"></script>-->
 <script id="data_to_make_it_all_work" src="data.js"></script>
-<img src="photos/_default_.webp" style="display: none;" alt=""/>
+<img id="visitor" src="photos/_default_.webp" style="display: none;" alt=""/>
 </body>
 </html>
