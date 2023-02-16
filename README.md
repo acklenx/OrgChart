@@ -4,7 +4,7 @@ Vanilla Javascript Organizational Chart - no dependencies
 
 **Demo available** at [jsorgchart.netlify.app](https://jsorgchart.netlify.app/)
 
-This is a simple org chart with not a lot of bells and whistles. Navigation is **fast!** There are _no required external dependencies_. There is not a build file.  This cannot be imported or installed.  You can however copy one file, edit it to point to your data source and be done (assuming your data is in the supported format).  This org chart is drawn with simple native template literals.  The templates are all included script tags inside the index.html file.  There are not many of them. They are just html.  Some do call a javascript helper function to format their data.  That should not be required, but it is convenient, if you need it.
+This is a simple org chart with not a lot of bells and whistles. Navigation is **fast!** There are _no required external dependencies_. There is not a build file.  This cannot be imported or installed.  You can however copy one file, edit it to point to your data source and be done (assuming your data is in the supported format).  This org chart is drawn with simple native template literals.  The templates are all included script tags inside the index.html file.  There are not many of them. They are just html.  Some do call a javascript helper functions to format their data.  That should not be required, but it is convenient, if you need it.
 
 **screenshot:**
 
