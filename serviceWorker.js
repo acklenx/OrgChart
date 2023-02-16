@@ -14,7 +14,7 @@ async function cacheFirst( request, fallbackUrl )
 	if ( responseFromCache )
 	{
 		fastestResponse = responseFromCache;
-		everythingElseNext( request, fallbackUrl );  // do this behind the scenes;
+		await everythingElseNext( request, fallbackUrl );  // do this behind the scenes;
 	} else
 	{
 		fastestResponse = await everythingElseNext( request, fallbackUrl );
@@ -29,7 +29,7 @@ async function cacheFirst( request, fallbackUrl )
 			const responseFromNetwork = await fetch( request );
 			if ( responseFromNetwork.status === 200 )
 			{
-				putInCache( request, responseFromNetwork.clone() ); // do NOT make the user 'await'... just put it in there for later
+				await putInCache( request, responseFromNetwork.clone() ); // do NOT make the user 'await'... just put it in there for later... so why did I put await at the front just now?
 				fastestResponse = responseFromNetwork;
 			} else
 			{
