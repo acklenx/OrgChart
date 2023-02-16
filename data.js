@@ -1,3 +1,7 @@
+/*
+//# sourceMappingURL=data.js.map
+*/
+
 if( window.ORGCHART_DATA )
 {
 	// data was already defined via a symlink from the data.txt file to datatxt.js, so no need to define it again here
