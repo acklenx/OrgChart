@@ -1,8 +1,8 @@
-# OrgChart ![image](https://user-images.githubusercontent.com/277458/219515577-9a61df09-c9ce-4435-bd5d-6ff1bd444818.png)
+# OrgChart ![image](https://user-images.githubusercontent.com/277458/219509984-12aaf43c-59b7-4554-8077-342efd60c303.png)
 
 Vanilla Javascript Organizational Chart - no dependencies
 
-**Demo available** at [jsorgchart.netlify.app](https://jsorgchart.netlify.app)
+**Demo available** at [jsorgchart.netlify.app](https://jsorgchart.netlify.app/)
 
 This is a simple org chart with not a lot of bells and whistles. Navigation is **fast!** There are _no required external dependencies_. There is not a build file.  This cannot be imported or installed.  You can however copy one file, edit it to point to your data source and be done (assuming your data is in the supported format).  This org chart is drawn with simple native template literals.  The templates are all included script tags inside the index.html file.  There are not many of them. They are just html.  Some do call a javascript helper functions to format their data.  That should not be required, but it is convenient, if you need it.
 
@@ -24,7 +24,7 @@ This page is set to NOT be indexed by default. If you include PII data for your 
 
 **data.js** is a simple javascript object.  The included file has around 600 fictitious people in it.
 
-**LICENSE** MIT ftw!  Use this as you see fit, but please include the license (you know, with my name in it) if you use it.  
+**LICENSE** MIT ftw!  Use this as you see fit, but please include the license (you know, with my name in it) if you use it.
 
 **serviceWorker.js** is a complete service worker definition.  On mobile devices in particular you will be able to save the page to your device and it will work completely offline.  It does include the default image in the assets along with a google font, Manrope.  Combined with the serviceworker_for_PWA script and the meta tags in the index.html file this will generate a perfect Lighthouse PWA score. If you're not interested in a WPA you should delete the entire serviceworker_for_PWA script since it tries to make a reference to the serviceWorker.js file that won't load if you don't have it.   The meta tags are good to keep around and shouldn't cause a problem if you remove the PWA.
 
@@ -39,8 +39,7 @@ This page is set to NOT be indexed by default. If you include PII data for your 
 **photos/50x50/** is a default thumbnail size for photos. Everything in the parent directory is included here, but should be resized to 50 pixels by 50 pixels.  Might not be used at the time of this writing.  The is a getPhotoUrl() helper that takes a second parameter that is the size of the photo.  That function could, in theory, call a resizer proxy... it's just not at the moment.
 
 **favicon.ico** is simple to put a delightful little org chart icon in your bookmarks should you choose to bookmark a site where this is deployed. Very not required, but 100% requested by browsers when they load your page.
-  
+
 This orgchart as a webpage gets a nearly perfect Google Lighthouse score.  img ![image](https://user-images.githubusercontent.com/277458/219504959-29042ea5-5d6e-4af6-9303-cfe1577201f2.png)
 
 Images are provided by uifaces.com via [Random User](https://randomuser.me/photos) and by [Generated Photos](https://generated.photos).  Please see their terms if you want to redistribute their work.  If you use your own photos you should remove the citation at the bottom of the page.
-
