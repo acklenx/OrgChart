@@ -1,4 +1,5 @@
-# OrgChart
+# OrgChart ![image](https://user-images.githubusercontent.com/277458/219515577-9a61df09-c9ce-4435-bd5d-6ff1bd444818.png)
+
 Vanilla Javascript Organizational Chart - no dependencies
 
 **Demo available** at [jsorgchart.netlify.app](jsorgchart.netlify.app)
