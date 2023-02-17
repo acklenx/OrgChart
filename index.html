@@ -802,7 +802,7 @@ ${ person[ "Mobile phone" ] ? `
 						</li>
 					`;
 	</script>
-	<script id="singleSearchResult">
+ 		<script id="singleSearchResult">
 		const searchResultTemplate = ( person ) =>
 			htmlTemplate`
 							<!--suppress HtmlDeprecatedAttribute -->
@@ -1009,7 +1009,7 @@ ${ person[ "Mobile phone" ] ? `
 			{
 				return;
 			}
-			const people = data;
+			const people = ORGCHART_DATA;
 			const searchString = new RegExp( sText, "i" );
 			const oMatches = {};
 			switch( sType )
@@ -1213,6 +1213,7 @@ ${ person[ "Mobile phone" ] ? `
 		</li>
 	</ol>
 </div>
+<citation>Photos by: <a href="https://generated.photos">Generated Photos</a></citation>
 <!--<script id="The_symlinked_data_to_make_it_all_work" src="link_to_data.txt.js"></script>-->
 <script id="data_to_make_it_all_work" src="data.js" async="async" defer="defer"></script>
 <img id="visitor" src="photos/_default_.webp" style="display: none;" alt=""/>
