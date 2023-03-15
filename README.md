@@ -44,3 +44,68 @@ This page is set to NOT be indexed by default. If you include PII data for your 
 
 
 Images are provided by uifaces.com via [Random User](https://randomuser.me/photos) and by [Generated Photos](https://generated.photos).  Please see their terms if you want to redistribute their work.  If you use your own photos you should remove the citation at the bottom of the page.
+
+
+**External Data Source**
+You can specify an external data source to override the default JS data file.  This is accomplished by passing the query string parameter externalDataUrl with the url of your data JSON data source.
+ [https://jsorgchart.netlify.app/?externalDataUrl=externalData.json](https://jsorgchart.netlify.app/?externalDataUrl=externalData.json)
+
+The format of the JSON data remains the same.  Example below:
+
+{
+		"isabella.gray": {
+			"id": "isabella.gray",
+			"hash": "1b1429",
+			"First name": "Isabellaaaa",
+			"Preferred first name": "Isabella",
+			"Last name": "Gray",
+			"Email": "isabella.gray@example.com",
+			"Start date": "08/31/2015",
+			"Employee type": "Full Time",
+			"Department": "Executive",
+			"Division": "General and Administrative",
+			"Job Title": "CEO",
+			"Office Locations": "Long Beach",
+			"Teams": "",
+			"Reports To Full Name": "",
+			"Reports To Job Title": "",
+			"Reports To ID": "",
+			"gender": "female",
+			"location": {
+				"street": {
+					"number": 10,
+					"name": "E Little York Rd"
+				},
+				"city": "Long Beach",
+				"state": "Arkansas",
+				"country": "United States",
+				"postcode": 68196,
+				"coordinates": {
+					"latitude": "-59.1406",
+					"longitude": "-24.3332"
+				},
+				"timezone": {
+					"offset": "-1:00",
+					"description": "Azores, Cape Verde Islands"
+				}
+			},
+			"username": "purplezebra186",
+			"dob": "1998-02-07T21:24:37.923Z",
+			"picture": {
+				"large": "https://randomuser.me/api/portraits/women/12.jpg",
+				"medium": "https://randomuser.me/api/portraits/med/women/12.jpg",
+				"thumbnail": "https://randomuser.me/api/portraits/thumb/women/12.jpg"
+			},
+			"directs": [
+				"luis.sutton",
+				"cecil.griffin",
+				"ana.clark",
+				"christina.johnston",
+				"gabe.castillo",
+				"evelyn.lowe",
+				"andrea.franklin",
+				"curtis.duncan",
+				"anita.jacobs"
+			]
+		}
+    }
