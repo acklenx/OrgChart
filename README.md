@@ -48,7 +48,7 @@ Images are provided by uifaces.com via [Random User](https://randomuser.me/photo
 
 **External Data Source**
 You can specify an external data source to override the default JS data file.  This is accomplished by passing the query string parameter externalDataUrl with the url of your data JSON data source.
- [https://jsorgchart.netlify.app/?externalDataUrl=externalData.json](https://jsorgchart.netlify.app/?externalDataUrl=externalData.json)
+ [[https://jsorgchart.netlify.app/?externalDataUrl=externalData.json](https://jsorgchart.netlify.app/externalData.json)]([https://jsorgchart.netlify.app/?externalDataUrl=externalData.json](https://jsorgchart.netlify.app/externalData.json))
 
 The format of the JSON data remains the same.  Example below:
 
