@@ -649,7 +649,6 @@
 			const upTemplate = ( person ) => htmlTemplate`<div class="manager" onclick="makeRoot( '${ person[ "Reports To ID" ] }' )">${ person[ "Reports To Full Name" ] }</div>`;
 		</script>
 		<script id="init">
-			const defaultPerson = "isabella.gray";
 			let lastUnsavedId = null;
 			let lastHash = document.location.hash;
 
