@@ -1,0 +1,139 @@
+	{
+		"wilma.diaz": {
+			"id": "wilma.diaz",
+			"hash": "107754",
+			"First name": "Wilma",
+			"Preferred first name": "Wilma",
+			"Last name": "Diaz",
+			"Email": "wilma.diaz@example.com",
+			"Start date": "03/29/2021",
+			"End date": "01/05/2023",
+			"Employee type": "Full Time",
+			"Department": "Engineering",
+			"Division": "Research and Development",
+			"Job Title": "Engineering Manager",
+			"Office Locations": "Forney",
+			"Teams": "Card Lifecycle Management",
+			"Reports To Full Name": "Leon Harrison",
+			"Reports To Job Title": "Senior Engineering Manager",
+			"Reports To ID": "leon.harrison",
+			"gender": "female",
+			"location": {
+				"street": {
+					"number": 2951,
+					"name": "Blossom Hill Rd"
+				},
+				"city": "Forney",
+				"state": "Virginia",
+				"country": "United States",
+				"postcode": 38920,
+				"coordinates": {
+					"latitude": "-66.8279",
+					"longitude": "89.4195"
+				},
+				"timezone": {
+					"offset": "-1:00",
+					"description": "Azores, Cape Verde Islands"
+				}
+			},
+			"username": "heavymouse110",
+			"dob": "1990-12-08T23:24:16.417Z",
+			"picture": {
+				"large": "https://randomuser.me/api/portraits/women/21.jpg",
+				"medium": "https://randomuser.me/api/portraits/med/women/21.jpg",
+				"thumbnail": "https://randomuser.me/api/portraits/thumb/women/21.jpg"
+			},
+			"directs": [
+				"frederick.montgomery",
+				"brayden.black"
+			]
+		},
+		"frederick.montgomery": {
+			"id": "frederick.montgomery",
+			"hash": "2f4e69",
+			"First name": "Frederick",
+			"Preferred first name": "Frederick",
+			"Last name": "Montgomery",
+			"Email": "frederick.montgomery@example.com",
+			"Start date": "05/31/2022",
+			"Employee type": "Contractor",
+			"Department": "Engineering",
+			"Division": "Research and Development",
+			"Job Title": "Contractor - Software Engineer",
+			"Office Locations": "Bellevue",
+			"Teams": "Card Lifecycle Management",
+			"Reports To Full Name": "Wilma Diaz",
+			"Reports To Job Title": "Engineering Manager",
+			"Reports To ID": "wilma.diaz",
+			"gender": "male",
+			"location": {
+				"street": {
+					"number": 2282,
+					"name": "Photinia Ave"
+				},
+				"city": "Bellevue",
+				"state": "Tennessee",
+				"country": "United States",
+				"postcode": 89457,
+				"coordinates": {
+					"latitude": "50.9003",
+					"longitude": "-61.5893"
+				},
+				"timezone": {
+					"offset": "-9:00",
+					"description": "Alaska"
+				}
+			},
+			"username": "goldengorilla428",
+			"dob": "1966-01-10T05:00:57.251Z",
+			"picture": {
+				"large": "https://randomuser.me/api/portraits/men/18.jpg",
+				"medium": "https://randomuser.me/api/portraits/med/men/18.jpg",
+				"thumbnail": "https://randomuser.me/api/portraits/thumb/men/18.jpg"
+			}
+		},
+		"brayden.black": {
+			"id": "brayden.black",
+			"hash": "ac636d",
+			"First name": "Brayden",
+			"Preferred first name": "Brayden",
+			"Last name": "Black",
+			"Email": "brayden.black@example.com",
+			"Start date": "07/19/2021",
+			"Employee type": "Full Time",
+			"Department": "Engineering",
+			"Division": "Research and Development",
+			"Job Title": "Software Engineer",
+			"Office Locations": "El Monte",
+			"Teams": "Card Lifecycle Management",
+			"Reports To Full Name": "Wilma Diaz",
+			"Reports To Job Title": "Engineering Manager",
+			"Reports To ID": "wilma.diaz",
+			"gender": "male",
+			"location": {
+				"street": {
+					"number": 7938,
+					"name": "Lone Wolf Trail"
+				},
+				"city": "El Monte",
+				"state": "Utah",
+				"country": "United States",
+				"postcode": 64213,
+				"coordinates": {
+					"latitude": "-57.3320",
+					"longitude": "-57.1914"
+				},
+				"timezone": {
+					"offset": "+3:00",
+					"description": "Baghdad, Riyadh, Moscow, St. Petersburg"
+				}
+			},
+			"username": "silverfish630",
+			"dob": "1977-01-09T22:38:10.525Z",
+			"picture": {
+				"large": "https://randomuser.me/api/portraits/men/62.jpg",
+				"medium": "https://randomuser.me/api/portraits/med/men/62.jpg",
+				"thumbnail": "https://randomuser.me/api/portraits/thumb/men/62.jpg"
+			}
+		}
+	}
