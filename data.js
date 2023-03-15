@@ -1,5 +1,60 @@
-const ORGCHART_DATA =
+let ORGCHART_DATA =
 	{
+		"isabella.gray": {
+			"id": "isabella.gray",
+			"hash": "1b1429",
+			"First name": "Isabellaaaa",
+			"Preferred first name": "Isabella",
+			"Last name": "Gray",
+			"Email": "isabella.gray@example.com",
+			"Start date": "08/31/2015",
+			"Employee type": "Full Time",
+			"Department": "Executive",
+			"Division": "General and Administrative",
+			"Job Title": "CEO",
+			"Office Locations": "Long Beach",
+			"Teams": "",
+			"Reports To Full Name": "",
+			"Reports To Job Title": "",
+			"Reports To ID": "",
+			"gender": "female",
+			"location": {
+				"street": {
+					"number": 10,
+					"name": "E Little York Rd"
+				},
+				"city": "Long Beach",
+				"state": "Arkansas",
+				"country": "United States",
+				"postcode": 68196,
+				"coordinates": {
+					"latitude": "-59.1406",
+					"longitude": "-24.3332"
+				},
+				"timezone": {
+					"offset": "-1:00",
+					"description": "Azores, Cape Verde Islands"
+				}
+			},
+			"username": "purplezebra186",
+			"dob": "1998-02-07T21:24:37.923Z",
+			"picture": {
+				"large": "https://randomuser.me/api/portraits/women/12.jpg",
+				"medium": "https://randomuser.me/api/portraits/med/women/12.jpg",
+				"thumbnail": "https://randomuser.me/api/portraits/thumb/women/12.jpg"
+			},
+			"directs": [
+				"luis.sutton",
+				"cecil.griffin",
+				"ana.clark",
+				"christina.johnston",
+				"gabe.castillo",
+				"evelyn.lowe",
+				"andrea.franklin",
+				"curtis.duncan",
+				"anita.jacobs"
+			]
+		},
 		"wilma.diaz": {
 			"id": "wilma.diaz",
 			"hash": "107754",
@@ -13821,61 +13876,7 @@ const ORGCHART_DATA =
 				"thumbnail": "https://randomuser.me/api/portraits/thumb/men/4.jpg"
 			}
 		},
-		"isabella.gray": {
-			"id": "isabella.gray",
-			"hash": "1b1429",
-			"First name": "Isabellaaaa",
-			"Preferred first name": "Isabella",
-			"Last name": "Gray",
-			"Email": "isabella.gray@example.com",
-			"Start date": "08/31/2015",
-			"Employee type": "Full Time",
-			"Department": "Executive",
-			"Division": "General and Administrative",
-			"Job Title": "CEO",
-			"Office Locations": "Long Beach",
-			"Teams": "",
-			"Reports To Full Name": "",
-			"Reports To Job Title": "",
-			"Reports To ID": "",
-			"gender": "female",
-			"location": {
-				"street": {
-					"number": 10,
-					"name": "E Little York Rd"
-				},
-				"city": "Long Beach",
-				"state": "Arkansas",
-				"country": "United States",
-				"postcode": 68196,
-				"coordinates": {
-					"latitude": "-59.1406",
-					"longitude": "-24.3332"
-				},
-				"timezone": {
-					"offset": "-1:00",
-					"description": "Azores, Cape Verde Islands"
-				}
-			},
-			"username": "purplezebra186",
-			"dob": "1998-02-07T21:24:37.923Z",
-			"picture": {
-				"large": "https://randomuser.me/api/portraits/women/12.jpg",
-				"medium": "https://randomuser.me/api/portraits/med/women/12.jpg",
-				"thumbnail": "https://randomuser.me/api/portraits/thumb/women/12.jpg"
-			},
-			"directs": [
-				"luis.sutton",
-				"cecil.griffin",
-				"ana.clark",
-				"christina.johnston",
-				"gabe.castillo",
-				"evelyn.lowe",
-				"andrea.franklin",
-				"curtis.duncan",
-				"anita.jacobs"
-			]
-		},
+
 		"ruby.lowe": {
 			"id": "ruby.lowe",
 			"hash": "d58a12",
