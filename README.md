@@ -50,12 +50,7 @@ Images are provided by uifaces.com via [Random User](https://randomuser.me/photo
 You can specify an external data source to override the default JS data file.  This is accomplished by passing the query string parameter externalDataUrl with the fully qualified url of your CORS enabled data JSON data source.
 Ex: [https://jsorgchart.netlify.app/?externalDataUrl=https://jsorgchart.netlify.app/externalData.json](https://jsorgchart.netlify.app/?externalDataUrl=https://jsorgchart.netlify.app/externalData.json)
 	
-	
-
-	[Random User][(https://randomuser.me/photos](https://jsorgchart.netlify.app/?externalDataUrl=https://jsorgchart.netlify.app/externalData.json))
-	
-
-	
+Please note that the search (?) portion of the URL always comes before the hash (#) portion of the URL.  The current user is shown in the hash because it does not cause the page to navigate/reload.  Putting the externalDataUrl parameter in the hash will not work. Observe how the URL changes after the link above is loaded.
 
 The format of the JSON data remains the same.  Example below:
 
