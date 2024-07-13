@@ -1,5 +1,61 @@
 data =
 	{
+		"quincy.acklen": {
+			"id": "quincy.acklen",
+			"hash": "acklenx",
+			"First name": "Quincy",
+			"Preferred first name": "Quincy",
+			"Last name": "Acklen ",
+			"Email": "quincy.acklen@example.com",
+			"Start date": "10/23/2014",
+			"Employee type": "Full Time",
+			"Department": "Innovation",
+			"Division": "Technology",
+			"Job Title": "OrgChart Programmer",
+			"Office Locations": "Home",
+			"Teams": "",
+			"Reports To Full Name": "",
+			"Reports To Job Title": "",
+			"Reports To ID": "",
+			"gender": "male",
+			"location": {
+				"street": {
+					"number": 1471,
+					"name": "Lexington Ave"
+				},
+				"city": "Kaneohe",
+				"state": "Hawaii",
+				"country": "United States",
+				"postcode": 96744,
+				"coordinates": {
+					"latitude": "21.4029",
+					"longitude": "157.7996"
+				},
+				"timezone": {
+					"offset": "-10:00",
+					"description": "Hawaii-Aleutian"
+				}
+			},
+			"username": "acklenx",
+			"dob": "1981-10-23T13:47:13.756Z",
+			"picture": {
+				"large": "images/Quincy_Acklen768.webp",
+				"medium": "photos/quincy.acklen.webp",
+				"thumbnail": "photos/50x50/quincy.acklen.webp",
+			},
+			"directs": [
+				"luis.sutton",
+				"cecil.griffin",
+				"ana.clark",
+				"christina.johnston",
+				"gabe.castillo",
+				"evelyn.lowe",
+				"isabella.gray",
+				"andrea.franklin",
+				"curtis.duncan",
+				"anita.jacobs"
+			]
+		},
 		"isabella.gray": {
 			"id": "isabella.gray",
 			"hash": "1b1429",
@@ -11,12 +67,12 @@ data =
 			"Employee type": "Full Time",
 			"Department": "Executive",
 			"Division": "General and Administrative",
-			"Job Title": "CEO",
+			"Job Title": "Chief of Staff",
 			"Office Locations": "Long Beach",
 			"Teams": "",
-			"Reports To Full Name": "",
-			"Reports To Job Title": "",
-			"Reports To ID": "",
+			"Reports To Full Name": "Quincy Acklen",
+			"Reports To Job Title": "OrgChart Programmer",
+			"Reports To ID": "quincy.acklen",
 			"gender": "female",
 			"location": {
 				"street": {
@@ -42,18 +98,7 @@ data =
 				"large": "https://randomuser.me/api/portraits/women/12.jpg",
 				"medium": "https://randomuser.me/api/portraits/med/women/12.jpg",
 				"thumbnail": "https://randomuser.me/api/portraits/thumb/women/12.jpg"
-			},
-			"directs": [
-				"luis.sutton",
-				"cecil.griffin",
-				"ana.clark",
-				"christina.johnston",
-				"gabe.castillo",
-				"evelyn.lowe",
-				"andrea.franklin",
-				"curtis.duncan",
-				"anita.jacobs"
-			]
+			}
 		},
 		"wilma.diaz": {
 			"id": "wilma.diaz",
@@ -9371,50 +9416,6 @@ data =
 				"thumbnail": "https://randomuser.me/api/portraits/thumb/women/86.jpg"
 			}
 		},
-		"quincy.acklen": {
-			"id": "quincy.acklen",
-			"hash": "acklenx",
-			"First name": "Quincy",
-			"Preferred first name": "Quincy",
-			"Last name": "Acklen ",
-			"Email": "quincy.acklen@example.com",
-			"Start date": "10/23/2014",
-			"Employee type": "Full Time",
-			"Department": "Innovation",
-			"Division": "Technology",
-			"Job Title": "Programmer",
-			"Office Locations": "Home",
-			"Teams": "Hackerspace",
-			"Reports To Full Name": "Bonnie Steeves",
-			"Reports To Job Title": "Director, HR Partners",
-			"Reports To ID": "bonnie.steeves",
-			"gender": "male",
-			"location": {
-				"street": {
-					"number": 1471,
-					"name": "Lexington Ave"
-				},
-				"city": "Kaneohe",
-				"state": "Hawaii",
-				"country": "United States",
-				"postcode": 96744,
-				"coordinates": {
-					"latitude": "21.4029",
-					"longitude": "157.7996"
-				},
-				"timezone": {
-					"offset": "-10:00",
-					"description": "Hawaii-Aleutian"
-				}
-			},
-			"username": "acklenx",
-			"dob": "1981-10-23T13:47:13.756Z",
-			"picture": {
-				"large": "images/Quincy_Acklen768.webp",
-				"medium": "photos/quincy.acklen.webp",
-				"thumbnail": "photos/50x50/quincy.acklen.webp",
-			}
-		},
 		"ken.graves": {
 			"id": "ken.graves",
 			"hash": "07f9db",
@@ -9746,9 +9747,9 @@ data =
 			"Job Title": "Chief HR Officer",
 			"Office Locations": "Orange",
 			"Teams": "",
-			"Reports To Full Name": "Isabella Gray",
-			"Reports To Job Title": "CEO",
-			"Reports To ID": "isabella.gray",
+			"Reports To Full Name": "Quincy Acklen",
+			"Reports To Job Title": "OrgChart Programmer",
+			"Reports To ID": "quincy.acklen",
 			"gender": "male",
 			"location": {
 				"street": {
@@ -12031,9 +12032,9 @@ data =
 			"Job Title": "Chief Technology Officer",
 			"Office Locations": "Rochester",
 			"Teams": "CTO Team",
-			"Reports To Full Name": "Isabella Gray",
-			"Reports To Job Title": "CEO",
-			"Reports To ID": "isabella.gray",
+			"Reports To Full Name": "Quincy Acklen",
+			"Reports To Job Title": "OrgChart Programmer",
+			"Reports To ID": "quincy.acklen",
 			"gender": "male",
 			"location": {
 				"street": {
@@ -15138,9 +15139,9 @@ data =
 			"Job Title": "VP Product Design",
 			"Office Locations": "Warren",
 			"Teams": "",
-			"Reports To Full Name": "Isabella Gray",
-			"Reports To Job Title": "CEO",
-			"Reports To ID": "isabella.gray",
+			"Reports To Full Name": "Quincy Acklen",
+			"Reports To Job Title": "OrgChart Programmer",
+			"Reports To ID": "quincy.acklen",
 			"gender": "female",
 			"location": {
 				"street": {
@@ -15187,9 +15188,9 @@ data =
 			"Job Title": "Chief Financial Officer",
 			"Office Locations": "Lakewood",
 			"Teams": "",
-			"Reports To Full Name": "Isabella Gray",
-			"Reports To Job Title": "CEO",
-			"Reports To ID": "isabella.gray",
+			"Reports To Full Name": "Quincy Acklen",
+			"Reports To Job Title": "OrgChart Programmer",
+			"Reports To ID": "quincy.acklen",
 			"gender": "female",
 			"location": {
 				"street": {
@@ -21608,9 +21609,9 @@ data =
 			"Job Title": "Chief Operating Officer",
 			"Office Locations": "Modesto",
 			"Teams": "",
-			"Reports To Full Name": "Isabella Gray",
-			"Reports To Job Title": "CEO",
-			"Reports To ID": "isabella.gray",
+			"Reports To Full Name": "Quincy Acklen",
+			"Reports To Job Title": "OrgChart Programmer",
+			"Reports To ID": "quincy.acklen",
 			"gender": "male",
 			"location": {
 				"street": {
@@ -22509,9 +22510,9 @@ data =
 			"Job Title": "Chief Product Officer",
 			"Office Locations": "Anchorage",
 			"Teams": "",
-			"Reports To Full Name": "Isabella Gray",
-			"Reports To Job Title": "CEO",
-			"Reports To ID": "isabella.gray",
+			"Reports To Full Name": "Quincy Acklen",
+			"Reports To Job Title": "OrgChart Programmer",
+			"Reports To ID": "quincy.acklen",
 			"gender": "female",
 			"location": {
 				"street": {
@@ -23519,9 +23520,9 @@ data =
 			"Job Title": "Co-Founder",
 			"Office Locations": "Bridgeport",
 			"Teams": "",
-			"Reports To Full Name": "Isabella Gray",
-			"Reports To Job Title": "CEO",
-			"Reports To ID": "isabella.gray",
+			"Reports To Full Name": "Quincy Acklen",
+			"Reports To Job Title": "OrgChart Programmer",
+			"Reports To ID": "quincy.acklen",
 			"gender": "female",
 			"location": {
 				"street": {
@@ -25264,9 +25265,9 @@ data =
 			"Job Title": "Chief Marketing Officer",
 			"Office Locations": "Durham",
 			"Teams": "",
-			"Reports To Full Name": "Isabella Gray",
-			"Reports To Job Title": "CEO",
-			"Reports To ID": "isabella.gray",
+			"Reports To Full Name": "Quincy Acklen",
+			"Reports To Job Title": "OrgChart Programmer",
+			"Reports To ID": "quincy.acklen",
 			"gender": "male",
 			"location": {
 				"street": {
@@ -27675,9 +27676,9 @@ data =
 			"Job Title": "Chief Legal Officer",
 			"Office Locations": "Westminster",
 			"Teams": "",
-			"Reports To Full Name": "Isabella Gray",
-			"Reports To Job Title": "CEO",
-			"Reports To ID": "isabella.gray",
+			"Reports To Full Name": "Quincy Acklen",
+			"Reports To Job Title": "OrgChart Programmer",
+			"Reports To ID": "quincy.acklen",
 			"gender": "female",
 			"location": {
 				"street": {
