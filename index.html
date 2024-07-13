@@ -2080,7 +2080,7 @@
 				} );
 			}
 		</script>
-<!-- 		<script src="data.js" async="async"></script> -->
+<!-- 		<script src="data.js"  async="async"></script> -->
 		<script src="data.min.js"  async="async"></script>
 		<script id="initialize_and_infer_team_data_from_manager"  async="async">
 			function initializeAndInferTeamDataFromManager( sPersonId, oSuppliedOrgData )
@@ -2134,16 +2134,18 @@
 			}
 		</script>
 		<script id="orgChartViewInit"  async="async">
-			addEventListener( 'popstate', () =>
-			{
-			} );
-			window.onpopstate = function()
-			{
-				loadPerson( getStartingPersonFromUrl(), true );
-			};
 
-			const defaultPerson = 'isabella.gray'; // Tim
+			window.onhashchange = function()
+			{
+				const person_id = getStartingPersonFromUrl();
+				if(person_id  && person_id !== sCurrentPersonId)
+				{
+					loadPerson( person_id, false )
+				}
+			}
 
+			let sCurrentPersonId; // you haven't loaded the default person yet!
+			const defaultPerson = 'isabella.gray';
 			let lastIdNotAdded = null;
 			let lastHash;
 
@@ -2156,14 +2158,13 @@
 				{
 					document.location.hash = 'person=' + person_id;
 					lastIdNotAdded = null;
+					sCurrentPersonId = person_id;
 				}
 				else
 				{
 					lastIdNotAdded = person_id;
 				}
 				document.title = 'OrgChart:' + getFullName( person_id );
-				//const quincy = 'U058R7U6B89';
-				//data[ person_id ].slackData = get( "http://localhost:8080/?user=" + ( data[ person_id ].slack || quincy ) );
 				document.getElementById( 'root' ).innerHTML = personTemplate( data[ person_id ] );
 				document.getElementById( 'UpToManager' ).innerHTML = render( data[ person_id ], upTemplate );
 				lastHash = document.location.hash;
@@ -2275,11 +2276,9 @@
 				{
 					maxDepth = 2;
 				}
-
 				loadPerson();
 				aAllSearchTypes = getAllSearchTypes();
 				document.getElementById( 'searchText' ).focus();
-
 			}
 
 			function getAllSearchTypes()
@@ -2389,9 +2388,7 @@
 						<li class="topPerson">
 							<div id="${ initializeLevels( person ) }"
 								 class="topPersonDiv manager_${ person.directs && person.directs.length > 0 }
-
-								 contractor_${ isContractor( person.id ) }
-								 ">
+								 contractor_${ isContractor( person.id ) } ">
 								<table border="0" cellpadding="0" cellspacing="0" width="100%" ondblclick="navigator.clipboard.writeText( getJson( '${ person.id }' ) )" onclick="showRawData( '${ person.id }' )">
 									<thead>
 										<tr>
@@ -2419,7 +2416,6 @@
 										</tr>
 									</thead>
 									<tbody>
-
 										<tr>
 											<td rowspan="3" width="1">
 											<div class="cropLargePhoto" >
@@ -2433,7 +2429,6 @@
 											</td>
 											<td rowspan="3" width="5%">&nbsp;</td>
 										</tr>
-
 										<tr>
 											<td style="font-size: 5px;">
 											&nbsp;
@@ -2505,7 +2500,6 @@ ${ person[ 'office' ] ? `
 											    <label class="itemName">Additional Info:</label>
 												<span class="itemValue">
 												<ul>
-
 ${ person.slack ? `
 												<li>
 													 <a href="https://my.slack.com/team/${ person.slack }" target="slack">Slack</a>
@@ -2574,7 +2568,6 @@ ${ person.email ? `
 							${ person.directs && person.level < maxDepth ? `<ol class="level_${ person.level }"> ${ render( person.directs.map( person_id => data[ person_id ] ), nestedPersonTemplate ) } </ol>` : '' }
 						</li>
 					`;
-
 			function getTeam( person )
 			{
 				let sTeam = '';
@@ -2619,9 +2612,7 @@ ${ person.email ? `
 					const nextBiggest = aDirects[ i + 1 ];
 					const smallest = aReverse[ i ];
 					const nextSmallest = aReverse[ i + 1 ];
-
 					aSpreadDirects[ i ] = biggest; // always
-
 					if( biggest !== smallest )
 					{
 						aSpreadDirects[ i + 1 ] = smallest;
@@ -2638,7 +2629,6 @@ ${ person.email ? `
 					{
 						break;
 					}
-
 					if( nextSmallest !== nextBiggest )
 					{
 						aSpreadDirects[ aDirects.length - ( i + 2 ) ] = nextSmallest;
@@ -2672,8 +2662,6 @@ ${ person.email ? `
 					rawDataWindow.document.body.innerHTML = `<textarea style="height: 100%;width: 100%">${ JSON.stringify( oPerson, null, '\t' ) }</textarea>`;
 				}
 			}
-
-			// 'data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvP8APEAcQERGIiP4HAA=='; // 64x64 transparent webp image (34 bytes!!!)
 
 			function initializeLevels( person )
 			{
