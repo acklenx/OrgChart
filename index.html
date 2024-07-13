@@ -2080,7 +2080,8 @@
 				} );
 			}
 		</script>
-		<script src="data.js"  async="async"></script>
+<!-- 		<script src="data.js" async="async"></script> -->
+		<script src="data.min.js"  async="async"></script>
 		<script id="initialize_and_infer_team_data_from_manager"  async="async">
 			function initializeAndInferTeamDataFromManager( sPersonId, oSuppliedOrgData )
 			{
@@ -2219,7 +2220,7 @@
 					const person = data[ chump ];
 					person.name = person[ 'First name' ] + ' ' + person[ 'Last name' ];
 					person.manager = person[ 'Reports To ID' ];
-					person.image = 'photos/' + person.id + '.jpg';
+					person.image = 'photos/' + person.id + '.webp';
 
 					person.first = person[ 'First name' ];
 					person.last = person[ 'Last name' ];
