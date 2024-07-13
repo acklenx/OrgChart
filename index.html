@@ -2489,7 +2489,7 @@ ${ person[ 'office' ] ? `
 												<div class="item_office">
                                                     <label class="itemName">Office:</label>
                                                     <span class="itemValue">
-                                                         <a  style="min-width: 5.5em; display:inline-block"  href="${ getMapLink( person ) }" target="map">${ person.office | '' }</a>
+                                                         <a  style="min-width: 5.5em; display:inline-block"  href="${ getMapLink( person ) }" target="map">${ person.office || '' }</a>
                                                     </span>
 												</div>
 ` : `` }
