@@ -33,7 +33,7 @@ async function cacheFirst( request, fallbackUrl )
 				fastestResponse = responseFromNetwork;
 			} else
 			{
-				const fallbackResponse = await caches.match( fallbackUrl );
+				//const fallbackResponse = await caches.match( fallbackUrl );
 				fastestResponse = await failLast( request, fallbackUrl )
 			}
 		}
@@ -45,6 +45,11 @@ async function cacheFirst( request, fallbackUrl )
 		async function failLast( request, fallbackUrl, error )
 		{
 			const fallbackResponse = await caches.match( fallbackUrl );
+			if( error )
+			{
+				console.log( "An error occurred: ", error );
+			}
+
 			if ( fallbackResponse )
 			{
 				fastestResponse = fallbackResponse;
@@ -71,7 +76,7 @@ async function cacheFirst( request, fallbackUrl )
 	}
 }
 
-self.addEventListener( 'install', function ( event )
+self.addEventListener( 'install', function ()
 {
 	self.skipWaiting();  // this newly installed service worker progresses into the activating state, _regardless_ of whether there is already an active service worker.
 } );

@@ -1,9 +1,9 @@
-let ORGCHART_DATA =
+data =
 	{
 		"isabella.gray": {
 			"id": "isabella.gray",
 			"hash": "1b1429",
-			"First name": "Isabellaaaa",
+			"First name": "Isabella",
 			"Preferred first name": "Isabella",
 			"Last name": "Gray",
 			"Email": "isabella.gray@example.com",
@@ -67,6 +67,7 @@ let ORGCHART_DATA =
 			"Employee type": "Full Time",
 			"Department": "Engineering",
 			"Division": "Research and Development",
+			"Domain": "Research and Development",
 			"Job Title": "Engineering Manager",
 			"Office Locations": "Forney",
 			"Teams": "Card Lifecycle Management",

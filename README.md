@@ -27,17 +27,17 @@ This page is set to NOT be indexed by default. If you include PII data for your 
 
 **LICENSE** MIT ftw!  Use this as you see fit, but please include the license (you know, with my name on it) if you use it.
 
-**serviceWorker.js** is a complete service worker definition.  On mobile devices in particular you will be able to save the page to your device and it will work completely offline.  It does include the default image in the assets along with a google font, Manrope.  Combined with the serviceworker_for_PWA script and the meta tags in the index.html file this will generate a perfect Lighthouse PWA score. If you're not interested in a WPA you should delete the entire serviceworker_for_PWA script since it tries to refer to the serviceWorker.js file that won't load if you don't have it.   The meta tags are good to keep around and shouldn't cause a problem if you remove the PWA.
+**serviceWorker.js** is a complete service worker definition.  On mobile devices in particular you will be able to save the page to your device, and it will work completely offline.  It does include the default image in the assets along with a Google font, Manrope.  Combined with the serviceworker_for_PWA script and the meta tags in the index.html file this will generate a perfect Lighthouse PWA score. If you're not interested in a WPA you should delete the entire serviceworker_for_PWA script since it tries to refer to the serviceWorker.js file that won't load if you don't have it.   The meta tags are good to keep around and shouldn't cause a problem if you remove the PWA.
 
 **manifest.json** is required for the PWA and service worker.  If you don't want the PWA you should delete this too.  But really it's just nice to have offline mode available.
 
 **images/** includes the two required PWA images size required for Android and iOS.  They are both org chart images and at least one is maskable as required.
 
-**photos/** is a directory where you can put your photos of your organization.  Photos by default should be named <userID>.jpg  This can be changed.  Because the sample data supplied is fake, the user id is the username portion of each person's email address.  The sample CEO Isabella Gray's email address is isabella.gray@example.com, her id is isabella.gray, and her photo is found that the url /photos/isabella.gray.jpg but in practice, it should not be PII data, which presumably YOUR userIds are not.
+**photos/** is a directory where you can put your photos of your organization.  Photos by default should be named <userID>.jpg  This can be changed.  Because the sample data supplied is fake, the user id is the username portion of each person's email address.  The sample CEO Isabella Gray's email address is isabella.gray@example.com, her id is 'isabella.gray', and her photo is found that the url /photos/isabella.gray.jpg but in practice, it should not be PII data, which presumably YOUR userIds are not.
 
 **photos/_default_.webp** is a default missing photo picture. If you use photos, it's nice to have everything spaced the same. Without any photos, this photo and reference should be removed
 
-**photos/50x50/** is the default thumbnail size for photos. Everything in the parent directory is included here but should be resized to 50 pixels by 50 pixels.  Might not be used at the time of this writing.  The is a getPhotoUrl() helper that takes a second parameter which is the size of the photo.  That function could, in theory, call a resizer proxy... it's just not at the moment.
+**photos/50x50/** is the default thumbnail size for photos. Everything in the parent directory is included here but should be resized to 50 pixels by 50 pixels.  Might not be used at the time of this writing.  The function 'getPhotoUrl()' is a helper that takes a second parameter which is the size of the photo.  That function could, in theory, call a resizer proxy... it's just not at the moment.
 
 **favicon.ico** is simple to put a delightful little org chart icon in your bookmarks should you choose to bookmark a site where this is deployed. Very not required, but 100% requested by browsers when they load your page.
 
@@ -58,7 +58,7 @@ The format of the JSON data remains the same.  Example below:
 		"isabella.gray": {
 			"id": "isabella.gray",
 			"hash": "1b1429",
-			"First name": "Isabellaaaa",
+			"First name": "Isabella",
 			"Preferred first name": "Isabella",
 			"Last name": "Gray",
 			"Email": "isabella.gray@example.com",
@@ -91,7 +91,7 @@ The format of the JSON data remains the same.  Example below:
 					"description": "Azores, Cape Verde Islands"
 				}
 			},
-			"username": "purplezebra186",
+			"username": "purpleZebra186",
 			"dob": "1998-02-07T21:24:37.923Z",
 			"picture": {
 				"large": "https://randomuser.me/api/portraits/women/12.jpg",

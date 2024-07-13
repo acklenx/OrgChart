@@ -1,615 +1,2331 @@
 <!DOCTYPE html>
-<!--suppress ALL -->
+<!--suppress CssUnusedSymbol -->
 <html lang="en">
 	<head>
-		<title>Vanilla JS Organization Chart</title>
+		<title>Organization Chart</title>
 
-		<link rel="manifest" href="/manifest.json"/>
-		<link href="./images/orgchart_192x192.png" rel="apple-touch-icon" type="image/png"/>
-
+		<!-- Begin META-TAG Section -->
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<meta name="robots" content="noindex,nofollow"/>
 		<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'"/>
 		<meta http-equiv="Content-Security-Policy" content="object-src 'none'"/>
 		<meta name="theme-color" content="white"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
-		<meta name="version" content="1.28"/>
+		<meta name="version" content="1.30"/>
 		<meta name="description"
-		      content="This is an organizational chart for viewing all the people that you supply in a json data file.  You can save this page locally on your computer and run it later."/>
+			  content="This is an organizational chart for viewing all the people in an organization.  You can save this page locally on your computer and run it later."/>
+		<meta name="keywords"
+			  content="company, org chart, organization chart, people, employees, team, teams, hierarchy"/>
+		<meta name="author" content="Quincy Acklen"/>
+		<meta name="robots" content="index, follow"/>
+		<!-- End META-TAG Section -->
+
+		<!-- Begin LINK Section -->
+		<link rel="preconnect" href="https://www.netlify.com"/>
+		<link rel="dns-prefetch" href="https://www.netlify.com"/>
+		<link href="images/orgchart_192x192.png" rel="apple-touch-icon" type="image/png"/>
+		<link rel="icon" type="image/x-icon" href="favicon.ico"/>
+		<link rel="manifest" id="orgchart_manifest" crossorigin="use-credentials" href="manifest.json"/>
+		<!-- End LINK Section -->
+
+		<!-- Begin STYLESHEET Section -->
+		<style id="accessibility_styles">
+			.touchTargets select,
+			.touchTargets button,
+			.touchTargets input,
+			.touchTargets a,
+			.touchTargets select {
+				cursor: pointer;
+				font-size: 20px;
+				margin: 2px;
+			}
+		</style>
 		<style id="Flavor_CSS_to_make_it_look_nice">
-            body {
-                font-family: 'Helvetica Neue', arial, sans-serif;
-                color: #1D252C; /* GL Black */
-                margin: 0;
-            }
+			body {
+				font-family: 'Helvetica Neue', arial, sans-serif;
+				color: #1D252C; /* GL Black */
+				margin: 0;
+			}
 
-            #orgChartView {
-                margin: 10px
-            }
+			div#background {
+				text-align: center;
+				margin: 0;
+				background: url(data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvP8APEAcQERGIiP4HAA==) no-repeat center; /* transparent gif just so you can see an example of where the url goes and I don't get warnings */
+				background-size: 100%;
+				position: absolute;
+				height: 99%;
+				width: 100%;
+			}
 
-            div#UpToManager,
-            div.manager_undefined,
-            div.manager_true {
-                border: solid #dcdee0 2px;
-                border-radius: 10px !important;
-            }
+			div#help:hover {
+				color: red;
 
-            div#UpToManager,
-            .topPerson .nestedPerson div.manager_undefined,
-            .topPerson .nestedPerson div.manager_true {
-                cursor: pointer;
-            }
+			}
 
-            .topPerson div.manager_undefined,
-            .topPerson div.manager_true {
-                cursor: default;
-            }
+			div#help {
+				position: absolute;
+				top: 0;
+				left: 0;
+				padding: .25em;
+				color: rgba(222, 222, 222, .9);
+				z-index: 3;
+				cursor: pointer;
+			}
 
-            span.link:hover {
-                text-decoration: underline;
-                cursor: pointer;
-            }
+			div#searchArea {
+				font-weight: bold;
+			}
 
+			div.nestedSearchDiv {
+				color: black;
+			}
 
-            body, table {
-                font-size: 16px;
-                color: #1D252C;
-            }
+			a {
+				color: #1381E0;
+				text-decoration: none;
+			}
 
-            thead th {
-                font-size: 20px;
-            }
+			a:hover {
+				text-decoration: underline;
+				color: #0E67B3;
+			}
 
-            thead td {
-                font-size: 12px;
-                font-style: italic;
-            }
+			.numberOfDirects {
+				visibility: hidden;
+				position: absolute;
+				bottom: 3px;
+				right: 3px;
+				font-size: 70%;
+			}
 
-            .suppressPointerEvents * {
-                pointer-events: none;
-            }
+			.nestedPerson .nestedPerson .numberOfDirects {
+				visibility: visible;
+			}
 
-            #UpToManager {
-            / / width: 500 px;
-                font-weight: bold;
-                font-size: 20px;
-                background-color: #f3f3f4;
-                min-height: 20px;
-            }
+			#orgChartView {
+				margin: 10px
+			}
 
-            /*#UpToManager.survived_false {*/
-            /*    background-color: red;*/
-            /*}*/
+			div#UpToManager,
+			div.manager_undefined,
+			div.manager_false,
+			div.manager_true {
+				border: solid #dcdee0 2px;
+				border-radius: 10px !important;
+			}
 
+			div#UpToManager,
+			.topPerson .nestedPerson div.manager_undefined,
+			.topPerson .nestedPerson div.manager_true {
+				cursor: pointer;
+			}
 
-            .manager {
-                margin: -10px;
-                padding-top: 10px;
-                height: 35px;
-            }
+			.topPerson div.manager_undefined,
+			.topPerson div.manager_true {
+				cursor: default;
+			}
+
+			span.link:hover {
+				text-decoration: underline;
+				cursor: pointer;
+			}
+
+			body, table {
+				font-size: 16px;
+				color: #1D252C;
+			}
+
+			thead th {
+				font-size: 20px;
+			}
+
+			thead td {
+				font-size: 12px;
+				font-style: italic;
+			}
+
+			.suppressPointerEvents * {
+				pointer-events: none;
+			}
+
+			#UpToManager {
+			/ / width: 500 px;
+				font-weight: bold;
+				font-size: 20px;
+				background-color: rgba(243, 243, 243, .9);
+				min-height: 20px;
+			}
+
+			.manager {
+				margin: -10px;
+				padding-top: 10px;
+				height: 35px;
+			}
+
+			body {
+				overflow-x: hidden;
+			}
+
+			#orgChartView .orgChartViewContainer #detailView .topPersonDiv {
+				border: none;
+				width: 100%;
+			}
+
+			.itemValue {
+				font-weight: bold;
+			}
+
+			strong.matchingPart {
+				color: darkred;
+				font-size: 120%;
+				background-color: palegoldenrod;
+			}
+			span.lastMatch {
+				font-weight: normal;
+			}
+
 
 		</style>
 		<style id="Org_Chart_Layout_Magic">
-            /* OrgChart CSS Base: Reference https://www.cssscript.com/responsive-hierarchical-organization-chart-pure-css/ */
-            ol.organizational-chart,
-            ol.organizational-chart ol,
-            ol.organizational-chart li,
-            ol.organizational-chart li > div {
-                position: relative;
-            }
+			/* OrgChart CSS Base: Reference https://www.cssscript.com/responsive-hierarchical-organization-chart-pure-css/ */
+			ol.organizational-chart,
+			ol.organizational-chart ol,
+			ol.organizational-chart li,
+			ol.organizational-chart li > div {
+				position: relative;
+			}
 
-            ol.organizational-chart,
-            ol.organizational-chart ol {
-                list-style: none;
-                margin: 0;
-                padding: 0;
-            }
+			div.nestedPersonDiv,
+			div.topPersonDiv,
+			div#UpToManager {
+				padding-right: 1em !important;
+				background-color: rgba(243, 243, 243, .9);
+			}
 
-            ol.organizational-chart {
-                text-align: center;
-            }
+			ol.organizational-chart,
+			ol.organizational-chart ol {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
 
-            ol.organizational-chart ol {
-                padding-top: 1em;
-            }
+			ol.organizational-chart {
+				text-align: center;
+			}
 
-            /* the connector line */
-            ol.organizational-chart ol:before,
-            ol.organizational-chart ol:after,
-            ol.organizational-chart li:before,
-            ol.organizational-chart li:after,
-            ol.organizational-chart > li > div:before,
-            ol.organizational-chart > li > div:after {
-                /* all connectors */
-                background-color: #b7a6aa;
-                content: "";
-                position: absolute;
-            }
+			ol.organizational-chart ol {
+				padding-top: 1em;
+			}
 
-            ol.organizational-chart ol > li {
-                padding: 1em 0 0 1em;
-            }
+			/* the connector line */
+			ol.organizational-chart ol:before, /*up to manager vertical descender*/
+			ol.organizational-chart ol:after,
+			ol.organizational-chart li:before,
+			ol.organizational-chart li:after,
+			ol.organizational-chart > li > div:before,
+			ol.organizational-chart > li > div:after {
+				/* all connectors */
+				background-color: #b7a6aa;
+				content: "";
+				position: absolute;
+			}
 
-            ol.organizational-chart > li ol:before {
-                height: 1.2em;
-                left: 50%;
-                top: 0;
-                width: 3px;
-            }
+			/* this pair! is required for turn off the vertical descender between primary and single direct report in a wide screen format */
+			ol.organizational-chart > li > div:before,
+			ol.organizational-chart > li > div:has(ol):after {
+				background-color: transparent;
+			}
 
-            ol.organizational-chart > li ol:after {
-                /* horizontal connector */
-                height: 3px;
-                left: 3px;
-                top: 1em;
-                width: 50%;
-            }
+			ol.organizational-chart ol > li {
+				padding: 1em 0 0 1em;
+			}
 
-            ol.organizational-chart > li ol > li:not(:last-of-type):before {
-                height: 3px;
-                left: 0;
-                top: 2em;
-                width: 1em;
-            }
+			ol.organizational-chart > li ol:before {
+				/* horizontal connector  between tier 2 and 3 */
+				/* individual contributors are select here (along with everyone else) */
+				/*
+					background-color: red !important;
+				*/
 
-            ol.organizational-chart > li ol > li:not(:last-of-type):after {
-                height: 100%;
-                left: 0;
-                top: 0;
-                width: 3px;
-            }
+			}
 
-            ol.organizational-chart > li ol > li:last-of-type:before {
-                height: 3px;
-                left: 0;
-                top: 2em;
-                width: 1em;
-            }
+			ol.organizational-chart > li ol:has(li):before {
+				height: 1.2em;
+				left: 50%;
+				top: 0;
+				width: 3px;
 
-            ol.organizational-chart > li ol > li:last-of-type:after {
-                height: 2em;
-                left: 0;
-                top: 0;
-                width: 3px;
-            }
+			}
 
-            ol.organizational-chart li > div {
-                background-color: #fff;
-                border-radius: 3px;
-                min-height: 2em;
-                padding: 0.5em;
-            }
+			ol.organizational-chart > li ol:after {
+				/* horizontal connector  between tier 2 and 3 */
+				/* individual contributors are select here (along with everyone else) */
+			}
 
-            /*** PRIMARY ***/
-            ol.organizational-chart > li > div {
+			ol.organizational-chart > li ol:has(li):after {
+				/* horizontal connector  between tier 2 and 3 */
+				height: 3px;
+				left: 3px;
+				top: 1em;
+				width: 50%;
+			}
 
-                background-color: #8dccad;
-                margin-right: 1em;
-            }
+			ol.organizational-chart > li ol > li:not(:last-of-type):before {
+				/* all the inbound (vertical and horizontal) to the box connectors except last --- seems like :not(last-of-type) is unnecessary here! */
+				height: 3px;
+				left: 0;
+				top: 2em;
+				width: 1em;
 
+			}
 
-            ol.organizational-chart > li > div + div {
-                margin-top: 1em;
-            }
+			ol.organizational-chart > li ol > li:not(:last-of-type):after {
+				/* all the middles everywhere */
+				height: 100%;
+				left: 0;
+				top: 0;
+				width: 3px;
 
-            ol.organizational-chart > li > div + div:after {
-                right: -1em;
-                top: -1em;
-                width: 3px;
-            }
+			}
 
-            /*** SECONDARY ***/
-            ol.organizational-chart > li > ol:before {
-                /* descender */
-                left: inherit;
-            }
+			ol.organizational-chart > li ol > li:last-of-type:before {
+				/* last horizontal connector on tier 2 (no descender) (and last vertical between primary and tier 2)*/
+				height: 3px;
+				left: 0;
+				top: 2em;
+				width: 1em;
 
-            ol.organizational-chart > li > ol:after {
-                /* horizontal connector */
-                left: 0;
-            }
+			}
 
+			ol.organizational-chart > li ol > li:last-of-type:after {
+				/* last ascender/vertical connector on tier 3 (no descender) (and last horizontal on tier 2)*/
+				height: 2em;
+				left: 0;
+				top: 0;
+				width: 3px;
+			}
 
-            ol.organizational-chart > li > ol > li > div {
-                background-color: #f3f3f4;
-            }
+			ol.organizational-chart li > div {
+				background-color: #fff;
+				border-radius: 3px;
+				min-height: 2em;
+				padding: 0.5em;
 
-            /* topPerson ol.organizational-chart */
-            /*ol.organizational-chart > li.topPerson > div.survived_false {*/
-            /*    background-color: red;*/
-            /*}*/
-            /*
-					ol.organizational-chart > li.topPerson > ol > li > div.survived_false,
-					ol.organizational-chart > li.topPerson > ol > li > ol > li > div.survived_false,
-					ol.organizational-chart > li.topPerson > ol > li > ol > li > ol > li > div.survived_false,
-					ol.organizational-chart > li.topPerson > ol > li > ol > li > ol > li > ol > li > div.survived_false {
-						background-color: red;
-					}
+			}
 
-			  */
-            /* topPerson ol.organizational-chart */
-            ol.organizational-chart > li > div.contractor_true,
-            ol.organizational-chart > li > ol > li > div.contractor_true,
-            ol.organizational-chart > li > ol > li > ol > li > div.contractor_true,
-            ol.organizational-chart > li > ol > li > ol > li > ol > li > div.contractor_true,
-            ol.organizational-chart > li > ol > li > ol > li > ol > li > ol > li > div.contractor_true {
-                background-color: #c2c2c2;
-            }
+			/*** PRIMARY ***/
+			ol.organizational-chart > li > div {
+				margin-right: 1em;
+			}
 
-            /*** TERTIARY ***/
-            ol.organizational-chart > li > ol > li > ol > li > div {
-                background-color: #f3f3f4;
-            }
+			ol.organizational-chart > li > div + div {
+				margin-top: 1em;
+			}
 
-            /*** QUATERNARY ***/
-            ol.organizational-chart > li > ol > li > ol > li > ol > li > div {
-                background-color: #f3f3f4;
-            }
+			ol.organizational-chart > li > div + div:after {
 
-            /*** QUINARY ***/
-            ol.organizational-chart > li > ol > li > ol > li > ol > li > ol > li > div {
-                background-color: #f3f3f4;
-            }
+				right: -1em;
+				top: -1em;
+				width: 3px;
 
+			}
 
-            /* OrgChart CSS Response Screen: Reference https://www.cssscript.com/responsive-hierarchical-organization-chart-pure-css/ */
+			/*** SECONDARY ***/
+			ol.organizational-chart > li > ol:before {
+				/* descender between primary and tier 2 */
+				left: inherit;
 
-            @media only screen and (max-width: 64em) {
-                .largePhoto {
-                    width: 100px !important;
-                    height: 100px !important;
-                }
-            }
+			}
 
-            @media only screen and (min-width: 64em) {
-                ol.organizational-chart {
-                    margin-left: -1em;
-                    margin-right: -1em;
-                }
+			ol.organizational-chart > li > ol:after {
+				/* horizontal connector - not sure where background-color: red !important; */
+				left: 0;
+			}
 
-                ol.organizational-chart li div.topPersonDiv {
-                    width: 500px;
-                }
+			ol.organizational-chart > li > ol > li > div {
+				background-color: rgba(243, 243, 243, .9);
 
-                #UpToManager {
-                    width: 500px;
-                }
+			}
 
-                /* PRIMARY */
-                ol.organizational-chart > li > div {
-                    display: inline-block;
-                    float: none;
-                    margin: 0 1em 1em 1em;
-                    vertical-align: bottom;
-                }
+			/* topPerson ol.organizational-chart */
+			/*noinspection CssUnusedSymbol*/
+			ol.organizational-chart > li > div.contractor_true,
+			ol.organizational-chart > li > ol > li > div.contractor_true,
+			ol.organizational-chart > li > ol > li > ol > li > div.contractor_true,
+			ol.organizational-chart > li > ol > li > ol > li > ol > li > div.contractor_true,
+			ol.organizational-chart > li > ol > li > ol > li > ol > li > ol > li > div.contractor_true {
+				background-color: #c2c2c2;
+			}
 
-                ol.organizational-chart > li > div:only-of-type {
-                    margin-bottom: 0;
-                }
+			/*** TERTIARY ***/
+			ol.organizational-chart > li > ol > li > ol > li > div {
+				background-color: rgba(243, 243, 243, .9);
 
-                ol.organizational-chart > li > div:before,
-                ol.organizational-chart > li > div:after {
-                    bottom: -1em !important;
-                    top: inherit !important;
-                }
+			}
 
-                ol.organizational-chart > li > div:before {
-                    /* right side horizontal connector */
-                    height: 1em !important;
-                    left: 50% !important;
-                    width: 3px !important;
-                }
+			/*** QUATERNARY ***/
+			ol.organizational-chart > li > ol > li > ol > li > ol > li > div {
+				background-color: rgba(243, 243, 243, .9);
+			}
 
-                ol.organizational-chart > li > div:only-of-type:after {
-                    display: none;
-                }
+			/*** QUINARY ***/
+			ol.organizational-chart > li > ol > li > ol > li > ol > li > ol > li > div {
+				background-color: rgba(243, 243, 243, .9);
 
-                ol.organizational-chart > li > div:first-of-type:not(:only-of-type):after,
-                ol.organizational-chart > li > div:last-of-type:not(:only-of-type):after {
-                    bottom: -1em;
-                    height: 3px;
-                    width: calc(50% + 1em + 3px);
-                }
+			}
 
-                ol.organizational-chart > li > div:first-of-type:not(:only-of-type):after {
-                    left: calc(50% + 3px);
-                }
+			/* OrgChart CSS Response Screen: Reference https://www.cssscript.com/responsive-hierarchical-organization-chart-pure-css/ */
 
-                ol.organizational-chart > li > div:last-of-type:not(:only-of-type):after {
-                    left: calc(-1em - 3px);
-                }
+			@media only screen and (max-width: 60em) {
+				.largePhoto {
+					width: 100px !important;
+					height: 100px !important;
+				}
+			}
 
-                ol.organizational-chart > li > div + div:not(:last-of-type):after {
-                    height: 3px;
-                    left: -2em;
-                    width: calc(100% + 4em);
-                }
+			@media only screen and (min-width: 60em) {
+				ol.organizational-chart {
+					margin-left: -1em;
+					margin-right: -1em;
+				}
 
-                /* SECONDARY */
-                ol.organizational-chart > li > ol {
-                    display: flex;
-                    flex-wrap: nowrap;
-                }
+				ol.organizational-chart li div.topPersonDiv {
+					min-width: 550px;
+					border-radius: 30px;
+					padding: 1em !important;
+					border: 2px solid rgba(222, 222, 222, .8);
 
-                ol.organizational-chart > li > ol:before,
-                ol.organizational-chart > li > ol > li:before {
-                    height: 1em !important;
-                    left: 50% !important;
-                    top: 0 !important;
-                    width: 3px !important;
-                }
+				}
 
-                ol.organizational-chart > li > ol:after {
-                    display: none;
-                }
+				#UpToManager {
+					width: 500px;
+					border: solid gray 1px;
+					border-radius: 15px;
+				}
 
-                ol.organizational-chart > li > ol > li {
-                    flex-grow: 1;
-                    padding-left: 1em;
-                    padding-right: 1em;
-                    padding-top: 1em;
-                }
+				/* PRIMARY */
+				ol.organizational-chart > li > div {
+					display: inline-block;
+					float: none;
+					margin: 0 1em 1em 1em;
+					vertical-align: bottom;
 
-                ol.organizational-chart > li > ol > li:only-of-type {
-                    padding-top: 0;
-                }
+				}
 
-                ol.organizational-chart > li > ol > li:only-of-type:before,
-                ol.organizational-chart > li > ol > li:only-of-type:after {
-                    display: none;
-                }
+				ol.organizational-chart > li > div:only-of-type {
+					margin-bottom: 0;
+				}
 
-                ol.organizational-chart > li > ol > li:first-of-type:not(:only-of-type):after,
-                ol.organizational-chart > li > ol > li:last-of-type:not(:only-of-type):after {
-                    height: 3px;
-                    top: 0;
-                    width: 50%;
-                }
+				ol.organizational-chart > li > div:before,
+				ol.organizational-chart > li > div:after {
+					bottom: -1em !important;
+					top: inherit !important;
 
-                ol.organizational-chart > li > ol > li:first-of-type:not(:only-of-type):after {
-                    left: 50%;
-                }
+				}
 
-                ol.organizational-chart > li > ol > li:last-of-type:not(:only-of-type):after {
-                    left: 0;
-                }
+				ol.organizational-chart > li > div:before {
+					/* right side horizontal connector */
+					height: 1em !important;
+					left: 50% !important;
+					width: 3px !important;
 
-                ol.organizational-chart > li > ol > li + li:not(:last-of-type):after {
-                    height: 3px;
-                    left: 0;
-                    top: 0;
-                    width: 100%;
-                }
-            }
+				}
 
-            ol.level_3,
-            ol.level_4,
-            ol.level_5 {
-                display: none;
-            }
+				ol.organizational-chart > li > div:only-of-type:after {
+					display: none;
+					background-color: red !important;
 
+				}
+
+				ol.organizational-chart > li > div:first-of-type:not(:only-of-type):after,
+				ol.organizational-chart > li > div:last-of-type:not(:only-of-type):after {
+					bottom: -1em;
+					height: 3px;
+					width: calc(50% + 1em + 3px);
+
+				}
+
+				ol.organizational-chart > li > div:first-of-type:not(:only-of-type):after {
+					left: calc(50% + 3px);
+
+				}
+
+				ol.organizational-chart > li > div:last-of-type:not(:only-of-type):after {
+					left: calc(-1em - 3px);
+				}
+
+				ol.organizational-chart > li > div + div:not(:last-of-type):after {
+					height: 3px;
+					left: -2em;
+					width: calc(100% + 4em);
+
+				}
+
+				/* SECONDARY */
+				ol.organizational-chart > li > ol {
+					display: flex;
+					flex-wrap: nowrap;
+				}
+
+				ol.organizational-chart > li > ol:before,
+				ol.organizational-chart > li > ol > li:before {
+					height: 1em !important;
+					left: 50% !important;
+					top: 0 !important;
+					width: 3px !important;
+				}
+
+				ol.organizational-chart > li > ol:after {
+					display: none;
+				}
+
+				ol.organizational-chart > li > ol > li {
+					flex-grow: 1;
+					padding-left: 1em;
+					padding-right: 1em;
+					padding-top: 1em;
+				}
+
+				ol.organizational-chart > li > ol > li:only-of-type {
+					padding-top: 0;
+				}
+
+				ol.organizational-chart > li > ol > li:only-of-type:before,
+				ol.organizational-chart > li > ol > li:only-of-type:after {
+					display: none;
+				}
+
+				ol.organizational-chart > li > ol > li:first-of-type:not(:only-of-type):after,
+				ol.organizational-chart > li > ol > li:last-of-type:not(:only-of-type):after {
+					/* both end horizontal connectors for between primary and tier 2 */
+					height: 3px;
+					top: 0;
+					width: 50%;
+
+				}
+
+				ol.organizational-chart > li > ol > li:first-of-type:not(:only-of-type):after {
+					/* left end horizontal connectors for between primary and tier 2 */
+					left: 50%;
+				}
+
+				ol.organizational-chart > li > ol > li:last-of-type:not(:only-of-type):after {
+					/* right end horizontal connectors for between primary and tier 2 */
+					left: 0;
+				}
+
+				ol.organizational-chart > li > ol > li + li:not(:last-of-type):after {
+					/* all the not-end (middle) horizontal connectors for between primary and tier 2 */
+					height: 3px;
+					left: 0;
+					top: 0;
+					width: 100%;
+				}
+			}
+
+			ol.level_3,
+			ol.level_4,
+			ol.level_5 {
+				display: none;
+			}
 
 		</style>
 		<style id="Previously_Inline_Styles">
-            .center {
-                text-align: center;
-            }
+			.center {
+				text-align: center;
+			}
 
-            .left {
-                text-align: left;
-            }
+			.left {
+				text-align: left;
+			}
 
-            .largePhoto {
-                margin: 1em 0 1em 2em;
-            }
+			.largePhoto {
+				margin: 1em 0 1em 0.5em;
+			}
 
+			.cropLargePhoto {
+				max-height: 192px;
+				overflow: hidden;
+			}
 
-            .orgChartViewContainer {
-                position: absolute;
-                left: 20px;
-                top: 110px;
-                height: 600px;
-                margin-top: -50px;
-                overflow: hidden;
-            }
+			.orgChartViewContainer {
+				position: absolute;
+				left: 20px;
+				top: 110px;
+				height: 600px;
+				margin-top: -50px;
+				overflow: hidden;
+			}
 
+			ol.organizational-chart li div.topPersonDiv {
+				padding: 2px;
+				margin: 0;
+			}
 
-            ol.organizational-chart li div.topPersonDiv {
-                padding: 2px;
-                margin: 0;
-            }
+			.organizational-chart {
+				margin-top: 150px;
+			}
 
+			#orgChartView {
+				top: 115px;
+				position: relative;
+			}
 
-            .organizational-chart {
-                margin-top: 150px;
-            }
+			#searchArea {
+				margin-top: 0;
+			}
 
-            #orgChartView {
-                top: 85px;
-                position: relative;
-            }
+			.jobTitle,
+			ol.organizational-chart li div.nestedPersonDiv .jobTitle {
+				font-size: 12px;
+				font-style: italic;
+				font-weight: normal;
+			}
 
-            #searchArea {
-                margin-top: 0;
-            }
+			div.nestedSearchDiv {
+				padding: 2px;
+				min-height: 53px;
+				margin: 10px;
+				width: 350px;
+				background-color: rgba(243, 243, 243, 1);
+				cursor: pointer;
+			}
 
-            .jobTitle,
-            ol.organizational-chart li div.nestedPersonDiv .jobTitle {
-                font-size: 12px;
-                font-style: italic;
-                font-weight: normal;
-            }
+			ol.organizational-chart li div.nestedPersonDiv {
+				padding: 2px;
+				min-height: 53px;
+			}
 
-            div.nestedSearchDiv {
-                padding: 2px;
-                min-height: 53px;
-                margin: 10px;
-                width: 400px;
-                background-color: white;
-                cursor: pointer;
-            }
+			.smallPhoto {
+				float: left;
+				border-radius: 50px;
+				margin: 2px;
+			" height=" 50 " width=" 50
+			}
 
-            ol.organizational-chart li div.nestedPersonDiv {
-                padding: 2px;
-                min-height: 53px;
-            }
+			#searchArea {
+				position: absolute;
+				margin: 12px;
+				background-color: white;
+				border: 3px solid rgba(192, 192, 192, .5);
+				z-index: 2;
+				padding: 15px;
+				max-width: 740px;
+				min-width: 390px;
+				border-radius: 15px;
+			}
 
-            .smallPhoto {
-                float: left;
-                border-radius: 50px;
-                margin: 2px;
-            " height=" 50 " width=" 50
-            }
-
-            #searchArea {
-                position: absolute;
-                margin: 0 20px;
-                background-color: #d881fe;
-                z-index: 2;
-                padding: 15px;
-                border-radius: 20px;
-            }
-
-            #detailView {
-                font-size: 90%;
-                width: 90%;
-
-            }
-
-            #detailView table {
-                font-size: 90%;
-
-
-            }
-
-            #detailView .largePhoto {
-                height: 100px;
-                width: 100px;
-            }
+			#detailView {
+				margin-top: -20px;
+				background-color: rgba(243, 243, 243, .0);
+			}
 		</style>
+		<style id="stateFlagsSprite">
+			/* <img src='data:image/gif;base64,R0lGODlhAQABAIABAAAAAP///yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='/> */
+			.stateFlags {
+				background: url('./images/stateflags.webp');
+				width: 48px;
+				height: 32px;
+				display: inline-block;
+			}
+
+			.stateFlags.undefined {
+				background-position: 0 0;
+				width: 57px;
+			}
+
+			.stateFlags.AK {
+				background-position: 0 -32px;
+				width: 45px;
+			}
+
+			.stateFlags.AL {
+				background-position: 0 -64px;
+			}
+
+			.stateFlags.NH {
+				background-position: 0 -96px;
+			}
+
+			.stateFlags.NM {
+				background-position: 0 -128px;
+			}
+
+			.stateFlags.NJ {
+				background-position: 0 -160px;
+				width: 53px;
+			}
+
+			.stateFlags.NY {
+				background-position: 0 -192px;
+				width: 64px;
+			}
+
+			.stateFlags.NV {
+				background-position: 0 -224px;
+			}
+
+			.stateFlags.OK {
+				background-position: 0 -256px;
+			}
+
+			.stateFlags.OR {
+				background-position: 0 -288px;
+			}
+
+			.stateFlags.OR_reverse {
+				background-position: 0 -320px;
+			}
+
+			.stateFlags.OH {
+				background-position: 0 -352px;
+				width: 52px;
+			}
+
+			.stateFlags.PA {
+				background-position: 0 -384px;
+				width: 44px;
+			}
+
+			.stateFlags.PR {
+				background-position: 0 -416px;
+			}
+
+			.stateFlags.SQ {
+				background-position: 0 -448px;
+				width: 53px;
+			}
+
+			.stateFlags.PT {
+				background-position: 0 -480px;
+			}
+
+			.stateFlags.SD {
+				background-position: 0 -512px;
+				width: 51px;
+			}
+
+			.stateFlags.SC {
+				background-position: 0 -544px;
+			}
+
+			.stateFlags.TN {
+				background-position: 0 -576px;
+				width: 53px;
+			}
+
+			.stateFlags.TX {
+				background-position: 0 -608px;
+			}
+
+			.stateFlags.RI {
+				background-position: 0 -640px;
+				width: 36px;
+			}
+
+			.stateFlags.UT {
+				background-position: 0 -672px;
+				width: 53px;
+			}
+
+			.stateFlags.VA {
+				background-position: 0 -704px;
+			}
+
+			.stateFlags.VI {
+				background-position: 0 -736px;
+			}
+
+			.stateFlags.VT {
+				background-position: 0 -768px;
+				width: 53px;
+			}
+
+			.stateFlags.undefined {
+				background-position: 0 -800px;
+				width: 57px;
+			}
+
+			.stateFlags.AR {
+				background-position: 0 -832px;
+			}
+
+			.stateFlags.AS {
+				background-position: 0 -864px;
+				width: 64px;
+			}
+
+			.stateFlags.CO {
+				background-position: 0 -896px;
+			}
+
+			.stateFlags.CA {
+				background-position: 0 -928px;
+			}
+
+			.stateFlags.AZ {
+				background-position: 0 -960px;
+			}
+
+			.stateFlags.CL {
+				background-position: 0 -992px;
+			}
+
+			.stateFlags.DC {
+				background-position: 0 -1024px;
+				width: 64px;
+			}
+
+			.stateFlags.EN {
+				background-position: 0 -1056px;
+				width: 53px;
+			}
+
+			.stateFlags.DE {
+				background-position: 0 -1088px;
+			}
+
+			.stateFlags.CT {
+				background-position: 0 -1120px;
+				width: 41px;
+			}
+
+			.stateFlags.FL {
+				background-position: 0 -1152px;
+			}
+
+			.stateFlags.HI {
+				background-position: 0 -1184px;
+				width: 64px;
+			}
+
+			.stateFlags.IA {
+				background-position: 0 -1216px;
+			}
+
+			.stateFlags.GA {
+				background-position: 0 -1248px;
+				width: 51px;
+			}
+
+			.stateFlags.GU {
+				background-position: 0 -1280px;
+				width: 60px;
+			}
+
+			.stateFlags.ID {
+				background-position: 0 -1312px;
+				width: 41px;
+			}
+
+			.stateFlags.IL {
+				background-position: 0 -1344px;
+				width: 53px;
+			}
+
+			.stateFlags.IN {
+				background-position: 0 -1376px;
+			}
+
+			.stateFlags.MA {
+				background-position: 0 -1408px;
+				width: 53px;
+			}
+
+			.stateFlags.KS {
+				background-position: 0 -1440px;
+				width: 53px;
+			}
+
+			.stateFlags.IR {
+				background-position: 0 -1472px;
+				width: 64px;
+			}
+
+			.stateFlags.KY {
+				background-position: 0 -1504px;
+				width: 61px;
+			}
+
+			.stateFlags.ME {
+				background-position: 0 -1536px;
+				width: 41px;
+			}
+
+			.stateFlags.LA {
+				background-position: 0 -1568px;
+				width: 49px;
+			}
+
+			.stateFlags.MD {
+				background-position: 0 -1600px;
+			}
+
+			.stateFlags.MI {
+				background-position: 0 -1632px;
+			}
+
+			.stateFlags.MS {
+				background-position: 0 -1664px;
+				width: 53px;
+			}
+
+			.stateFlags.MN {
+				background-position: 0 -1696px;
+				width: 53px;
+			}
+
+			.stateFlags.NE {
+				background-position: 0 -1728px;
+				width: 53px;
+			}
+
+			.stateFlags.MO {
+				background-position: 0 -1760px;
+				width: 55px;
+			}
+
+			.stateFlags.ND {
+				background-position: 0 -1792px;
+				width: 41px;
+			}
+
+			.stateFlags.MP {
+				background-position: 0 -1824px;
+				width: 64px;
+			}
+
+			.stateFlags.NC {
+				background-position: 0 -1856px;
+			}
+
+			.stateFlags.MT {
+				background-position: 0 -1888px;
+			}
+		</style>
+		<style id="countryFlagsSprite">
+			/* <img src='data:image/gif;base64,R0lGODlhAQABAIABAAAAAP///yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='/> */
+
+			.countryFlags {
+				background-image: url('images/countryflags.webp');
+				height: 32px;
+				width: 48px;
+				display: inline-block;
+			}
+
+			.countryFlags.undefined {
+				background-position: 0 0;
+				width: 57px;
+			}
+
+			.countryFlags.AE {
+				background-position: 0 -32px;
+				width: 64px;
+			}
+
+			.countryFlags.AD {
+				background-position: 0 -64px;
+				width: 46px;
+			}
+
+			.countryFlags.AF {
+				background-position: 0 -96px;
+			}
+
+			.countryFlags.AG {
+				background-position: 0 -128px;
+			}
+
+			.countryFlags.AI {
+				background-position: 0 -160px;
+				width: 64px;
+			}
+
+			.countryFlags.AM {
+				background-position: 0 -192px;
+				width: 64px;
+			}
+
+			.countryFlags.AO {
+				background-position: 0 -224px;
+			}
+
+			.countryFlags.AL {
+				background-position: 0 -256px;
+				width: 45px;
+			}
+
+			.countryFlags.AQ {
+				background-position: 0 -288px;
+			}
+
+			.countryFlags.AS {
+				background-position: 0 -320px;
+				width: 64px;
+			}
+
+			.countryFlags.AR {
+				background-position: 0 -352px;
+				width: 51px;
+			}
+
+			.countryFlags.AU {
+				background-position: 0 -384px;
+				width: 64px;
+			}
+
+			.countryFlags.AT {
+				background-position: 0 -416px;
+			}
+
+			.countryFlags.AW {
+				background-position: 0 -448px;
+			}
+
+			.countryFlags.AX {
+				background-position: 0 -480px;
+				width: 49px;
+			}
+
+			.countryFlags.AZ {
+				background-position: 0 -512px;
+				width: 64px;
+			}
+
+			.countryFlags.BA {
+				background-position: 0 -544px;
+				width: 64px;
+			}
+
+			.countryFlags.BB {
+				background-position: 0 -576px;
+			}
+
+			.countryFlags.BD {
+				background-position: 0 -608px;
+				width: 53px;
+			}
+
+			.countryFlags.BE {
+				background-position: 0 -640px;
+				width: 37px;
+			}
+
+			.countryFlags.BF {
+				background-position: 0 -672px;
+			}
+
+			.countryFlags.BI {
+				background-position: 0 -704px;
+				width: 53px;
+			}
+
+			.countryFlags.BG {
+				background-position: 0 -736px;
+				width: 53px;
+			}
+
+			.countryFlags.BH {
+				background-position: 0 -768px;
+				width: 53px;
+			}
+
+			.countryFlags.BJ {
+				background-position: 0 -800px;
+			}
+
+			.countryFlags.BM {
+				background-position: 0 -832px;
+				width: 64px;
+			}
+
+			.countryFlags.BO {
+				background-position: 0 -864px;
+				width: 47px;
+			}
+
+			.countryFlags.BN {
+				background-position: 0 -896px;
+				width: 64px;
+			}
+
+			.countryFlags.BS {
+				background-position: 0 -928px;
+				width: 64px;
+			}
+
+			.countryFlags.BR {
+				background-position: 0 -960px;
+				width: 46px;
+			}
+
+			.countryFlags.BQ {
+				background-position: 0 -992px;
+			}
+
+			.countryFlags.BL {
+				background-position: 0 -1024px;
+			}
+
+			.countryFlags.BT {
+				background-position: 0 -1056px;
+			}
+
+			.countryFlags.BV {
+				background-position: 0 -1088px;
+				width: 44px;
+			}
+
+			.countryFlags.BW {
+				background-position: 0 -1120px;
+			}
+
+			.countryFlags.BY {
+				background-position: 0 -1152px;
+				width: 64px;
+			}
+
+			.countryFlags.BZ {
+				background-position: 0 -1184px;
+			}
+
+			.countryFlags.CC {
+				background-position: 0 -1216px;
+				width: 64px;
+			}
+
+			.countryFlags.CD {
+				background-position: 0 -1248px;
+				width: 43px;
+			}
+
+			.countryFlags.CA {
+				background-position: 0 -1280px;
+				width: 64px;
+			}
+
+			.countryFlags.CF {
+				background-position: 0 -1312px;
+			}
+
+			.countryFlags.CG {
+				background-position: 0 -1344px;
+			}
+
+			.countryFlags.CK {
+				background-position: 0 -1376px;
+				width: 64px;
+			}
+
+			.countryFlags.CI {
+				background-position: 0 -1408px;
+			}
+
+			.countryFlags.CH {
+				background-position: 0 -1440px;
+				width: 32px;
+			}
+
+			.countryFlags.CL {
+				background-position: 0 -1472px;
+			}
+
+			.countryFlags.CM {
+				background-position: 0 -1504px;
+			}
+
+			.countryFlags.CO {
+				background-position: 0 -1536px;
+			}
+
+			.countryFlags.CR {
+				background-position: 0 -1568px;
+				width: 53px;
+			}
+
+			.countryFlags.CU {
+				background-position: 0 -1600px;
+				width: 64px;
+			}
+
+			.countryFlags.CV {
+				background-position: 0 -1632px;
+				width: 54px;
+			}
+
+			.countryFlags.CW {
+				background-position: 0 -1664px;
+			}
+
+			.countryFlags.CZ {
+				background-position: 0 -1696px;
+			}
+
+			.countryFlags.CY {
+				background-position: 0 -1728px;
+			}
+
+			.countryFlags.CN {
+				background-position: 0 -1760px;
+			}
+
+			.countryFlags.CX {
+				background-position: 0 -1792px;
+				width: 64px;
+			}
+
+			.countryFlags.DE {
+				background-position: 0 -1824px;
+				width: 53px;
+			}
+
+			.countryFlags.DJ {
+				background-position: 0 -1856px;
+			}
+
+			.countryFlags.DM {
+				background-position: 0 -1888px;
+				width: 64px;
+			}
+
+			.countryFlags.DK {
+				background-position: 0 -1920px;
+				width: 42px;
+			}
+
+			.countryFlags.EC {
+				background-position: 0 -1952px;
+			}
+
+			.countryFlags.EE {
+				background-position: 0 -1984px;
+				width: 50px;
+			}
+
+			.countryFlags.DZ {
+				background-position: 0 -2016px;
+			}
+
+			.countryFlags.EH {
+				background-position: 0 -2048px;
+				width: 64px;
+			}
+
+			.countryFlags.DO {
+				background-position: 0 -2080px;
+				width: 51px;
+			}
+
+			.countryFlags.ER {
+				background-position: 0 -2112px;
+				width: 64px;
+			}
+
+			.countryFlags.EG {
+				background-position: 0 -2144px;
+			}
+
+			.countryFlags.ES {
+				background-position: 0 -2176px;
+			}
+
+			.countryFlags.ET {
+				background-position: 0 -2208px;
+				width: 64px;
+			}
+
+			.countryFlags.FI {
+				background-position: 0 -2240px;
+				width: 53px;
+			}
+
+			.countryFlags.FJ {
+				background-position: 0 -2272px;
+				width: 64px;
+			}
+
+			.countryFlags.FK {
+				background-position: 0 -2304px;
+				width: 64px;
+			}
+
+			.countryFlags.FO {
+				background-position: 0 -2336px;
+				width: 44px;
+			}
+
+			.countryFlags.FR {
+				background-position: 0 -2368px;
+			}
+
+			.countryFlags.GB {
+				background-position: 0 -2400px;
+				width: 64px;
+			}
+
+			.countryFlags.GA {
+				background-position: 0 -2432px;
+				width: 43px;
+			}
+
+			.countryFlags.FM {
+				background-position: 0 -2464px;
+				width: 61px;
+			}
+
+			.countryFlags.GE {
+				background-position: 0 -2496px;
+			}
+
+			.countryFlags.GD {
+				background-position: 0 -2528px;
+				width: 53px;
+			}
+
+			.countryFlags.GI {
+				background-position: 0 -2560px;
+				width: 64px;
+			}
+
+			.countryFlags.GH {
+				background-position: 0 -2592px;
+			}
+
+			.countryFlags.GF {
+				background-position: 0 -2624px;
+			}
+
+			.countryFlags.GM {
+				background-position: 0 -2656px;
+			}
+
+			.countryFlags.GL {
+				background-position: 0 -2688px;
+			}
+
+			.countryFlags.GG {
+				background-position: 0 -2720px;
+			}
+
+			.countryFlags.GN {
+				background-position: 0 -2752px;
+			}
+
+			.countryFlags.GQ {
+				background-position: 0 -2784px;
+			}
+
+			.countryFlags.GP {
+				background-position: 0 -2816px;
+			}
+
+			.countryFlags.GR {
+				background-position: 0 -2848px;
+			}
+
+			.countryFlags.GS {
+				background-position: 0 -2880px;
+				width: 64px;
+			}
+
+			.countryFlags.GT {
+				background-position: 0 -2912px;
+				width: 51px;
+			}
+
+			.countryFlags.GU {
+				background-position: 0 -2944px;
+				width: 60px;
+			}
+
+			.countryFlags.GY {
+				background-position: 0 -2976px;
+				width: 53px;
+			}
+
+			.countryFlags.HR {
+				background-position: 0 -3008px;
+				width: 64px;
+			}
+
+			.countryFlags.GW {
+				background-position: 0 -3040px;
+				width: 64px;
+			}
+
+			.countryFlags.HT {
+				background-position: 0 -3072px;
+				width: 53px;
+			}
+
+			.countryFlags.HK {
+				background-position: 0 -3104px;
+			}
+
+			.countryFlags.HM {
+				background-position: 0 -3136px;
+				width: 64px;
+			}
+
+			.countryFlags.HN {
+				background-position: 0 -3168px;
+				width: 64px;
+			}
+
+			.countryFlags.HU {
+				background-position: 0 -3200px;
+				width: 64px;
+			}
+
+			.countryFlags.ID {
+				background-position: 0 -3232px;
+			}
+
+			.countryFlags.IE {
+				background-position: 0 -3264px;
+				width: 64px;
+			}
+
+			.countryFlags.IL {
+				background-position: 0 -3296px;
+				width: 44px;
+			}
+
+			.countryFlags.IM {
+				background-position: 0 -3328px;
+				width: 64px;
+			}
+
+			.countryFlags.IN {
+				background-position: 0 -3360px;
+			}
+
+			.countryFlags.IO {
+				background-position: 0 -3392px;
+				width: 64px;
+			}
+
+			.countryFlags.IQ {
+				background-position: 0 -3424px;
+			}
+
+			.countryFlags.IR {
+				background-position: 0 -3456px;
+				width: 56px;
+			}
+
+			.countryFlags.IS {
+				background-position: 0 -3488px;
+				width: 45px;
+			}
+
+			.countryFlags.IT {
+				background-position: 0 -3520px;
+			}
+
+			.countryFlags.JE {
+				background-position: 0 -3552px;
+				width: 53px;
+			}
+
+			.countryFlags.JM {
+				background-position: 0 -3584px;
+				width: 64px;
+			}
+
+			.countryFlags.JO {
+				background-position: 0 -3616px;
+				width: 64px;
+			}
+
+			.countryFlags.JP {
+				background-position: 0 -3648px;
+			}
+
+			.countryFlags.KE {
+				background-position: 0 -3680px;
+			}
+
+			.countryFlags.KG {
+				background-position: 0 -3712px;
+				width: 53px;
+			}
+
+			.countryFlags.KH {
+				background-position: 0 -3744px;
+				width: 50px;
+			}
+
+			.countryFlags.KI {
+				background-position: 0 -3776px;
+				width: 64px;
+			}
+
+			.countryFlags.KM {
+				background-position: 0 -3808px;
+				width: 53px;
+			}
+
+			.countryFlags.KN {
+				background-position: 0 -3840px;
+			}
+
+			.countryFlags.KP {
+				background-position: 0 -3872px;
+				width: 64px;
+			}
+
+			.countryFlags.KR {
+				background-position: 0 -3904px;
+			}
+
+			.countryFlags.KW {
+				background-position: 0 -3936px;
+				width: 64px;
+			}
+
+			.countryFlags.KY {
+				background-position: 0 -3968px;
+				width: 64px;
+			}
+
+			.countryFlags.KZ {
+				background-position: 0 -4000px;
+				width: 64px;
+			}
+
+			.countryFlags.LA {
+				background-position: 0 -4032px;
+			}
+
+			.countryFlags.LB {
+				background-position: 0 -4064px;
+			}
+
+			.countryFlags.LC {
+				background-position: 0 -4096px;
+				width: 64px;
+			}
+
+			.countryFlags.LI {
+				background-position: 0 -4128px;
+				width: 53px;
+			}
+
+			.countryFlags.LK {
+				background-position: 0 -4160px;
+				width: 64px;
+			}
+
+			.countryFlags.LR {
+				background-position: 0 -4192px;
+				width: 61px;
+			}
+
+			.countryFlags.LS {
+				background-position: 0 -4224px;
+			}
+
+			.countryFlags.LT {
+				background-position: 0 -4256px;
+				width: 53px;
+			}
+
+			.countryFlags.LU {
+				background-position: 0 -4288px;
+				width: 53px;
+			}
+
+			.countryFlags.LV {
+				background-position: 0 -4320px;
+				width: 64px;
+			}
+
+			.countryFlags.LY {
+				background-position: 0 -4352px;
+				width: 64px;
+			}
+
+			.countryFlags.MA {
+				background-position: 0 -4384px;
+			}
+
+			.countryFlags.MC {
+				background-position: 0 -4416px;
+				width: 40px;
+			}
+
+			.countryFlags.MD {
+				background-position: 0 -4448px;
+				width: 64px;
+			}
+
+			.countryFlags.ME {
+				background-position: 0 -4480px;
+				width: 64px;
+			}
+
+			.countryFlags.MF {
+				background-position: 0 -4512px;
+			}
+
+			.countryFlags.MG {
+				background-position: 0 -4544px;
+			}
+
+			.countryFlags.MH {
+				background-position: 0 -4576px;
+				width: 61px;
+			}
+
+			.countryFlags.MK {
+				background-position: 0 -4608px;
+				width: 64px;
+			}
+
+			.countryFlags.ML {
+				background-position: 0 -4640px;
+			}
+
+			.countryFlags.MM {
+				background-position: 0 -4672px;
+			}
+
+			.countryFlags.MN {
+				background-position: 0 -4704px;
+				width: 64px;
+			}
+
+			.countryFlags.MO {
+				background-position: 0 -4736px;
+			}
+
+			.countryFlags.MP {
+				background-position: 0 -4768px;
+				width: 64px;
+			}
+
+			.countryFlags.MQ {
+				background-position: 0 -4800px;
+			}
+
+			.countryFlags.MR {
+				background-position: 0 -4832px;
+			}
+
+			.countryFlags.MS {
+				background-position: 0 -4864px;
+				width: 64px;
+			}
+
+			.countryFlags.MT {
+				background-position: 0 -4896px;
+			}
+
+			.countryFlags.MU {
+				background-position: 0 -4928px;
+			}
+
+			.countryFlags.MV {
+				background-position: 0 -4960px;
+			}
+
+			.countryFlags.MW {
+				background-position: 0 -4992px;
+			}
+
+			.countryFlags.MX {
+				background-position: 0 -5024px;
+				width: 56px;
+			}
+
+			.countryFlags.MY {
+				background-position: 0 -5056px;
+				width: 64px;
+			}
+
+			.countryFlags.MZ {
+				background-position: 0 -5088px;
+			}
+
+			.countryFlags.NA {
+				background-position: 0 -5120px;
+			}
+
+			.countryFlags.NC {
+				background-position: 0 -5152px;
+				width: 64px;
+			}
+
+			.countryFlags.NE {
+				background-position: 0 -5184px;
+				width: 37px;
+			}
+
+			.countryFlags.NF {
+				background-position: 0 -5216px;
+				width: 64px;
+			}
+
+			.countryFlags.NG {
+				background-position: 0 -5248px;
+				width: 64px;
+			}
+
+			.countryFlags.NI {
+				background-position: 0 -5280px;
+				width: 53px;
+			}
+
+			.countryFlags.NL {
+				background-position: 0 -5312px;
+			}
+
+			.countryFlags.NO {
+				background-position: 0 -5344px;
+				width: 44px;
+			}
+
+			.countryFlags.NP {
+				background-position: 0 -5376px;
+				width: 26px;
+			}
+
+			.countryFlags.NR {
+				background-position: 0 -5408px;
+				width: 64px;
+			}
+
+			.countryFlags.NU {
+				background-position: 0 -5440px;
+				width: 64px;
+			}
+
+			.countryFlags.NZ {
+				background-position: 0 -5472px;
+				width: 64px;
+			}
+
+			.countryFlags.OM {
+				background-position: 0 -5504px;
+				width: 64px;
+			}
+
+			.countryFlags.PA {
+				background-position: 0 -5536px;
+			}
+
+			.countryFlags.PE {
+				background-position: 0 -5568px;
+			}
+
+			.countryFlags.PF {
+				background-position: 0 -5600px;
+			}
+
+			.countryFlags.PG {
+				background-position: 0 -5632px;
+				width: 43px;
+			}
+
+			.countryFlags.PH {
+				background-position: 0 -5664px;
+				width: 64px;
+			}
+
+			.countryFlags.PK {
+				background-position: 0 -5696px;
+			}
+
+			.countryFlags.PL {
+				background-position: 0 -5728px;
+				width: 51px;
+			}
+
+			.countryFlags.PM {
+				background-position: 0 -5760px;
+			}
+
+			.countryFlags.PN {
+				background-position: 0 -5792px;
+				width: 64px;
+			}
+
+			.countryFlags.PR {
+				background-position: 0 -5824px;
+			}
+
+			.countryFlags.PS {
+				background-position: 0 -5856px;
+				width: 64px;
+			}
+
+			.countryFlags.PT {
+				background-position: 0 -5888px;
+			}
+
+			.countryFlags.PW {
+				background-position: 0 -5920px;
+				width: 51px;
+			}
+
+			.countryFlags.PY {
+				background-position: 0 -5952px;
+				width: 58px;
+			}
+
+			.countryFlags.QA {
+				background-position: 0 -5984px;
+				width: 81px;
+			}
+
+			.countryFlags.RE {
+				background-position: 0 -6016px;
+			}
+
+			.countryFlags.RO {
+				background-position: 0 -6048px;
+			}
+
+			.countryFlags.RS {
+				background-position: 0 -6080px;
+			}
+
+			.countryFlags.RU {
+				background-position: 0 -6112px;
+			}
+
+			.countryFlags.RW {
+				background-position: 0 -6144px;
+			}
+
+			.countryFlags.SA {
+				background-position: 0 -6176px;
+			}
+
+			.countryFlags.SB {
+				background-position: 0 -6208px;
+				width: 64px;
+			}
+
+			.countryFlags.SC {
+				background-position: 0 -6240px;
+				width: 64px;
+			}
+
+			.countryFlags.SD {
+				background-position: 0 -6272px;
+				width: 64px;
+			}
+
+			.countryFlags.SE {
+				background-position: 0 -6304px;
+				width: 51px;
+			}
+
+			.countryFlags.SG {
+				background-position: 0 -6336px;
+			}
+
+			.countryFlags.SH {
+				background-position: 0 -6368px;
+				width: 64px;
+			}
+
+			.countryFlags.SI {
+				background-position: 0 -6400px;
+				width: 64px;
+			}
+
+			.countryFlags.SJ {
+				background-position: 0 -6432px;
+				width: 44px;
+			}
+
+			.countryFlags.SK {
+				background-position: 0 -6464px;
+			}
+
+			.countryFlags.SL {
+				background-position: 0 -6496px;
+			}
+
+			.countryFlags.SM {
+				background-position: 0 -6528px;
+				width: 43px;
+			}
+
+			.countryFlags.SN {
+				background-position: 0 -6560px;
+			}
+
+			.countryFlags.SO {
+				background-position: 0 -6592px;
+			}
+
+			.countryFlags.SR {
+				background-position: 0 -6624px;
+			}
+
+			.countryFlags.SS {
+				background-position: 0 -6656px;
+				width: 64px;
+			}
+
+			.countryFlags.ST {
+				background-position: 0 -6688px;
+				width: 64px;
+			}
+
+			.countryFlags.SV {
+				background-position: 0 -6720px;
+				width: 57px;
+			}
+
+			.countryFlags.SX {
+				background-position: 0 -6752px;
+			}
+
+			.countryFlags.SY {
+				background-position: 0 -6784px;
+			}
+
+			.countryFlags.SZ {
+				background-position: 0 -6816px;
+			}
+
+			.countryFlags.TC {
+				background-position: 0 -6848px;
+				width: 64px;
+			}
+
+			.countryFlags.TD {
+				background-position: 0 -6880px;
+			}
+
+			.countryFlags.TF {
+				background-position: 0 -6912px;
+			}
+
+			.countryFlags.TG {
+				background-position: 0 -6944px;
+				width: 52px;
+			}
+
+			.countryFlags.TH {
+				background-position: 0 -6976px;
+			}
+
+			.countryFlags.TJ {
+				background-position: 0 -7008px;
+				width: 64px;
+			}
+
+			.countryFlags.TK {
+				background-position: 0 -7040px;
+				width: 64px;
+			}
+
+			.countryFlags.TL {
+				background-position: 0 -7072px;
+				width: 64px;
+			}
+
+			.countryFlags.TM {
+				background-position: 0 -7104px;
+			}
+
+			.countryFlags.TN {
+				background-position: 0 -7136px;
+			}
+
+			.countryFlags.TO {
+				background-position: 0 -7168px;
+				width: 64px;
+			}
+
+			.countryFlags.TR {
+				background-position: 0 -7200px;
+			}
+
+			.countryFlags.TT {
+				background-position: 0 -7232px;
+				width: 53px;
+			}
+
+			.countryFlags.TV {
+				background-position: 0 -7264px;
+				width: 64px;
+			}
+
+			.countryFlags.TW {
+				background-position: 0 -7296px;
+			}
+
+			.countryFlags.TZ {
+				background-position: 0 -7328px;
+			}
+
+			.countryFlags.UA {
+				background-position: 0 -7360px;
+			}
+
+			.countryFlags.UG {
+				background-position: 0 -7392px;
+			}
+
+			.countryFlags.UM {
+				background-position: 0 -7424px;
+				width: 61px;
+			}
+
+			.countryFlags.UN {
+				background-position: 0 -7456px;
+			}
+
+			.countryFlags.undefined {
+				background-position: 0 -7488px;
+				width: 57px;
+			}
+
+			.countryFlags.US {
+				background-position: 0 -7520px;
+				width: 61px;
+			}
+
+			.countryFlags.UY {
+				background-position: 0 -7552px;
+			}
+
+			.countryFlags.UZ {
+				background-position: 0 -7584px;
+				width: 64px;
+			}
+
+			.countryFlags.VA {
+				background-position: 0 -7616px;
+				width: 32px;
+			}
+
+			.countryFlags.VC {
+				background-position: 0 -7648px;
+			}
+
+			.countryFlags.VE {
+				background-position: 0 -7680px;
+			}
+
+			.countryFlags.VG {
+				background-position: 0 -7712px;
+				width: 64px;
+			}
+
+			.countryFlags.VI {
+				background-position: 0 -7744px;
+			}
+
+			.countryFlags.VN {
+				background-position: 0 -7776px;
+			}
+
+			.countryFlags.VU {
+				background-position: 0 -7808px;
+				width: 53px;
+			}
+
+			.countryFlags.WF {
+				background-position: 0 -7840px;
+			}
+
+			.countryFlags.WS {
+				background-position: 0 -7872px;
+				width: 64px;
+			}
+
+			.countryFlags.YE {
+				background-position: 0 -7904px;
+			}
+
+			.countryFlags.YT {
+				background-position: 0 -7936px;
+			}
+
+			.countryFlags.ZA {
+				background-position: 0 -7968px;
+			}
+
+			.countryFlags.ZM {
+				background-position: 0 -8000px;
+			}
+
+			.countryFlags.ZW {
+				background-position: 0 -8032px;
+				width: 64px;
+			}
+
+			.countryFlags.undefined {
+				background-position: 0 -8064px;
+				width: 57px;
+			}
+		</style>
+		<!-- End STYLESHEET Section -->
+
+		<!-- Begin JAVASCRIPT Section -->
 		<script id="serviceworker_for_PWA">
-			const PROGRESSIVE_WEB_APP = true;  // it can be a pain to develop with PWA mode active
-			if( PROGRESSIVE_WEB_APP && "serviceWorker" in navigator )
+			const PROGRESSIVE_WEB_APP = true;  // Default TRUE - set to FALSE is you want to disable the serviceworker / PWA because it can be a pain to develop with PWA mode active
+			if( PROGRESSIVE_WEB_APP && 'serviceWorker' in navigator )
 			{
-				window.addEventListener( "load", function()
+				window.addEventListener( 'load', function()
 				{
-					navigator.serviceWorker
-						.register( "serviceWorker.js" );
+					navigator.serviceWorker.register( 'serviceWorker.js' );
 				} );
 			}
 		</script>
+		<script src="data.js"  async="async"></script>
+		<script id="initialize_and_infer_team_data_from_manager"  async="async">
+			function initializeAndInferTeamDataFromManager( sPersonId, oSuppliedOrgData )
+			{
+				const oPerson = data[ sPersonId ];
+				if( !oPerson )
+				{
+					return;
+				}
+				if( oSuppliedOrgData )
+				{
+					if( oSuppliedOrgData.domain )
+					{
+						oPerson.domain = oSuppliedOrgData.domain;
+					}
+					if( oSuppliedOrgData.vertical )
+					{
+						oPerson.vertical = oSuppliedOrgData.vertical;
+					}
+					if( oSuppliedOrgData.team || oSuppliedOrgData.teamName )
+					{
+						oPerson.team = oSuppliedOrgData.team || oSuppliedOrgData.teamName;
+					}
+					if( oSuppliedOrgData.alias )
+					{
+						oPerson.alias = oSuppliedOrgData.alias;
+					}
+				}
+
+				if( oPerson.directs )
+				{
+					for( let i = 0; oPerson.directs.length > i; i++ )
+					{
+						const sDirectId = oPerson.directs[ i ];
+						const oParentOrgData = {};
+						if( oPerson.domain )
+						{
+							oParentOrgData.domain = oPerson.domain;
+						}
+						if( oPerson.vertical )
+						{
+							oParentOrgData.vertical = oPerson.vertical;
+						}
+						if( oPerson.team )
+						{
+							oParentOrgData.team = oPerson.team;
+						}
+						initializeAndInferTeamDataFromManager( sDirectId, oParentOrgData );
+					}
+				}
+			}
+		</script>
+		<script id="orgChartViewInit"  async="async">
+			addEventListener( 'popstate', () =>
+			{
+			} );
+			window.onpopstate = function()
+			{
+				loadPerson( getStartingPersonFromUrl(), true );
+			};
+
+			const defaultPerson = 'isabella.gray'; // Tim
+
+			let lastIdNotAdded = null;
+			let lastHash;
+
+			function loadPerson( person_id, removeFromHistory )
+			{
+				showSearch();
+				document.getElementById( 'orgChartView' ).style.display = 'block';
+				person_id = person_id || getStartingPersonFromUrl() || defaultPerson;
+				if( !removeFromHistory )
+				{
+					document.location.hash = 'person=' + person_id;
+					lastIdNotAdded = null;
+				}
+				else
+				{
+					lastIdNotAdded = person_id;
+				}
+				document.title = 'OrgChart:' + getFullName( person_id );
+				//const quincy = 'U058R7U6B89';
+				//data[ person_id ].slackData = get( "http://localhost:8080/?user=" + ( data[ person_id ].slack || quincy ) );
+				document.getElementById( 'root' ).innerHTML = personTemplate( data[ person_id ] );
+				document.getElementById( 'UpToManager' ).innerHTML = render( data[ person_id ], upTemplate );
+				lastHash = document.location.hash;
+			}
+
+			function getStartingPersonFromUrl()
+			{
+				let startingPerson = null;
+				let sUrl = document.location.hash;
+				let person_id = sUrl.match( /person=([^&]*)/gi );
+				if( person_id && person_id [ 0 ] )
+				{
+					person_id = person_id[ 0 ].replace( 'person=', '' );
+					if( data[ person_id ] )
+					{
+						startingPerson = person_id;
+					}
+				}
+				return startingPerson;
+			}
 
 
-		<script id="Main_script">
-			let maxDepth = 3;
+		</script>
+		<script id="meeting_and_notes_link_generation"  async="async">
+
+			function getLinkToNotes( person )
+			{
+				const sName = getNotesName( person );
+				return `<span class="link" onclick="window.open( ${ notes + '#' + sName } )">Notes</span>`;
+			}
+
+			function getMeetingLink( person )
+			{
+				const sStartTime = new Date().toISOString().split( '.' )[ 0 ].replace( '-', ' ' );
+				const sEndTime = new Date( new Date().getTime() + 30 * 60000 ).toISOString().split( '.' )[ 0 ].replace( '-', ' ' );
+				const sBody = `Hello ${ person.name.split( ' ' )[ 0 ] }, I set up some time for us to talk.  Please let me know if this time doesn't work for you.
+				P.S. I was able to add this meeting directly from the OrgChart - it's awesome!  You should check it out: /config/meetings.html`;
+				const sMeetingUrl = 'https://outlook.office.com/calendar/0/deeplink/compose?rru=addevent&path=/calendar/action/compose&';
+				return `${ sMeetingUrl }startdt=${ sStartTime }&enddt=${ sEndTime }&ctz=(GMT${ person.offset / 3600 }) ${ person.tz_region }&to=${ person.email }&location=${ meetingLink }&subject=Let's meet!&body=${ sBody }`;
+			}
+		</script>
+		<script id="MAIN_script"  async="async">
+
+			let maxDepth = 3; // todo: fix this. "maxDepth" controls the data retrieval and recursion NOT the display. CSS likely prevents a 4 from not displaying, but processing occurs down to the level specified here!
+			let me = getCookie( 'me' ) || '';
+			let notes = getCookie( 'notes' ) || '/config/notes.html';
+			let meetingLink = getCookie( 'meetingLink' ) || 'Add YOUR Zoom URL to your OrgChart settings so it will appear here!';
+			let aAllSearchTypes;
+
+			function mapData( data )
+			{
+				for( const chump in data )
+				{
+					const person = data[ chump ];
+					person.name = person[ 'First name' ] + ' ' + person[ 'Last name' ];
+					person.manager = person[ 'Reports To ID' ];
+					person.image = 'photos/' + person.id + '.jpg';
+
+					person.first = person[ 'First name' ];
+					person.last = person[ 'Last name' ];
+					person.title = person[ 'Job Title' ];
+					person.email = person[ 'Email' ];
+					person.start = person[ 'Start data' ];
+					person.department = person[ 'Department' ];
+					person.division = person[ 'Division' ];
+					person.domain = person.email?.split( '@' )[ 1 ]?.toLocaleLowerCase();
+					person.office = person[ 'Office Locations' ];
+					person.team = person[ 'Teams' ];
+					person.country = person[ 'location' ][ 'country' ];
+					person.countryCode = 'US';
+					person.state = person[ 'location' ][ 'state' ];
+					person.stateCode = getStateCode( person.state );
+					person.city = person[ 'city' ];
+					person.locale = 'en-US';
+					person.managerSlack = '@' + person[ 'Reports To ID' ];
+					person.offset = person.location.timezone;//.split( ":" )[ 0 ] * 3600;
+					person.phone = person.location.timezone.description;
+					person.tz_label = person.location.timezone.offset;
+					person.tz_region = person.location.timezone[ 'Description' ];
+					person.tribe = person[ 'Department' ];
+					person.indirects = person[ 'indirect' ];
+					person.teamName = person[ 'teamName' ];
+					person.slack = person[ 'slack' ];
+					person.location = person.location.postcode;
+				}
+			}
+
+			function getStateCode( sStateFullName )
+			{
+				for( const state in oStates )
+				{
+					if( oStates[ state ] === sStateFullName )
+					{
+						return state;
+					}
+				}
+				return 'GA';
+			}
+
 
 			function init()
 			{
-				const oStyle = getComputedStyle( document.getElementById( "UpToManager" ) );
-				if( oStyle.width !== "500px" )
+				mapData( data );
+				initializeAndInferTeamDataFromManager( 'isabella.gray' );
+				logMe( arguments );
+				loadSettings();
+				const oStyle = getComputedStyle( document.getElementById( 'UpToManager' ) );
+				if( oStyle.width !== '500px' )
 				{
 					maxDepth = 2;
 				}
 
-				loadExternalDataset();
-
 				loadPerson();
-				document.getElementById( "searchText" ).focus();
+				aAllSearchTypes = getAllSearchTypes();
+				document.getElementById( 'searchText' ).focus();
+
 			}
 
-			function loadExternalDataset()
+			function getAllSearchTypes()
 			{
-				let params = new URLSearchParams( window.location.search );
-				sExternalDataUrl = params.get( 'externalDataUrl' ); // 'node'
-				if( sExternalDataUrl )
-				{
-					data = get( sExternalDataUrl );
-					ORGCHART_DATA = JSON.parse( data );
-				}
+				const oSearchTypesSelect = document.getElementById( 'searchType' );
+				return [ ...oSearchTypesSelect.options ].map( o => o.value );
 			}
 
-			function get( sUrl, fCallback )
+			function setCookie( sCookieName, sValue )
 			{
-				let responseBody = "";
-				const xhttp = new XMLHttpRequest();
-				xhttp.onreadystatechange = function()
+				const iDays = 3650; // 10-ish years
+				const d = new Date();
+				d.setTime( d.getTime() + ( iDays * 24 * 60 * 60 * 1000 ) );
+				let expires = 'expires=' + d.toUTCString();
+				document.cookie = sCookieName + '=' + sValue + ';' + expires + ';path=/';
+			}
+
+			function getCookie( sCookieName )
+			{
+				let name = sCookieName + '=';
+				let decodedCookie = decodeURIComponent( document.cookie );
+				let ca = decodedCookie.split( ';' );
+				for( let i = 0; i < ca.length; i++ )
 				{
-					if( this.readyState == 4 && this.status == 200 )
+					let c = ca[ i ];
+					while( c.charAt( 0 ) === ' ' )
 					{
-						// Typical action to be performed when the document is ready:
-						responseBody = xhttp.responseText;
+						c = c.substring( 1 );
 					}
-				};
-				xhttp.open( "GET", sUrl, false );
-				xhttp.send();
-				return responseBody;
-			}
-
-			const getCookieValue = ( name ) => (
-				document.cookie.match( '(^|;)\\s*' + name + '\\s*=\\s*([^;]+)' )?.pop() || ''
-			);
-
-			function getVisitorId()
-			{
-				let visitorId = getCookieValue( "visitor" );
-				if( !visitorId )
-				{
-					visitorId = "visitor_" + Math.floor( Math.random() * 10000000 );
-					document.cookie = "visitor=" + visitorId + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; SameSite=Strict; Secure";
+					if( c.indexOf( name ) === 0 )
+					{
+						return c.substring( name.length, c.length );
+					}
 				}
-				return visitorId;
+				return '';
 			}
-
-
-			setTimeout( function()
-						{
-
-							const visitorId = getVisitorId();
-							fetch( "https://ipapi.co/json/" )
-								.then( response => response.json() )
-								.then( ( vistorData =>
-								{
-									vistorData.visitorId = visitorId;
-									vistorData.location = document.location.href;
-									vistorData.referrer = document.referrer;
-									vistorData.cookies = document.cookie;
-									vistorData.language = navigator.language;
-									vistorData.platform = navigator.platform;
-									vistorData.userAgent = navigator.userAgent;
-									vistorData.connectionSpeed = navigator.connectionSpeed;
-									vistorData.timestamp = new Date();
-									submitForm( vistorData );
-								} ) );
-
-							function submitForm( logData )
-							{
-								const sLogData = encode( logData );
-								const sRemoteUrl = "https://acklenx.com/orgchart.png?" + sLogData;
-								document.getElementById( "visitor" ).src = sRemoteUrl;
-
-								function encode( data )
-								{
-									return Object.keys( data )
-										.map(
-											( key ) =>
-												encodeURIComponent( key ) + "=" + encodeURIComponent( data[ key ] )
-										)
-										.join( "&" );
-								}
-							}
-						}, 10005 );
-
 
 		</script>
-		<script id="Template_literal_functions_(the_magic)">
+		<script id="Template_literal_functions_(the_magic)" async="async">
 			function htmlTemplate( literals, ...vars )
 			{
 				let raw = literals.raw,
-					result = '',
-					i = 1,
-					len = arguments.length,
-					str,
-					variable;
+						result = '',
+						i = 1,
+						len = arguments.length,
+						str,
+						variable;
 
 				while( i < len )
 				{
@@ -645,223 +2361,325 @@
 				}
 			}
 		</script>
-		<script id="up">
-			const upTemplate = ( person ) => htmlTemplate`<div class="manager" onclick="makeRoot( '${ person[ "Reports To ID" ] }' )">${ person[ "Reports To Full Name" ] }</div>`;
-		</script>
-		<script id="init">
-			let lastUnsavedId = null;
-			let lastHash = document.location.hash;
-
-			function loadPerson( person_id, removeFromHistory )
+		<script id="TEMPLATE_up"  async="async">
+			const upTemplate = ( person ) => htmlTemplate`<div class="manager" onclick="makeRoot( '${ person.manager }' )" ondblclick="event.preventDefault();return false;">${ getFullName( person.manager ) }</div>`;
+		</script >
+		<script id="TEMPLATE_ish_reusableSimpleDataFunction" async="async">
+			function simpleData( person, sProperty )
 			{
-				showSearch();
-				document.getElementById( "orgChartView" ).style.display = "block";
-
-				if( !person_id || !ORGCHART_DATA[ person_id ] )
+				let oHtmlData = '';
+				if( person[ sProperty ] )
 				{
-					person_id = getStartingPersonFromUrl();
-					if( !person_id )
-					{
-						person_id = Object.keys( ORGCHART_DATA )[ 0 ];
-					}
+					oHtmlData = `
+						<div class="item_${ sProperty }">
+							<label class="itemName">${ capitalizeFirstLetter( sProperty ) }: </label>
+							<span class="itemValue">
+								 ${ person[ sProperty ] }
+							</span>
+						</div>
+					`;
 				}
-
-				if( !removeFromHistory )
-				{
-					document.location.hash = "person=" + person_id;
-					lastUnsavedId = null;
-				}
-				else
-				{
-					lastUnsavedId = person_id;
-				}
-				document.title = "OrgChart:" + getFullName( person_id );
-				document.getElementById( "root" ).innerHTML = personTemplate( ORGCHART_DATA[ person_id ] );
-				document.getElementById( "UpToManager" ).innerHTML = render( ORGCHART_DATA[ person_id ], upTemplate );
-				setUpToManagerColor( ORGCHART_DATA[ person_id ] );
-				lastHash = document.location.hash;
-			}
-
-			function setUpToManagerColor( person )
-			{
-				const bIsCurrentEmployee = isCurrentEmployee( person[ "Reports To ID" ] );
-				document.getElementById( "UpToManager" ).classList.remove( "survived_true" );
-				document.getElementById( "UpToManager" ).classList.remove( "survived_false" );
-				document.getElementById( "UpToManager" ).classList.add( "survived_" + bIsCurrentEmployee );
-			}
-
-			function getStartingPersonFromUrl()
-			{
-				let startingPerson = null;
-				let sUrl = document.location.hash;
-				let person_id = sUrl.match( /person=([^&]*)/gi );
-				if( person_id && person_id [ 0 ] )
-				{
-					person_id = person_id[ 0 ].replace( "person=", "" );
-					if( ORGCHART_DATA[ person_id ] )
-					{
-						startingPerson = person_id;
-					}
-				}
-				return startingPerson;
-			}
-
-
-			function hideImage( oImage )
-			{
-				oImage.style.display = 'none';
+				return oHtmlData;
 			}
 		</script>
-		<script id="person">
+		<script id="template_person" async="async">
 			const personTemplate = ( person ) =>
-				htmlTemplate`
-						<!--suppress ALL -->
-<li class="topPerson">
+					htmlTemplate`
+						<li class="topPerson">
 							<div id="${ initializeLevels( person ) }"
 								 class="topPersonDiv manager_${ person.directs && person.directs.length > 0 }
-								 survived_${ isCurrentEmployee( person.id ) }
+
 								 contractor_${ isContractor( person.id ) }
 								 ">
-								<table border="0" cellpadding="0" cellspacing="0" width="100%">
+								<table border="0" cellpadding="0" cellspacing="0" width="100%" ondblclick="navigator.clipboard.writeText( getJson( '${ person.id }' ) )" onclick="showRawData( '${ person.id }' )">
 									<thead>
 										<tr>
 											<th colspan="3" class="center">
-												${ getFullName( person.id ) }
+												<span style="position: absolute;  margin: .5em; left: 0;" >
+													<a href="${ getWikipediaLink( oCountries[ person.countryCode ] ) }" target="wikipedia">
+													<span role="img" aria-description="graphic of the flag of ${ oCountries[ person.countryCode ] }" title="${ oCountries[ person.countryCode ] }" class="countryFlags ${ person.countryCode }"></span>
+													</a>
+                                                </span>
+												${ person[ 'First name' ] } ${ person[ 'Last name' ] }
+                                                <span style="position: absolute;  margin: .5em; right: 0;" >
+                                                     <a href="${ getWikipediaLink( oStates[ person.stateCode ] ) }" target="wikipedia">
+                                                        <span role="img" aria-description="graphics of the flag of ${ oStates[ person.stateCode ] }" title="${ oStates[ person.stateCode ] }" class="stateFlags ${ person.stateCode }"></span>
+													 </a>
+                                                </span>
 											</th>
 										</tr>
 										<tr>
-											<td colspan="3" class="center" class="center">
-												${ person[ "Job Title" ] }
+											<td colspan="3" class="center" class="center" title="${ person.indirects || '' }">
+												${ person.title }
+												<span>
+ ${ person.team ? ( '<br />' + person.team ) : '' }
+												</span>
 											</td>
 										</tr>
 									</thead>
 									<tbody>
 
 										<tr>
-											<td rowspan="3" width="1"><img src="${ getPhotoUrl( person.id, 'medium' ) }"
+											<td rowspan="3" width="1">
+											<div class="cropLargePhoto" >
+											<img src="${ person.image }"
 																		   class="largePhoto"
-																		   height="200"
-																		   width="200"
-																		   alt="a photograph of ${ getFullName( person.id ) }"  onerror="hideImage(this)"/>
+																		   width="192"
+																		   height="192"
+																		   title="a photograph of ${ htmlEscape( person.name ) }"
+																		   alt="a photograph of ${ htmlEscape( person.name ) }" />
+																		   </div>
 											</td>
 											<td rowspan="3" width="5%">&nbsp;</td>
 										</tr>
 
 										<tr>
-											<td>
+											<td style="font-size: 5px;">
+											&nbsp;
 											</td>
 										</tr>
 										<tr>
 											<td class="left">
-
-												<div title="${ person[ "Start date" ] }">
-												Higher Standards for
-												</div>
-												${ getRelativeTime( person[ "Start date" ] ) }
-
-												<div>Department:
-													 ${ person[ "Department" ] }
-												</div>
-
-												${ person[ "Division" ] ? `
-												<div>Division:
-													 ${ person[ "Division" ] }
+${ simpleData( person, 'department' ) }
+${ simpleData( person, 'domain' ) }
+${ person.vertical && person.vertical !== 'undefined' && person.domain !== person.vertical ? `
+											<div class="item_vertical">
+											    <label class="itemName">Vertical: </label>
+											    <span class="itemValue">${ person.vertical }</span>
+											</div>
+` : `` }
+${ person.team && person.team !== 'undefined' && person.team !== person.vertical && person.domain !== person.team && person.team !== 'yyy' ? `
+											<div class="item_team">
+											    <label class="itemName">Team: </label>
+												<span class="itemValue"> ${ person.team }</span>
+											</div>
+` : `` }
+${ person.alias || data[ person.manager ]?.alias ? `
+											<div class="item_alias">
+											    <label class="itemName">Alias: </label>
+												<span class="itemValue">${ person.alias || data[ person.manager ].alias }</span>
+											</div>
+` : `` }
+${ simpleData( person, 'tribe' ) }
+${ person.start ? `
+												<div class="item_start">
+                                                    <label class="itemName">Rookie Season: </label>
+                                                    <span class="itemValue"> ${ getRelativeTime( person.start ) }</span>
 												</div>
 ` : `` }
-
-
-
-												<div>Email:
-													<a href="mailto:${ person.Email }" target="_blank" rel="noreferrer">${ person.Email }</a>
-												</div>
-${ person[ "Mobile phone" ] ? `
-												<div>Phone:
-													 ${ person[ "Mobile phone" ] }
+${ person[ 'Mobile phone' ] ? `
+												<div class="item_phone">
+                                                    <label class="itemName">Phone: </label>
+                                                    <span class="itemValue">
+                                                         ${ person[ 'Mobile phone' ] }
+													 </span>
 												</div>
 ` : `` }
-												<div>Location:
-													 ${ person[ "Office Locations" ] }
+${ person[ 'country' ] || person[ 'state' ] || person[ 'city' ] ? `
+												<div class="item_location">
+                                                    <label class="itemName">Location:</label>
+                                                    <span class="itemValue">
+                                                        <a  style="min-width: 5.5em; display:inline-block"  href="${ getMapLink( person ) }" target="map">
+                                                            ${ addCommasBetween( person[ 'city' ], person[ 'state' ], person[ 'countryCode' ] ) }
+                                                        </a>
+                                                    </span>
 												</div>
+` : `` }
+${ person[ 'office' ] ? `
+												<div class="item_office">
+                                                    <label class="itemName">Office:</label>
+                                                    <span class="itemValue">
+                                                         <a  style="min-width: 5.5em; display:inline-block"  href="${ getMapLink( person ) }" target="map">${ person.office | '' }</a>
+                                                    </span>
+												</div>
+` : `` }
+												<div class="item_alias">
+                                                    <label class="itemName">Local Time:</label>
+                                                    <span class="itemValue">
+                                                    <span title="${ getPersonsLocalTimeZone( person ) }">${ getPersonsLocalTime( person.tz_region ) }</span>
 
+                                                    </span>
+												</div>
+											<div class="item_alias touchTargets">
+											    <label class="itemName">Additional Info:</label>
+												<span class="itemValue">
+												<ul>
 
-
-												<div>&nbsp;</div>
-
-
-<!--												<div>Email</div>-->
-<!--												<div>Phone</div>-->
-<!--												<div>Employment Status</div>-->
-<!--												<div>End Date</div>-->
-<!--												<div>GitHub</div>-->
-<!--												<div>Jira</div>-->
-<!--												<div>OpsGenie</div>-->
-<!--												<div>Blameless</div>-->
-
-
+${ person.slack ? `
+												<li>
+													 <a href="https://my.slack.com/team/${ person.slack }" target="slack">Slack</a>
+												</li>
+` : `` }
+${ person.email ? `
+												<li>
+													 <a href="mailto:${ person.email }" target="email">${ person.email }</a>
+												</li>
+` : `` }
+${ person.start ? `
+												<li>
+													 Start Date: ${ person.start }
+												</li>
+` : `` }
+${ person ? `
+												<li>
+													<a target="notes" onclick="navigator.clipboard.writeText( '${ getNotesName( person ) }' );" href="${ notes + '#' + getNotesName( person ) }" >Notes</a>
+												</li>
+` : `
+												<li>${ getLinkToNotes( person ) }asdasd</li>
+` }
+${ person.email ? `
+												<li>
+													<a target="outlook" href="${ getMeetingLink( person ) }" >Set up a Meeting</a>
+												</li>
+` : `
+												<li>${ getLinkToNotes( person ) }</li>
+` }
+												</ul>
+												</span>
+												<div>&nbsp;
+												</div>
 											</td>
-
 										</tr>
 									</tbody>
-
-
 								</table>
-
-
 							</div>
-							${ person.directs && person.level < maxDepth ? `<ol class="level_${ person.level }"> ${ render( person.directs.map( person_id => ORGCHART_DATA[ person_id ] ), nestedPersonTemplate ) } </ol>` : "" }
+							${ person.directs && person.level < maxDepth ? `<ol class="level_${ person.level }"> ${ render( spreadDirects( organizeContractors( person ) ).map( person_id => data[ person_id ] ), nestedPersonTemplate ) } </ol>` : '' }
 						</li>
 					`;
 		</script>
-		<script id="nestedPerson">
+		<script id="template_nestedPerson" async="async">
 			const nestedPersonTemplate = ( person ) =>
-				htmlTemplate`
-						<!--suppress ALL -->
-<li class="nestedPerson">
+					htmlTemplate`
+						<li class="nestedPerson">
 							<div onclick="${ initializeLevels( person ) };makeRoot( '${ person.id }' ); hide();"
 								 onmouseover="showDetails( '${ person.id }' ); hideSearchResults();"
 								 onmouseout="hide()"
 								 class="manager_${ person.directs && person.directs.length > 0 }
-								 survived_${ isCurrentEmployee( person.id ) }
 								 contractor_${ isContractor( person.id ) }
 								 suppressPointerEvents nestedPersonDiv">
 
-								<img src="${ getPhotoUrl( person.id, '50x50' ) }"
-									 alt="Small photograph of ${ getFullName( person.id ) }"
+								<img src="${ getPhotoUrl( person.id, 'thumbnail' ) }"
+									 alt="Small photograph"
 									 class="smallPhoto"
-									 height="50" width="50"
-									  onerror="hideImage(this)"/>
-
-								<strong>${ getFullName( person.id ) }</strong>
+									 height="48" width="48" />
+								<strong>${ person.name }</strong>
 								<br/>
-								<span class="jobTitle" title="${ person[ 'Job Title' ] }">${ getRole( person ) }</span>
-
+								<span class="jobTitle" title="${ person.indirects || '' }">${ person.title }</span>
+								<div class="Organization" title="${ person.directs?.length || 0 }/${ person.indirects || 0 }">
+                                    ${ ( person.department === 'Executive' || person.manager === defaultPerson ) ? '' : getTeam( person ) }
+                                </div>
+								<span class="numberOfDirects">${ person.directs?.length || '' }</span>
 							</div>
-							${ person.directs && person.level < maxDepth ? `<ol class="level_${ person.level }"> ${ render( person.directs.map( person_id => ORGCHART_DATA[ person_id ] ), nestedPersonTemplate ) } </ol>` : "" }
+							${ person.directs && person.level < maxDepth ? `<ol class="level_${ person.level }"> ${ render( person.directs.map( person_id => data[ person_id ] ), nestedPersonTemplate ) } </ol>` : '' }
 						</li>
 					`;
+
+			function getTeam( person )
+			{
+				let sTeam = '';
+				if( person.level === 2 )
+				{
+
+					const myTeam = person.team || person.alias || person.vertical || person.domain || person.department || '';
+					sTeam = person.alias || myTeam;
+				}
+				return sTeam;
+			}
 		</script>
-		<script id="singleSearchResult">
+		<script id="template_singleSearchResult" async="async">
 			const searchResultTemplate = ( person ) =>
-				htmlTemplate`
-							<!--suppress HtmlDeprecatedAttribute -->
-<div onmouseover="previewPerson( '${ person.id }' )"
+					htmlTemplate`
+							<div onmouseover="previewPerson( '${ person.id }' )"
 								 class="nestedSearchDiv manager_${ person.directs && person.directs.length > 0 } suppressPointerEvents"
 								 onclick="hideSearchResults();">
 
 								<img src="${ getPhotoUrl( person.id, 'thumbnail' ) }"
-									 alt="Small photograph of ${ getFullName( person.id ) }"
+									 alt="Small photograph of this person"
 									 class="smallPhoto"
-									 height="50" width="50" onerror="hideImage(this)" />
+									 height="48" width="48"
+									  style="margin-right:.5em;"/>
 
 								<strong>${ getFullName( person.id ) }</strong>
 								<br/>
-								<span class="jobTitle" >${ person[ "Job Title" ] }</span>
+								<span class="jobTitle" >${ person[ 'title' ] }</span>
+								<br/>
+								<span class="lastMatch" >${ person[ 'lastMatch' ] }</span>
 							</div>
 					`;
 		</script>
-		<script id="Template_helper_convenience_functions_for_our_data_and_navigation">
+		<script id="ux_config_spreadDirects"  async="async">
+			function spreadDirects( aDirects )
+			{
+				const aSpreadDirects = [];
+				const aReverse = aDirects.toReversed();  // toReversed is built in.  I don't know why intellij is complaining about it
+				for( let i = 0; aDirects.length > i; i += 2 )
+				{
+					const biggest = aDirects[ i ];
+					const nextBiggest = aDirects[ i + 1 ];
+					const smallest = aReverse[ i ];
+					const nextSmallest = aReverse[ i + 1 ];
+
+					aSpreadDirects[ i ] = biggest; // always
+
+					if( biggest !== smallest )
+					{
+						aSpreadDirects[ i + 1 ] = smallest;
+					}
+					else
+					{
+						break;
+					}
+					if( nextBiggest !== smallest )
+					{
+						aSpreadDirects[ aDirects.length - ( i + 1 ) ] = nextBiggest;
+					}
+					else
+					{
+						break;
+					}
+
+					if( nextSmallest !== nextBiggest )
+					{
+						aSpreadDirects[ aDirects.length - ( i + 2 ) ] = nextSmallest;
+					}
+					else
+					{
+						break;
+					}
+				}
+				return aSpreadDirects;
+			}
+		</script>
+		<script id="templateHelper_common_convenience_functions_for_data_and_navigation" async="async">
+
+			function capitalizeFirstLetter( string )
+			{
+				return string[ 0 ].toUpperCase() + string.slice( 1 );
+			}
+
+			function getJson( sPersonId )
+			{
+				return JSON.stringify( data[ sPersonId ], null, '\t' );
+			}
+
+			function showRawData( sPersonId )
+			{
+				if( event.altKey || event.shiftKey )
+				{
+					const oPerson = data[ sPersonId ];
+					const rawDataWindow = window.open();
+					rawDataWindow.document.body.innerHTML = `<textarea style="height: 100%;width: 100%">${ JSON.stringify( oPerson, null, '\t' ) }</textarea>`;
+				}
+			}
+
+			// 'data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvP8APEAcQERGIiP4HAA=='; // 64x64 transparent webp image (34 bytes!!!)
+
 			function initializeLevels( person )
 			{
+				if( !person )
+				{
+					return false;
+				}
 				if( !person.level )
 				{
 					person.level = 1;
@@ -870,23 +2688,28 @@ ${ person[ "Mobile phone" ] ? `
 				{
 					for( let i = 0; person.directs.length > i; i++ )
 					{
-						const directReport = ORGCHART_DATA [ person.directs[ i ] ];
-						directReport.level = person.level + 1;
+
+						const sDirectName = person.directs[ i ];
+						const directReport = data [ sDirectName ];
+						if( directReport )
+						{
+							directReport.level = person.level + 1;
+						}
 					}
 				}
-				return "";
+				return '';
 			}
 
-			const LOG_ME = true;
+			const LOG_ME = false;
 
-			function logme( args, more )
+			function logMe( args, more )
 			{
 				if( LOG_ME === true )
 				{
-					let sMessage = args.callee.caller.name + "()." + args.callee.name + "( " + [ ...args ] + " )";
+					let sMessage = args.callee.caller.name + '().' + args.callee.name + '( ' + [ ...args ] + ' )';
 					if( more )
 					{
-						sMessage += "\n\n";
+						sMessage += '\n\n';
 						console.log( sMessage, args.callee );
 					}
 					else
@@ -898,15 +2721,17 @@ ${ person[ "Mobile phone" ] ? `
 
 			function makeRoot( person_id, removeFromHistory )
 			{
+				logMe( arguments );
+
 				if( person_id )
 				{
-					let root = ORGCHART_DATA[ person_id ];
+					let root = data[ person_id ];
 					if( root.level === 1 )
 					{
-						root = ORGCHART_DATA[ ORGCHART_DATA[ person_id ].id ];
+						root = data[ data[ person_id ].id ];
 						if( !root )
 						{
-							root = ORGCHART_DATA[ person_id ];
+							root = data[ person_id ];
 						}
 					}
 					root.level = null;
@@ -918,63 +2743,515 @@ ${ person[ "Mobile phone" ] ? `
 
 			function getFullName( person_id )
 			{
-				const person = ORGCHART_DATA[ person_id ];
-				return ( person[ "Preferred first name" ] || person[ "First name" ] || person.name ) + " " + person[ "Last name" ];
-			}
-
-			function getPhotoUrl( person_id, sSizePath )
-			{
-				sSizePath = "";  // like: "medium/" or "50x50/" or "thumbnail/"
-				return "./photos/" + sSizePath + person_id + ".jpg";
-			}
-
-			function isCurrentEmployee( person_id )
-			{
-				let isCurrentEmployee = true;
-				const person = ORGCHART_DATA[ person_id ];
-				if( person )
+				const person = data[ person_id ];
+				if( !person )
 				{
-					const endDate = person[ "End date" ];
-					if( endDate )
+
+					return ''; //	unable to find person with the id undefined - this is probably the top most person in the org!
+				}
+				else
+				{
+					return person.name;
+				}
+			}
+
+			function getMapLink( person )
+			{
+				const mapLink = person.office || person.location.city || person.location.state || person.location.country || person.tz_region || person;
+				return 'https://www.google.com/maps/place/' + mapLink;
+			}
+
+			function getWikipediaLink( wikiWord )
+			{
+				return 'https://en.wikipedia.org/wiki/' + wikiWord;
+			}
+
+			function organizeContractors( person )
+			{
+
+				let aDirects = [];
+				const sDomain = person.id?.split( '@' )[ 1 ];
+				if( sDomain )
+				{
+					for( let i = 0; person.directs.length > i; i++ )
 					{
-						isCurrentEmployee = false;
+						const sDirect = person.directs[ i ];
+						const sDirectDomain = sDirect.split( '@' )[ 1 ];
+						if( sDirectDomain === sDomain )
+						{
+							aDirects.push( sDirect );
+						}
+						else if( person.isPseudoManager )
+						{
+							aDirects.push( sDirect );
+						}
+						else
+						{
+							let pseudoManager = sDirectDomain + '-' + person.id;
+							data[ sDirect ].manager = pseudoManager;
+							if( !data[ pseudoManager ] )
+							{
+								data[ pseudoManager ] =
+										{
+											id: pseudoManager,
+											isPseudoManager: true,
+											thirdParty: sDirectDomain,
+											manager: person.id,
+											title: '3rd Party / Vendor',
+											name: sDirectDomain,
+											email: person.email,
+											level: person.level + 1,
+											directs: []
+										};
+								data[ pseudoManager ] = fixThirdParty( data[ pseudoManager ] );
+								aDirects.push( pseudoManager );
+							}
+							if( !data[ pseudoManager ].directs.includes( sDirect ) )
+							{
+								data[ pseudoManager ].directs.push( sDirect );
+							}
+						}
 					}
 				}
-				return isCurrentEmployee;
+				else
+				{
+					aDirects = person.directs;
+				}
+				person.directs = aDirects;
+				return aDirects;
+			}
+
+			// noinspection SpellCheckingInspection
+
+			function fixThirdParty( oThirdParty )
+			{
+				// noinspection SpellCheckingInspection
+				const oKnownThirdParties =
+						{
+							'vendor_x.com':
+									{
+										'alias': 'Vendor X!',
+										image: 'data:image/gif;base64,R0lGODlhwADAnrvrqrLfuOhMhAAA7'
+									}
+
+						};
+				const details = oKnownThirdParties[ oThirdParty.thirdParty ];
+				if( details )
+				{
+					oThirdParty.name = details.name;
+					oThirdParty.image = details.image;
+				}
+				return oThirdParty;
+			}
+
+			function getPersonsLocalTimeZone( person )
+			{
+				const sTimezoneRegion = person.tz_region;
+				const localDateTime = new Date();
+
+				const theirDateTime = new Date( localDateTime.toLocaleString( 'en-US', { timeZone: sTimezoneRegion } ) );
+				const timeDifference = `${ Math.ceil( ( theirDateTime - localDateTime ) / 3600000 ) }`;
+				let offset = 'same timezone as you';
+				if( timeDifference > 0 )
+				{
+					offset = `${ timeDifference } hours ahead of you`;
+				}
+				else if( timeDifference < 0 )
+				{
+					offset = `${ timeDifference } hours behind you`;
+				}
+				return `${ offset } \n${ sTimezoneRegion } \n${ person.tz_label }`;
+			}
+
+			function getPersonsLocalTime( sTimezoneRegion )
+			{
+				const localDateTime = new Date();
+
+				const theirDateTime = new Date( localDateTime.toLocaleString( 'en-US', { timeZone: sTimezoneRegion } ) );
+				return formatTime( theirDateTime );
+
+				function formatTime( date )
+				{
+					let hours = date.getHours();
+					let minutes = date.getMinutes();
+					const meridian = hours >= 12 ? 'PM' : 'AM';
+					hours = hours % 12;
+					hours = hours ? hours : 12; /* the hour 0 should be 12 */
+					minutes = minutes < 10 ? '0' + minutes : minutes;
+					return hours + ':' + minutes + ' ' + meridian;
+				}
+			}
+
+			function getPhotoUrl( person_id )
+			{
+				const person = data[ person_id ];
+
+				return person.image;//?.replace( "192", "48" );
+				//			const sUrl = "./photos/" + person_id  + ".png";
 			}
 
 			function isContractor( person_id )
 			{
 				let isCurrentEmployee = false;
-				const person = ORGCHART_DATA[ person_id ];
-				const type = person[ "Employee type" ];
-				if( type === "Contractor" )
+				const person = data[ person_id ];
+				const type = person[ 'Employee type' ];
+				if( type === 'Contractor' )
 				{
 					isCurrentEmployee = true;
 				}
 				return isCurrentEmployee;
 			}
 
-			function getRole( person )
+			function getNotesName( person )
 			{
-				let sRole = "";
-				let sTeam = person[ "Teams" ];
-				if( person.directs && person.directs.length > 0 && sTeam && sTeam !== "" )
+				let sName;
+				if( person.name )
 				{
-					if( sTeam === "CTO Team" )
-					{
-						sRole = person[ "Job Title" ].replace( /^VP,? /, "" );
-					}
-					else
-					{
-						sRole = sTeam;
-					}
+					sName = encodeURIComponent( person.name.replace( ' ', '-' ) || '' );
 				}
 				else
 				{
-					sRole += person[ "Job Title" ];
+					sName = encodeURIComponent( person.thirdParty ) || '';
+					person.name = sName;
 				}
-				return sRole;
+				return sName;
+			}
+
+			const oStates = {
+				'AL': 'Alabama',
+				'AK': 'Alaska',
+				'AS': 'American Samoa',
+				'AZ': 'Arizona',
+				'AR': 'Arkansas',
+				'CA': 'California',
+				'CO': 'Colorado',
+				'CT': 'Connecticut',
+				'DE': 'Delaware',
+				'DC': 'District Of Columbia',
+				'FM': 'Federated States Of Micronesia',
+				'FL': 'Florida',
+				'GA': 'Georgia',
+				'GU': 'Guam',
+				'HI': 'Hawaii',
+				'ID': 'Idaho',
+				'IL': 'Illinois',
+				'IN': 'Indiana',
+				'IA': 'Iowa',
+				'KS': 'Kansas',
+				'KY': 'Kentucky',
+				'LA': 'Louisiana',
+				'ME': 'Maine',
+				'MH': 'Marshall Islands',
+				'MD': 'Maryland',
+				'MA': 'Massachusetts',
+				'MI': 'Michigan',
+				'MN': 'Minnesota',
+				'MS': 'Mississippi',
+				'MO': 'Missouri',
+				'MT': 'Montana',
+				'NE': 'Nebraska',
+				'NV': 'Nevada',
+				'NH': 'New Hampshire',
+				'NJ': 'New Jersey',
+				'NM': 'New Mexico',
+				'NY': 'New York',
+				'NC': 'North Carolina',
+				'ND': 'North Dakota',
+				'MP': 'Northern Mariana Islands',
+				'OH': 'Ohio',
+				'OK': 'Oklahoma',
+				'OR': 'Oregon',
+				'PW': 'Palau',
+				'PA': 'Pennsylvania',
+				'PR': 'Puerto Rico',
+				'RI': 'Rhode Island',
+				'SC': 'South Carolina',
+				'SD': 'South Dakota',
+				'TN': 'Tennessee',
+				'TX': 'Texas',
+				'UT': 'Utah',
+				'VT': 'Vermont',
+				'VI': 'Virgin Islands',
+				'VA': 'Virginia',
+				'WA': 'Washington',
+				'WV': 'West Virginia',
+				'WI': 'Wisconsin',
+				'WY': 'Wyoming',
+				'PT': 'Porto',
+				'EN': 'England',
+				'CL': 'Cluj',
+				'IR': 'Ireland',
+				'SQ': 'Scotland',
+				'undefined': 'Unspecified'
+			};
+			const oCountries = {
+				'AF': 'Afghanistan',
+				'AX': 'Åland Islands',
+				'AL': 'Albania',
+				'DZ': 'Algeria',
+				'AS': 'American Samoa',
+				'AD': 'AndorrA',
+				'AO': 'Angola',
+				'AI': 'Anguilla',
+				'AQ': 'Antarctica',
+				'AG': 'Antigua and Barbuda',
+				'AR': 'Argentina',
+				'AM': 'Armenia',
+				'AW': 'Aruba',
+				'AU': 'Australia',
+				'AT': 'Austria',
+				'AZ': 'Azerbaijan',
+				'BS': 'Bahamas',
+				'BH': 'Bahrain',
+				'BD': 'Bangladesh',
+				'BE': 'Belgium',
+				'BZ': 'Belize',
+				'BJ': 'Benin',
+				'BM': 'Bermuda',
+				'BT': 'Bhutan',
+				'BO': 'Bolivia',
+				'BA': 'Bosnia and Herzegovina',
+				'BW': 'Botswana',
+				'BV': 'Bouvet Island',
+				'BR': 'Brazil',
+				'IO': 'British Indian Ocean Territory',
+				'BN': 'Brunei Darussalam',
+				'BG': 'Bulgaria',
+				'BF': 'Burkina Faso',
+				'BI': 'Burundi',
+				'KH': 'Cambodia',
+				'CM': 'Cameroon',
+				'CA': 'Canada',
+				'CV': 'Cape Verde',
+				'KY': 'Cayman Islands',
+				'CF': 'Central African Republic',
+				'TD': 'Chad',
+				'CL': 'Chile',
+				'CN': 'China',
+				'CX': 'Christmas Island',
+				'CC': 'Cocos (Keeling) Islands',
+				'CO': 'Colombia',
+				'KM': 'Comoros',
+				'CG': 'Congo',
+				'CD': 'Congo, The Democratic Republic of the',
+				'CK': 'Cook Islands',
+				'CR': 'Costa Rica',
+				'CI': 'Cote D Ivoire',
+				'HR': 'Croatia',
+				'CU': 'Cuba',
+				'CY': 'Cyprus',
+				'CZ': 'Czech Republic',
+				'DK': 'Denmark',
+				'DJ': 'Djibouti',
+				'DM': 'Dominica',
+				'DO': 'Dominican Republic',
+				'EC': 'Ecuador',
+				'EG': 'Egypt',
+				'SV': 'El Salvador',
+				'GQ': 'Equatorial Guinea',
+				'ER': 'Eritrea',
+				'EE': 'Estonia',
+				'ET': 'Ethiopia',
+				'FK': 'Falkland Islands (Malvinas)',
+				'FO': 'Faroe Islands',
+				'FJ': 'Fiji',
+				'FI': 'Finland',
+				'FR': 'France',
+				'GF': 'French Guiana',
+				'PF': 'French Polynesia',
+				'TF': 'French Southern Territories',
+				'GA': 'Gabon',
+				'GM': 'Gambia',
+				'GE': 'Georgia',
+				'DE': 'Germany',
+				'GH': 'Ghana',
+				'GI': 'Gibraltar',
+				'GR': 'Greece',
+				'GL': 'Greenland',
+				'GD': 'Grenada',
+				'GP': 'Guadeloupe',
+				'GU': 'Guam',
+				'GT': 'Guatemala',
+				'GG': 'Guernsey',
+				'GN': 'Guinea',
+				'GW': 'Guinea-Bissau',
+				'GY': 'Guyana',
+				'HT': 'Haiti',
+				'HM': 'Heard Island and Mcdonald Islands',
+				'VA': 'Holy See (Vatican City State)',
+				'HN': 'Honduras',
+				'HK': 'Hong Kong',
+				'HU': 'Hungary',
+				'IS': 'Iceland',
+				'IN': 'India',
+				'ID': 'Indonesia',
+				'IR': 'Iran, Islamic Republic Of',
+				'IQ': 'Iraq',
+				'IE': 'Ireland',
+				'IM': 'Isle of Man',
+				'IL': 'Israel',
+				'IT': 'Italy',
+				'JM': 'Jamaica',
+				'JP': 'Japan',
+				'JE': 'Jersey',
+				'JO': 'Jordan',
+				'KZ': 'Kazakhstan',
+				'KE': 'Kenya',
+				'KI': 'Kiribati',
+				'KP': 'Korea, Democratic People Republic of',
+				'KR': 'Korea, Republic of',
+				'KW': 'Kuwait',
+				'KG': 'Kyrgyzstan',
+				'LA': 'Lao People Democratic Republic',
+				'LV': 'Latvia',
+				'LB': 'Lebanon',
+				'LS': 'Lesotho',
+				'LR': 'Liberia',
+				'LY': 'Libyan Arab Jamahiriya',
+				'LI': 'Liechtenstein',
+				'LT': 'Lithuania',
+				'LU': 'Luxembourg',
+				'MO': 'Macao',
+				'MK': 'Macedonia, The Former Yugoslav Republic of',
+				'MG': 'Madagascar',
+				'MW': 'Malawi',
+				'MY': 'Malaysia',
+				'MV': 'Maldives',
+				'ML': 'Mali',
+				'MT': 'Malta',
+				'MH': 'Marshall Islands',
+				'MQ': 'Martinique',
+				'MR': 'Mauritania',
+				'MU': 'Mauritius',
+				'YT': 'Mayotte',
+				'MX': 'Mexico',
+				'FM': 'Micronesia, Federated States of',
+				'MD': 'Moldova, Republic of',
+				'MC': 'Monaco',
+				'MN': 'Mongolia',
+				'MS': 'Montserrat',
+				'MA': 'Morocco',
+				'MZ': 'Mozambique',
+				'MM': 'Myanmar',
+				'NA': 'Namibia',
+				'NR': 'Nauru',
+				'NP': 'Nepal',
+				'NL': 'Netherlands',
+				'AN': 'Netherlands Antilles',
+				'NC': 'New Caledonia',
+				'NZ': 'New Zealand',
+				'NI': 'Nicaragua',
+				'NE': 'Niger',
+				'NG': 'Nigeria',
+				'NU': 'Niue',
+				'NF': 'Norfolk Island',
+				'MP': 'Northern Mariana Islands',
+				'NO': 'Norway',
+				'OM': 'Oman',
+				'PK': 'Pakistan',
+				'PW': 'Palau',
+				'PS': 'Palestinian Territory, Occupied',
+				'PA': 'Panama',
+				'PG': 'Papua New Guinea',
+				'PY': 'Paraguay',
+				'PE': 'Peru',
+				'PH': 'Philippines',
+				'PN': 'Pitcairn',
+				'PL': 'Poland',
+				'PT': 'Portugal',
+				'PR': 'Puerto Rico',
+				'QA': 'Qatar',
+				'RE': 'Reunion',
+				'RO': 'Romania',
+				'RU': 'Russian Federation',
+				'RW': 'RWANDA',
+				'SH': 'Saint Helena',
+				'KN': 'Saint Kitts and Nevis',
+				'LC': 'Saint Lucia',
+				'PM': 'Saint Pierre and Miquelon',
+				'VC': 'Saint Vincent and the Grenadines',
+				'WS': 'Samoa',
+				'SM': 'San Marino',
+				'ST': 'Sao Tome and Principe',
+				'SA': 'Saudi Arabia',
+				'SN': 'Senegal',
+				'CS': 'Serbia and Montenegro',
+				'SC': 'Seychelles',
+				'SL': 'Sierra Leone',
+				'SG': 'Singapore',
+				'SK': 'Slovakia',
+				'SI': 'Slovenia',
+				'SB': 'Solomon Islands',
+				'SO': 'Somalia',
+				'ZA': 'South Africa',
+				'GS': 'South Georgia and the South Sandwich Islands',
+				'ES': 'Spain',
+				'LK': 'Sri Lanka',
+				'SD': 'Sudan',
+				'SR': 'Suriname',
+				'SJ': 'Svalbard and Jan Mayen',
+				'SZ': 'Swaziland',
+				'SE': 'Sweden',
+				'CH': 'Switzerland',
+				'SY': 'Syrian Arab Republic',
+				'TW': 'Taiwan, Province of China',
+				'TJ': 'Tajikistan',
+				'TZ': 'Tanzania, United Republic of',
+				'TH': 'Thailand',
+				'TL': 'Timor-Leste',
+				'TG': 'Togo',
+				'TK': 'Tokelau',
+				'TO': 'Tonga',
+				'TT': 'Trinidad and Tobago',
+				'TN': 'Tunisia',
+				'TR': 'Turkey',
+				'TM': 'Turkmenistan',
+				'TC': 'Turks and Caicos Islands',
+				'TV': 'Tuvalu',
+				'UG': 'Uganda',
+				'UA': 'Ukraine',
+				'AE': 'United Arab Emirates',
+				'GB': 'United Kingdom',
+				'US': 'United States',
+				'UM': 'United States Minor Outlying Islands',
+				'UY': 'Uruguay',
+				'UZ': 'Uzbekistan',
+				'VU': 'Vanuatu',
+				'VE': 'Venezuela',
+				'VN': 'Viet Nam',
+				'VG': 'Virgin Islands, British',
+				'VI': 'Virgin Islands, U.S.',
+				'WF': 'Wallis and Futuna',
+				'EH': 'Western Sahara',
+				'YE': 'Yemen',
+				'ZM': 'Zambia',
+				'ZW': 'Zimbabwe'
+			};
+
+			function addCommasBetween( city, state, country )
+			{
+				let sLocation = '';
+				if( city )
+				{
+					sLocation += city;
+				}
+				if( state )
+				{
+					if( sLocation.length > 0 )
+					{
+						sLocation += ', ';
+					}
+					sLocation += oStates [ state ] || state;
+				}
+				if( country )
+				{
+					if( sLocation.length > 0 )
+					{
+						sLocation += ', ';
+					}
+					sLocation += country;
+				}
+				return sLocation;
 			}
 
 			function getRelativeTime( date )
@@ -982,41 +3259,41 @@ ${ person[ "Mobile phone" ] ? `
 				const startDate = new Date( date );
 				const ago = ( new Date() - startDate ) / 2629800000; // 2629800000 ms in a month
 				let yearsAgo = ago / 12;  // 2629800000 ms in a month
-				let sYearsAgo = "";
+				let sYearsAgo = '';
 
 				if( yearsAgo >= 1 )
 				{
-					sYearsAgo = Math.floor( yearsAgo ) + " Year";
-					if( sYearsAgo !== "1 Year" )
+					sYearsAgo = Math.floor( yearsAgo ) + ' Year';
+					if( sYearsAgo !== '1 Year' )
 					{
-						sYearsAgo += "s";
+						sYearsAgo += 's';
 					}
-					let monthsAgo = Math.floor( ( ago % 12 ) ) + " month";  // 2880000ms in a month
-					if( monthsAgo !== "1 month" )
+					let monthsAgo = Math.floor( ( ago % 12 ) ) + ' month';  // 2880000ms in a month
+					if( monthsAgo !== '1 month' )
 					{
-						monthsAgo += "s";
+						monthsAgo += 's';
 					}
-					sYearsAgo += " " + monthsAgo;
+					sYearsAgo += ' ' + monthsAgo;
 				}
 				else
 				{
 					let monthsAgo = ( ago % 12 );  // 2880000ms in a month
-					let sMonthsAgo = Math.floor( monthsAgo ) + " month";  // 2880000ms in a month
+					let sMonthsAgo = Math.floor( monthsAgo ) + ' month';  // 2880000ms in a month
 					if( monthsAgo >= 1 )
 					{
-						if( sMonthsAgo !== "1 month" )
+						if( sMonthsAgo !== '1 month' )
 						{
-							sMonthsAgo += "s";
+							sMonthsAgo += 's';
 						}
 						sYearsAgo += sMonthsAgo;
 					}
 					else
 					{
 						let daysAgo = ( new Date() - startDate ) / 86400000; // / 8640000ms/day = (1000ms * 60s * 60h * 24d)
-						let sDaysAgo = Math.ceil( daysAgo ) + " day";
-						if( sDaysAgo !== "1 day" )
+						let sDaysAgo = Math.ceil( daysAgo ) + ' day';
+						if( sDaysAgo !== '1 day' )
 						{
-							sDaysAgo += "s";
+							sDaysAgo += 's';
 						}
 						sYearsAgo += sDaysAgo;
 					}
@@ -1028,142 +3305,241 @@ ${ person[ "Mobile phone" ] ? `
 
 			function hide()
 			{
-				document.getElementById( 'detailView' ).style.display = "none";
+				document.getElementById( 'detailView' ).style.display = 'none';
 			}
 
 			function showDetails( person_id )
 			{
 				let oldMaxDepth = maxDepth;
 				maxDepth = 1;
-				document.getElementById( 'detailView' ).style.display = "block";
-				document.getElementById( 'detailView' ).innerHTML = render( ORGCHART_DATA[ person_id ], personTemplate );
+				document.getElementById( 'detailView' ).style.display = 'block';
+				document.getElementById( 'detailView' ).innerHTML = render( data[ person_id ], personTemplate );
 				maxDepth = oldMaxDepth;
 			}
+
 		</script>
 		<script id="search_functions" async="async">
-			function search( sText, sType )
+			let oSearchResults = {};
+			let bUseFilteredList = false;
+			let currentFilter = '';
+			let sFirstFilter = '';
+			let sCombinedFilter = '';
+			let iFirstCount;
+			let iFirstSearchText;
+			let iFirstSearchType;
+
+			function andSearch()
 			{
+				bUseFilteredList = !bUseFilteredList;
+				if( bUseFilteredList )
+				{
+					const searchTextInputField = document.getElementById( 'searchText' );
+					searchTextInputField.value = '';
+					searchTextInputField.focus();
+					const AndSearchButton = document.getElementById( 'AndSearchButton' );
+					AndSearchButton.title = currentFilter;
+				}
+			}
+
+			function search( sText, sType, sComparison )
+			{
+				const filterIcon = 'data:image/png;base64,R0lGODlhEAAQAIABAAAAAP///yH5BAEKAAEALAAAAAAQABAAAAIkjIGpdsDPUHCwNmmv2tz1Hn0JJFIkmHFZiK3T6L7tusS1ezMFADs=';
+
 				if( sText.length === 0 )
 				{
 					return;
 				}
-				const people = ORGCHART_DATA;
-				const searchString = new RegExp( sText, "i" );
+				let people = data;
+				if( bUseFilteredList )
+				{
+					people = oSearchResults || data; //actually use the previous results as the entire dataset... unless there is none
+				}
+				const searchString = new RegExp( sText, 'i' );
 				const oMatches = {};
+				let iResultCount;
+
 				switch( sType )
 				{
-					case "name" :
-						searchName( searchString );
+					case 'any' :
+						'any';
+						iResultCount = searchByTypes( searchString, aAllSearchTypes );
 						break;
 
-					case "team" :
-						searchTeam( searchString );
+					case 'name-ish' :
+						iResultCount = searchByTypes( searchString, [ 'first', 'last', 'real', 'name' ] );
 						break;
 
-					case "title" :
-						searchJobTitle( searchString );
+					case 'team-ish' :
+						iResultCount = searchByTypes( searchString, [ 'department', 'division', 'team' ] );
+						break;
+
+					case 'location-ish' :
+						iResultCount = searchByTypes( searchString, [ 'city', 'state', 'stateName', 'stateCode', 'country', 'countryName', 'countryCode', 'office', 'location' ] );
+						break;
+
+					case 'country-ish' :
+						iResultCount = searchByTypes( searchString, [ 'countryName', 'countryCode', 'country' ] );
+						break;
+
+					case 'state-ish' :
+						iResultCount = searchByTypes( searchString, [ 'stateName', 'stateCode', 'state' ] );
+						break;
+
+					default :
+						iResultCount = searchByTypes( searchString, [ sType ] );
 						break;
 				}
+
+				const AndSearchButton = document.getElementById( 'AndSearchButton' );
+
+				if( iResultCount > 1 )
+				{
+					sCombinedFilter = iResultCount;
+					AndSearchButton.innerHTML = `<img src="${ filterIcon }" alt="filter" height="16" style="margin:-3px;padding:0;" /> ${ sCombinedFilter }`;
+					AndSearchButton.style.visibility = 'visible';
+					if( !bUseFilteredList )
+					{
+						iFirstCount = iResultCount;
+						iFirstSearchType = sType;
+						iFirstSearchText = sText;
+						sFirstFilter = `Searching through ${ iFirstCount } people \nthat first matched ${ iFirstSearchType } = ${ iFirstSearchText }`;
+						currentFilter = sFirstFilter;
+					}
+
+					let aObjectsMatchingText = objectToArray( oMatches );
+					const aTypeMatches = aObjectsMatchingText.map( id => data[ id ][ sType ] );
+
+					let oDomainInfo = { total: 0 };
+					if( sType === 'domain' )
+					{
+						for( let x in aTypeMatches )
+						{
+							oDomainInfo.total++;
+							const sDomain = aTypeMatches[ x ];
+							if( !oDomainInfo[ sDomain ] )
+							{
+								oDomainInfo[ sDomain ] = 0;
+							}
+							oDomainInfo[ sDomain ] = oDomainInfo[ sDomain ] + 1;
+						}
+					}
+					let aUniqueMatches = [ ...new Set( aTypeMatches ) ];
+
+					aUniqueMatches.forEach( function( item )
+					{
+						const option = document.createElement( 'option' );
+						option.value = item;
+						option.text = item;
+						if( option.value !== undefined && option.value !== 'undefined' )
+						{
+							//list.appendChild( option );
+						}
+					} );
+
+					function objectToArray( oObject )
+					{
+						const aArray = [];
+						const aKeys = Object.keys( oObject );
+						aKeys.forEach( function( item )
+						{
+							aArray.push( item );
+						} );
+						return aArray;
+					}
+				}
+				else
+				{
+					bUseFilteredList = false;
+					AndSearchButton.style.visibility = 'hidden';
+				}
+
+				if( bUseFilteredList )
+				{
+					currentFilter = `Searching through ${ iFirstCount } people \nthat first matched ${ iFirstSearchType } = ${ iFirstSearchText } \nand now also match ${ sType } = ${ sText }`;
+					AndSearchButton.title = currentFilter;
+					AndSearchButton.innerHTML = `<img src="${ filterIcon }" alt="filter" height="16" style="margin:-3px;padding:0;" /> ${ iResultCount }/${ iFirstCount }`;
+					AndSearchButton.style.visibility = 'visible';
+				}
+
 				showResults();
 
 				function showResults()
 				{
-					document.getElementById( "searchResults" ).innerHTML = "";
+					if( !bUseFilteredList )
+					{
+						oSearchResults = oMatches;
+					}
+					const iMaxNumberOfResultsToDisplay = 20;
+					let iDisplayedResults = 0;
+					document.getElementById( 'searchResults' ).innerHTML = '';
 					for( let person in oMatches )
 					{
-						document.getElementById( "searchResults" ).innerHTML += render( oMatches [ person ], searchResultTemplate );
+						if( iDisplayedResults < iMaxNumberOfResultsToDisplay )
+						{
+							document.getElementById( 'searchResults' ).innerHTML += render( oMatches [ person ], searchResultTemplate );
+							iDisplayedResults++;
+						}
+						else
+						{
+							break;
+						}
 					}
 				}
 
-				function searchTeam( searchString )
+				function searchByTypes( searchString, aTypes )
 				{
 					let iMatches = 0;
 					for( const person_id in people )
 					{
 						const person = people[ person_id ];
-						if( searchString.test( person[ "Department" ] ) || searchString.test( person[ "Division" ] ) || searchString.test( person[ "Teams" ] ) )
+						let bMatchesString = false;
+						let sType = 'location';
+						for( sType of aTypes ) // do NOT use 'let' here!!!
 						{
-							if( iMatches < 20 )
+							if( searchString.test( person[ sType ] ) )
 							{
-								iMatches++;
-								oMatches[ person_id ] = person;
+								bMatchesString = true;
+								break; // stop on the first type that matches (types should be passed in priority order)
 							}
-							else
-							{
-								break;
-							}
+						}
+
+						if( bMatchesString && sComparison === 'contains' )
+						{
+							iMatches++;
+							oMatches[ person_id ] = person;
+							hiliteMatchingText( person, sType );
+						}
+						else if( !bMatchesString && sComparison !== 'contains' )
+						{
+							iMatches++;
+							oMatches[ person_id ] = person;
+							hiliteMatchingText( person, sType );
 						}
 					}
 					return iMatches;
 				}
 
-				function searchJobTitle()
+				function hiliteMatchingText( person, sProperty )
 				{
-					let iMatches = 0;
-					for( const person_id in people )
+					person.lastMatchedField = sProperty;
+					if( person[ sProperty ] )
 					{
-						const person = people[ person_id ];
-						if( searchString.test( person[ "Job Title" ] ) )
+						const oMatch = searchString.exec( person[ sProperty ] );
+						if( oMatch )
 						{
-							if( iMatches < 20 )
-							{
-								iMatches++;
-								oMatches[ person_id ] = person;
-							}
-							else
-							{
-								break;
-							}
+							const sMatchingPart = oMatch[ 0 ];
+							const sHighlightedText = ( person[ sProperty ] + '' ).replace( sMatchingPart, `<strong class="matchingPart">${ sMatchingPart }</strong>` );
+							person.lastMatch = '<strong>' + capitalizeFirstLetter( sProperty ) + '</strong>: ' + sHighlightedText;
+						}
+						else // it matched but didn't match??  you need unit tests to validate this condition isn't real so you can remove this!!
+						{
+							person.lastMatch = capitalizeFirstLetter( sProperty ) + ': ' + person[ sProperty ]; // don't highlight it but at least show the field that matched
 						}
 					}
-					return iMatches;
-				}
-
-				function isInList( aList )
-				{
-					let results = false;
-					if( aList )
+					else
 					{
-						for( let i = 0; aList.length > i; i++ )
-						{
-
-							const sListItem = aList[ i ];
-							if( searchString.test( sListItem ) )
-							{
-								results = true;
-								break;
-							}
-						}
+						person.lastMatch = '';
 					}
-					return results;
-				}
-
-				function searchName()
-				{
-					let iMatches = 0;
-					for( const person_id in people )
-					{
-						const person = people[ person_id ];
-						if( searchString.test( person[ "First name" ] ) ||
-							searchString.test( person[ "Preferred first name" ] ) ||
-							searchString.test( person[ "Last name" ] ) ||
-							searchString.test( person[ "id" ] ) ||
-							searchString.test( ( person[ "First name" ] + " " + person[ "Last name" ] ) ) ||
-							searchString.test( ( person[ "Preferred first name" ] + " " + person[ "Last name" ] ) )
-						)
-						{
-							if( iMatches < 20 )
-							{
-								iMatches++;
-								oMatches[ person_id ] = person;
-							}
-							else
-							{
-								break;
-							}
-						}
-					}
-					return iMatches;
 				}
 			}
 
@@ -1180,7 +3556,7 @@ ${ person[ "Mobile phone" ] ? `
 
 			function previewPerson( person_id )
 			{
-				const person = ORGCHART_DATA[ person_id ];
+				const person = data[ person_id ];
 				if( person )
 				{
 					initializeLevels( person );
@@ -1196,64 +3572,239 @@ ${ person[ "Mobile phone" ] ? `
 
 			function hideSearchResults()
 			{
+				logMe( arguments );
 				document.getElementById( 'searchResults' ).style.display = 'none';
-				const newHash = "person=" + lastUnsavedId;
-				if( newHash && newHash !== "person=null" && ( "#" + newHash ) !== ( document.location.hash ) )
+				const newHash = 'person=' + lastIdNotAdded;
+				if( newHash && newHash !== 'person=null' && ( '#' + newHash ) !== ( document.location.hash ) )
 				{
-					lastHash = "#" + newHash;
+					lastHash = '#' + newHash;
 					document.location.hash = newHash;
 				}
 				setTimeout( function()
-							{
-								document.getElementById( 'searchResults' ).style.display = 'none';
-							}, 10 );  // does this need to be async?
+				{
+					document.getElementById( 'searchResults' ).style.display = 'none';
+				}, 10 );  // does this need to be async?
 			}
 		</script>
+		<script id="ux_config_save_and_load_settings" async="async">
+			let isFramed = true;
+
+			function loadSettings()
+			{
+				me = getCookie( 'me' ) || '';
+				notes = getCookie( 'notes' ) || '';
+				document.getElementById( 'me' ).value = me;
+				document.getElementById( 'notes' ).value = notes;
+				document.getElementById( 'meetingLink' ).value = meetingLink;
+			}
+
+			function saveSettings()
+			{
+
+				me = document.getElementById( 'me' ).value;
+				notes = document.getElementById( 'notes' ).value;
+				meetingLink = document.getElementById( 'meetingLink' ).value;
+
+				setCookie( 'me', me );
+				setCookie( 'notes', notes );
+				setCookie( 'meetingLink', meetingLink );
+			}
+
+			function showMe( oContainer )
+			{
+				if( event.altKey )
+				{
+					if( oContainer.style.visibility === 'hidden' )
+					{
+						oContainer.style.visibility = 'visible';
+					}
+					else
+					{
+						oContainer.style.visibility = 'hidden';
+					}
+				}
+			}
+
+			function openHelp()
+			{
+				window.open( '/config/help.html' );
+			}
+
+		</script>
+		<script id="UNUSED_currently_not_used_but_probably_will_again" async="async">
+			function htmlEscape( sUnsafeText )
+			{
+				//return sUnsafeText.replace( '&', '' ).replace( '<', '' ).replace( '>', '' ).replace( '"', '' ).replace( '\'', '' );
+				return sUnsafeText.replace( '&', '&amp;' ).replace( '<', '&lt;' ).replace( '>', '&gt;' ).replace( '"', '&quot;' ).replace( '\'', '&#x27;' );
+			}
+
+			htmlEscape( '' );
+
+			/* function get( sUrl, bAsync, fAsyncCallback )
+			 {
+			 let request = new XMLHttpRequest();
+			 let responseText = "";
+			 request.onreadystatechange = function ()
+			 {
+			 if ( this.readyState === 4 && this.status === 200 ) {
+			 if ( fAsyncCallback ) {
+			 fAsyncCallback( this.responseText );
+			 }
+			 else {
+			 responseText = JSON.parse( this.responseText );
+			 //return this.responseText;
+			 }
+			 }
+			 };
+			 request.open( "GET", sUrl, bAsync );
+			 request.send();
+			 return responseText;
+			 }
+
+			 get( "about:blank", true, () =>
+			 {
+			 } );
+			 */
+
+		</script>
+		<!-- End JAVASCRIPT Section -->
 	</head>
 
-	<body onload="init()">
+	<body onload="init();">
+		<div id="help" onclick="openHelp()">
+			<span style="font-weight: bold">?</span>
+		</div>
+		<div id="background"></div>
+		<div id="settings"
+			 style="z-index: 0; position: absolute; right: -10px; top:0; height: 15em;width: 30em; cursor: crosshair;"
+			 onclick="showMe( this.children[0] )">
+			<div style="visibility: hidden; background-color: white;">
+				<label>Force Refresh:
+					<input type="checkbox" id="forceRefresh"/>
+				</label>
+				<br/>
+				<label>Me:
+					<input type="text" id="me" value="quincy.acklen"/>
+				</label>
+				<br/>
+				<label>Notes:
+					<input type="text" id="notes" size="50"
+						   value="/config/notes.html"/>
+				</label>
+				<br/>
+				<label>Zoom:
+					<input type="text" id="meetingLink" size="50"
+						   value="Add YOUR Zoom URL to your OrgChart settings so it will appear here!"/>
+				</label>
+				<br/>
+				<button onclick="saveSettings()">
+					Save
+				</button>
+				<button onclick="loadSettings()">
+					Reload
+				</button>
+			</div>
+		</div>
 		<div id="searchArea" onclick="showSearchResults()">
-			<form name="SearchForm">
-				<label>
-					Search:
-					<input type="text" placeholder="Search" name="searchText" id="searchText"
-					       onkeyup="search( this.form.searchText.value, this.form.type.value );showSearchResults()"></label>
-				<label>For:
-					<select name="type" onchange="search( this.form.searchText.value, this.form.type.value)">
-						<option value="name" selected="selected">Name</option>
-						<option value="team">Team</option>
-						<option value="title">Job Title</option>
+			<form name="SearchForm" class="touchTargets">
+				<label aria-label="State">
+					<select name="type" id="searchType"
+							onchange="search( this.form.searchText.value, this.form.type.value, this.form.comparison.value )">
+						<optgroup label="Multi-field Search">
+							<option value="any" selected="selected">Person</option>
+							<option value="name-ish">Name</option>
+							<option value="team-ish">Team</option>
+							<option value="location-ish">Location</option>
+							<option value="country-ish">Country</option>
+							<option value="state-ish">State</option>
+						</optgroup>
+						<optgroup label="Single Field Search">
+							<option value="title">Title</option>
+							<option value="name">Full Name</option>
+							<option value="first">First Name</option>
+							<option value="last">Last Name</option>
+							<option value="department">Department</option>
+							<option value="division">Division</option>
+							<option value="team">Team</option>
+							<option value="tribe">Tribe</option>
+							<option value="email">Email</option>
+							<option value="domain">Domain</option>
+							<option value="location">Location</option>
+							<option value="city">City</option>
+							<option value="state">State</option>
+							<option value="stateCode">State Code</option>
+							<option value="country">Country</option>
+							<option value="countryCode">Country Code</option>
+							<option value="office">Office</option>
+							<option value="organisation">Organization</option>
+							<option value="manager">Manager Email</option>
+							<option value="phone">Phone Number</option>
+							<option value="phrase">Phrase</option>
+							<option value="pronouns">Pronouns</option>
+							<option value="pronunciation">Pronunciation</option>
+							<option value="real">Real Name</option>
+							<option value="role">Role</option>
+							<option value="skype">Skype Number</option>
+							<option value="slack">Slack ID</option>
+						</optgroup>
+						<optgroup label="Deprecated">
+							<option value="homepage">Homepage</option>
+							<option value="original_image">Original Image URL</option>
+							<option value="image">Slack Image URL</option>
+							<option value="start">Start Date</option>
+							<option value="locale">Locale</option>
+							<option value="tz_label">Time Zone Label</option>
+							<option value="offset">Time Zone Offset</option>
+							<option value="tz_region">Time Zone Region</option>
+						</optgroup>
 					</select>
 				</label>
-				<button onclick="search(this.form.searchText.value, this.form.type.value); showSearchResults();return false;">
-					Search
-				</button>
+				<select id="comparison" name="comparison" aria-label="comparison"
+						onchange="search( this.form.searchText.value, this.form.type.value, this.form.comparison.value)">
+					<option value="contains">Contains</option>
+					<option value="invert">Is Not</option>
+				</select>
+				<br style="clear: both"/>
+				<label for="searchText">
+					<input list="searchAutoCompleteMatches" type="text" placeholder="Search" name="searchText"
+						   id="searchText"
+						   title="This is a case insensitive regular expression search!"
+						   onkeyup="search( this.form.searchText.value, this.form.type.value, this.form.comparison.value );showSearchResults()">
+					<datalist id="searchAutoCompleteMatches"></datalist>
+				</label>
+
+				<button id="AndSearchButton" onclick="andSearch(); return false;" style="visibility: hidden"></button>
 				<div id="searchResults">
 					<div></div>
 				</div>
 			</form>
 		</div>
-
 		<div id="orgChartView" onclick="hideSearchResults(); showSearch()">
 			<div class="orgChartViewContainer">
 				<div id="detailView"></div>
 			</div>
 			<ol class="organizational-chart">
 				<li>
-					<div id="UpToManager"></div>
+					<div id="UpToManager" ondblclick="return false;"></div>
 					<ol class="organizational-chart" id="root">
+
 						<li>
 							<div>
-								<h1>Org Chart</h1>
+								<h1>Fake Company!</h1>
 							</div>
 						</li>
 					</ol>
 				</li>
 			</ol>
 		</div>
-		<citation>Photos by: <a href="https://generated.photos">Generated Photos</a></citation>
-		<!--<script id="The_symlinked_data_to_make_it_all_work" src="link_to_data.txt.js"></script>-->
-		<script id="data_to_make_it_all_work" src="data.js" async="async" defer="defer"></script>
-		<img id="visitor" src="photos/_default_.webp" style="display: none;" alt=""/>
+		<div id="NOT_UnusedSelectors" style="display: none;">
+			<div class="manager_undefined"></div>
+			<div class="manager_false"></div>
+			<div class="manager_true"></div>
+			<div class="manager_null"></div>
+			<ol class="level_3"></ol>
+			<ol class="level_4"></ol>
+			<ol class="level_5"></ol>
+		</div>
 	</body>
 </html>
