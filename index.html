@@ -2221,7 +2221,7 @@
 					const person = data[ chump ];
 					person.name = person[ 'First name' ] + ' ' + person[ 'Last name' ];
 					person.manager = person[ 'Reports To ID' ];
-					person.image = 'photos/' + person.id + '.webp';
+					person.image = getPhotoUrl( person.id );
 
 					person.first = person[ 'First name' ];
 					person.last = person[ 'Last name' ];
@@ -2553,7 +2553,7 @@ ${ person.email ? `
 								 contractor_${ isContractor( person.id ) }
 								 suppressPointerEvents nestedPersonDiv">
 
-								<img src="${ getPhotoUrl( person.id, 'thumbnail' ) }"
+								<img src="${ getPhotoUrl( person.id, '50x50' ) }"
 									 alt="Small photograph"
 									 class="smallPhoto"
 									 height="50" width="50" />
@@ -2587,7 +2587,7 @@ ${ person.email ? `
 								 class="nestedSearchDiv manager_${ person.directs && person.directs.length > 0 } suppressPointerEvents"
 								 onclick="hideSearchResults();">
 
-								<img src="${ getPhotoUrl( person.id, 'thumbnail' ) }"
+								<img src="${ getPhotoUrl( person.id, '50x50' ) }"
 									 alt="Small photograph of this person"
 									 class="smallPhoto"
 									 height="48" width="48"
@@ -2871,12 +2871,10 @@ ${ person.email ? `
 				}
 			}
 
-			function getPhotoUrl( person_id )
+			function getPhotoUrl( person_id, sSize )
 			{
-				const person = data[ person_id ];
-
-				return person.image;//?.replace( "192", "48" );
-				//			const sUrl = "./photos/" + person_id  + ".png";
+				const sSizeDirectory = sSize ? ( "./photos/" + sSize + "/" ) : "./photos/";
+				return sSizeDirectory + person_id  + ".webp";
 			}
 
 			function isContractor( person_id )
