@@ -3328,6 +3328,13 @@ ${ person.email ? `
 				}
 			}
 
+			function clearFilter()
+			{
+				bUseFilteredList = false;
+				const AndSearchButton = document.getElementById( 'AndSearchButton' );
+				AndSearchButton.style.visibility = 'hidden';
+			}
+
 			function search( sText, sType, sComparison )
 			{
 				const filterIcon = 'data:image/png;base64,R0lGODlhEAAQAIABAAAAAP///yH5BAEKAAEALAAAAAAQABAAAAIkjIGpdsDPUHCwNmmv2tz1Hn0JJFIkmHFZiK3T6L7tusS1ezMFADs=';
@@ -3379,7 +3386,7 @@ ${ person.email ? `
 
 				const AndSearchButton = document.getElementById( 'AndSearchButton' );
 
-				if( iResultCount > 1 )
+				if( iResultCount >= 1 )
 				{
 					sCombinedFilter = iResultCount;
 					AndSearchButton.innerHTML = `<img src="${ filterIcon }" alt="filter" height="16" style="margin:-3px;padding:0;" /> ${ sCombinedFilter }`;
@@ -3434,11 +3441,6 @@ ${ person.email ? `
 						return aArray;
 					}
 				}
-				else
-				{
-					bUseFilteredList = false;
-					AndSearchButton.style.visibility = 'hidden';
-				}
 
 				if( bUseFilteredList )
 				{
@@ -3456,7 +3458,7 @@ ${ person.email ? `
 					{
 						oSearchResults = oMatches;
 					}
-					const iMaxNumberOfResultsToDisplay = 20;
+					const iMaxNumberOfResultsToDisplay = 40;
 					let iDisplayedResults = 0;
 					document.getElementById( 'searchResults' ).innerHTML = '';
 					for( let person in oMatches )
@@ -3480,7 +3482,7 @@ ${ person.email ? `
 					{
 						const person = people[ person_id ];
 						let bMatchesString = false;
-						let sType = 'location';
+						let sType;
 						for( sType of aTypes ) // do NOT use 'let' here!!!
 						{
 							if( searchString.test( person[ sType ] ) )
@@ -3570,6 +3572,7 @@ ${ person.email ? `
 				setTimeout( function()
 				{
 					document.getElementById( 'searchResults' ).style.display = 'none';
+					clearFilter();
 				}, 10 );  // does this need to be async?
 			}
 		</script>
