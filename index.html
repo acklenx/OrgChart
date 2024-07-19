@@ -179,6 +179,7 @@
 				font-size: 120%;
 				background-color: palegoldenrod;
 			}
+
 			span.lastMatch {
 				font-weight: normal;
 			}
@@ -626,65 +627,276 @@
 				height: 32px;
 				display: inline-block;
 			}
-			.stateFlags.undefined { background-position: 0 0; width: 61px; }
-			.stateFlags.AK { background-position: 0 -33px; width: 45px; }
-			.stateFlags.AL { background-position: 0 -66px; }
-			.stateFlags.AR { background-position: 0 -99px; }
-			.stateFlags.AZ { background-position: 0 -132px; }
-			.stateFlags.CA { background-position: 0 -165px; }
-			.stateFlags.CO { background-position: 0 -198px; }
-			.stateFlags.CT { background-position: 0 -231px; width: 41px; }
-			.stateFlags.DE { background-position: 0 -264px; }
-			.stateFlags.FL { background-position: 0 -297px; }
-			.stateFlags.GA { background-position: 0 -330px; width: 51px; }
-			.stateFlags.HI { background-position: 0 -363px; width: 64px; }
-			.stateFlags.IA { background-position: 0 -396px; }
-			.stateFlags.ID { background-position: 0 -429px; width: 41px; }
-			.stateFlags.IL { background-position: 0 -462px; width: 53px; }
-			.stateFlags.IN { background-position: 0 -495px; }
-			.stateFlags.KS { background-position: 0 -528px; width: 53px; }
-			.stateFlags.KY { background-position: 0 -561px; width: 61px; }
-			.stateFlags.LA { background-position: 0 -594px; width: 49px; }
-			.stateFlags.MA { background-position: 0 -627px; width: 53px; }
-			.stateFlags.MD { background-position: 0 -660px; }
-			.stateFlags.ME { background-position: 0 -693px; width: 41px; }
-			.stateFlags.MI { background-position: 0 -726px; }
-			.stateFlags.MN { background-position: 0 -759px; width: 53px; }
-			.stateFlags.MO { background-position: 0 -792px; width: 55px; }
-			.stateFlags.MS { background-position: 0 -825px; width: 53px; }
-			.stateFlags.MT { background-position: 0 -858px; }
-			.stateFlags.NC { background-position: 0 -891px; }
-			.stateFlags.ND { background-position: 0 -924px; width: 41px; }
-			.stateFlags.NE { background-position: 0 -957px; width: 53px; }
-			.stateFlags.NH { background-position: 0 -990px; }
-			.stateFlags.NJ { background-position: 0 -1023px; width: 53px; }
-			.stateFlags.NM { background-position: 0 -1056px; }
-			.stateFlags.NV { background-position: 0 -1089px; }
-			.stateFlags.NY { background-position: 0 -1122px; width: 64px; }
-			.stateFlags.OH { background-position: 0 -1155px; width: 52px; }
-			.stateFlags.OK { background-position: 0 -1188px; }
-			.stateFlags.OR { background-position: 0 -1221px; }
-			.stateFlags.PA { background-position: 0 -1254px; width: 44px; }
-			.stateFlags.RI { background-position: 0 -1287px; width: 36px; }
-			.stateFlags.SC { background-position: 0 -1320px; }
-			.stateFlags.SD { background-position: 0 -1353px; width: 51px; }
-			.stateFlags.TN { background-position: 0 -1386px; width: 53px; }
-			.stateFlags.TX { background-position: 0 -1419px; }
-			.stateFlags.UT { background-position: 0 -1452px; width: 53px; }
-			.stateFlags.VI { background-position: 0 -1485px; }
-			.stateFlags.VT { background-position: 0 -1518px; width: 53px; }
-			.stateFlags.WA { background-position: 0 -1551px; width: 54px; }
-			.stateFlags.WI { background-position: 0 -1584px; }
-			.stateFlags.WV { background-position: 0 -1617px; width: 61px; }
-			.stateFlags.WY { background-position: 0 -1650px; width: 46px; }
-			.stateFlags.UM71 { background-position: 0 -1683px; width: 53px; }
-			.stateFlags.UM79 { background-position: 0 -1716px; }
-			.stateFlags.AS { background-position: 0 -1749px; width: 64px; }
-			.stateFlags.DC { background-position: 0 -1782px; width: 64px; }
-			.stateFlags.GU { background-position: 0 -1815px; width: 60px; }
-			.stateFlags.MP { background-position: 0 -1848px; width: 64px; }
-			.stateFlags.PR { background-position: 0 -1881px; }
-			.stateFlags.VI { background-position: 0 -1914px; }
+
+			.stateFlags.undefined {
+				background-position: 0 0;
+				width: 61px;
+			}
+
+			.stateFlags.AK {
+				background-position: 0 -33px;
+				width: 45px;
+			}
+
+			.stateFlags.AL {
+				background-position: 0 -66px;
+			}
+
+			.stateFlags.AR {
+				background-position: 0 -99px;
+			}
+
+			.stateFlags.AZ {
+				background-position: 0 -132px;
+			}
+
+			.stateFlags.CA {
+				background-position: 0 -165px;
+			}
+
+			.stateFlags.CO {
+				background-position: 0 -198px;
+			}
+
+			.stateFlags.CT {
+				background-position: 0 -231px;
+				width: 41px;
+			}
+
+			.stateFlags.DE {
+				background-position: 0 -264px;
+			}
+
+			.stateFlags.FL {
+				background-position: 0 -297px;
+			}
+
+			.stateFlags.GA {
+				background-position: 0 -330px;
+				width: 51px;
+			}
+
+			.stateFlags.HI {
+				background-position: 0 -363px;
+				width: 64px;
+			}
+
+			.stateFlags.IA {
+				background-position: 0 -396px;
+			}
+
+			.stateFlags.ID {
+				background-position: 0 -429px;
+				width: 41px;
+			}
+
+			.stateFlags.IL {
+				background-position: 0 -462px;
+				width: 53px;
+			}
+
+			.stateFlags.IN {
+				background-position: 0 -495px;
+			}
+
+			.stateFlags.KS {
+				background-position: 0 -528px;
+				width: 53px;
+			}
+
+			.stateFlags.KY {
+				background-position: 0 -561px;
+				width: 61px;
+			}
+
+			.stateFlags.LA {
+				background-position: 0 -594px;
+				width: 49px;
+			}
+
+			.stateFlags.MA {
+				background-position: 0 -627px;
+				width: 53px;
+			}
+
+			.stateFlags.MD {
+				background-position: 0 -660px;
+			}
+
+			.stateFlags.ME {
+				background-position: 0 -693px;
+				width: 41px;
+			}
+
+			.stateFlags.MI {
+				background-position: 0 -726px;
+			}
+
+			.stateFlags.MN {
+				background-position: 0 -759px;
+				width: 53px;
+			}
+
+			.stateFlags.MO {
+				background-position: 0 -792px;
+				width: 55px;
+			}
+
+			.stateFlags.MS {
+				background-position: 0 -825px;
+				width: 53px;
+			}
+
+			.stateFlags.MT {
+				background-position: 0 -858px;
+			}
+
+			.stateFlags.NC {
+				background-position: 0 -891px;
+			}
+
+			.stateFlags.ND {
+				background-position: 0 -924px;
+				width: 41px;
+			}
+
+			.stateFlags.NE {
+				background-position: 0 -957px;
+				width: 53px;
+			}
+
+			.stateFlags.NH {
+				background-position: 0 -990px;
+			}
+
+			.stateFlags.NJ {
+				background-position: 0 -1023px;
+				width: 53px;
+			}
+
+			.stateFlags.NM {
+				background-position: 0 -1056px;
+			}
+
+			.stateFlags.NV {
+				background-position: 0 -1089px;
+			}
+
+			.stateFlags.NY {
+				background-position: 0 -1122px;
+				width: 64px;
+			}
+
+			.stateFlags.OH {
+				background-position: 0 -1155px;
+				width: 52px;
+			}
+
+			.stateFlags.OK {
+				background-position: 0 -1188px;
+			}
+
+			.stateFlags.OR {
+				background-position: 0 -1221px;
+			}
+
+			.stateFlags.PA {
+				background-position: 0 -1254px;
+				width: 44px;
+			}
+
+			.stateFlags.RI {
+				background-position: 0 -1287px;
+				width: 36px;
+			}
+
+			.stateFlags.SC {
+				background-position: 0 -1320px;
+			}
+
+			.stateFlags.SD {
+				background-position: 0 -1353px;
+				width: 51px;
+			}
+
+			.stateFlags.TN {
+				background-position: 0 -1386px;
+				width: 53px;
+			}
+
+			.stateFlags.TX {
+				background-position: 0 -1419px;
+			}
+
+			.stateFlags.UT {
+				background-position: 0 -1452px;
+				width: 53px;
+			}
+
+			.stateFlags.VI {
+				background-position: 0 -1485px;
+			}
+
+			.stateFlags.VT {
+				background-position: 0 -1518px;
+				width: 53px;
+			}
+
+			.stateFlags.WA {
+				background-position: 0 -1551px;
+				width: 54px;
+			}
+
+			.stateFlags.WI {
+				background-position: 0 -1584px;
+			}
+
+			.stateFlags.WV {
+				background-position: 0 -1617px;
+				width: 61px;
+			}
+
+			.stateFlags.WY {
+				background-position: 0 -1650px;
+				width: 46px;
+			}
+
+			.stateFlags.UM71 {
+				background-position: 0 -1683px;
+				width: 53px;
+			}
+
+			.stateFlags.UM79 {
+				background-position: 0 -1716px;
+			}
+
+			.stateFlags.AS {
+				background-position: 0 -1749px;
+				width: 64px;
+			}
+
+			.stateFlags.DC {
+				background-position: 0 -1782px;
+				width: 64px;
+			}
+
+			.stateFlags.GU {
+				background-position: 0 -1815px;
+				width: 60px;
+			}
+
+			.stateFlags.MP {
+				background-position: 0 -1848px;
+				width: 64px;
+			}
+
+			.stateFlags.PR {
+				background-position: 0 -1881px;
+			}
+
+			.stateFlags.VI {
+				background-position: 0 -1914px;
+			}
 		</style>
 		<style id="countryFlagsSprite">
 			/* <img src='data:image/gif;base64,R0lGODlhAQABAIABAAAAAP///yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='/> */
@@ -1864,9 +2076,9 @@
 				} );
 			}
 		</script>
-<!-- 		<script src="data.js"  async="async"></script> -->
-		<script src="data.min.js"  async="async"></script>
-		<script id="initialize_and_infer_team_data_from_manager"  async="async">
+		<!-- 		<script src="data.js"  async="async"></script> -->
+		<script src="data.min.js" async="async"></script>
+		<script id="initialize_and_infer_team_data_from_manager" async="async">
 			function initializeAndInferTeamDataFromManager( sPersonId, oSuppliedOrgData )
 			{
 				const oPerson = data[ sPersonId ];
@@ -1917,15 +2129,15 @@
 				}
 			}
 		</script>
-		<script id="orgChartViewInit"  async="async">
+		<script id="orgChartViewInit" async="async">
 			window.onhashchange = function()
 			{
 				const sPersonId = getStartingPersonFromUrl();
-				if(sPersonId  && sPersonId !== sCurrentPersonId)
+				if( sPersonId && sPersonId !== sCurrentPersonId )
 				{
-					loadPerson( sPersonId, false )
+					loadPerson( sPersonId, false );
 				}
-			}
+			};
 
 			let sCurrentPersonId; // you haven't loaded the default person yet!
 			const sDefaultPerson = 'quincy.acklen';
@@ -1969,7 +2181,7 @@
 				return oStartingPerson;
 			}
 		</script>
-		<script id="meeting_and_notes_link_generation"  async="async">
+		<script id="meeting_and_notes_link_generation" async="async">
 			function getLinkToNotes( person )
 			{
 				const sName = getNotesName( person );
@@ -1986,7 +2198,7 @@
 				return `${ sMeetingUrl }startdt=${ sStartTime }&enddt=${ sEndTime }&ctz=(GMT${ person.offset / 3600 }) ${ person.tz_region }&to=${ person.email }&location=${ sMeetingLink }&subject=Let's meet!&body=${ sBody }`;
 			}
 		</script>
-		<script id="MAIN_script"  async="async">
+		<script id="MAIN_script" async="async">
 			let iMaxDepth = 3; // todo: fix this. "maxDepth" controls the data retrieval and recursion NOT the display. CSS likely prevents a 4 from not displaying, but processing occurs down to the level specified here!
 			let sMe = getCookie( 'me' ) || '';
 			let sNotes = getCookie( 'notes' ) || '/config/notes.html';
@@ -2041,7 +2253,6 @@
 				}
 				return 'GA';
 			}
-
 
 			function init()
 			{
@@ -2138,9 +2349,9 @@
 				}
 			}
 		</script>
-		<script id="TEMPLATE_up"  async="async">
+		<script id="TEMPLATE_up" async="async">
 			const upTemplate = ( person ) => htmlTemplate`<div class="manager" onclick="makeRoot( '${ person.manager }' )" ondblclick="event.preventDefault();return false;">${ getFullName( person.manager ) }</div>`;
-		</script >
+		</script>
 		<script id="TEMPLATE_ish_reusableSimpleDataFunction" async="async">
 			function simpleData( oPerson, sProperty )
 			{
@@ -2345,6 +2556,7 @@ ${ person.email ? `
 							${ person.directs && person.level < iMaxDepth ? `<ol class="level_${ person.level }"> ${ render( person.directs.map( person_id => data[ person_id ] ), nestedPersonTemplate ) } </ol>` : '' }
 						</li>
 					`;
+
 			function getTeam( oPerson )
 			{
 				let sTeam = '';
@@ -2377,7 +2589,7 @@ ${ person.email ? `
 							</div>
 					`;
 		</script>
-		<script id="ux_config_spreadDirects"  async="async">
+		<script id="ux_config_spreadDirects" async="async">
 			function spreadDirects( aDirects )
 			{
 				const aSpreadDirects = [];
@@ -2585,7 +2797,6 @@ ${ person.email ? `
 			}
 
 			// noinspection SpellCheckingInspection
-
 			function fixThirdParty( oThirdParty )
 			{
 				// noinspection SpellCheckingInspection
@@ -2646,8 +2857,8 @@ ${ person.email ? `
 
 			function getPhotoUrl( sPersonId, sSize )
 			{
-				const sSizeDirectory = sSize ? ( "./photos/" + sSize + "/" ) : "./photos/";
-				return sSizeDirectory + sPersonId  + ".webp";
+				const sSizeDirectory = sSize ? ( './photos/' + sSize + '/' ) : './photos/';
+				return sSizeDirectory + sPersonId + '.webp';
 			}
 
 			function isContractor( sPersonId )
@@ -3153,7 +3364,6 @@ ${ person.email ? `
 				}
 
 				const eAndSearchButton = document.getElementById( 'AndSearchButton' );
-
 				if( iResultCount >= 1 )
 				{
 					sCombinedFilter = iResultCount;
