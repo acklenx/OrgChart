@@ -1918,66 +1918,62 @@
 			}
 		</script>
 		<script id="orgChartViewInit"  async="async">
-
 			window.onhashchange = function()
 			{
-				const person_id = getStartingPersonFromUrl();
-				if(person_id  && person_id !== sCurrentPersonId)
+				const sPersonId = getStartingPersonFromUrl();
+				if(sPersonId  && sPersonId !== sCurrentPersonId)
 				{
-					loadPerson( person_id, false )
+					loadPerson( sPersonId, false )
 				}
 			}
 
 			let sCurrentPersonId; // you haven't loaded the default person yet!
-			const defaultPerson = 'quincy.acklen';
-			let lastIdNotAdded = null;
-			let lastHash;
+			const sDefaultPerson = 'quincy.acklen';
+			let sLastIdNotAdded = null;
+			let sLastHash;
 
-			function loadPerson( person_id, removeFromHistory )
+			function loadPerson( sPersonId, bRemoveFromHistory )
 			{
 				showSearch();
 				document.getElementById( 'orgChartView' ).style.display = 'block';
-				person_id = person_id || getStartingPersonFromUrl() || defaultPerson;
-				if( !removeFromHistory )
+				sPersonId = sPersonId || getStartingPersonFromUrl() || sDefaultPerson;
+				if( !bRemoveFromHistory )
 				{
-					document.location.hash = 'person=' + person_id;
-					lastIdNotAdded = null;
-					sCurrentPersonId = person_id;
+					document.location.hash = 'person=' + sPersonId;
+					sLastIdNotAdded = null;
+					sCurrentPersonId = sPersonId;
 				}
 				else
 				{
-					lastIdNotAdded = person_id;
+					sLastIdNotAdded = sPersonId;
 				}
-				document.title = 'OrgChart:' + getFullName( person_id );
-				document.getElementById( 'root' ).innerHTML = personTemplate( data[ person_id ] );
-				document.getElementById( 'UpToManager' ).innerHTML = render( data[ person_id ], upTemplate );
-				lastHash = document.location.hash;
+				document.title = 'OrgChart:' + getFullName( sPersonId );
+				document.getElementById( 'root' ).innerHTML = personTemplate( data[ sPersonId ] );
+				document.getElementById( 'UpToManager' ).innerHTML = render( data[ sPersonId ], upTemplate );
+				sLastHash = document.location.hash;
 			}
 
 			function getStartingPersonFromUrl()
 			{
-				let startingPerson = null;
+				let oStartingPerson = null;
 				let sUrl = document.location.hash;
-				let person_id = sUrl.match( /person=([^&]*)/gi );
-				if( person_id && person_id [ 0 ] )
+				let sPersonId = sUrl.match( /person=([^&]*)/gi );
+				if( sPersonId && sPersonId [ 0 ] )
 				{
-					person_id = person_id[ 0 ].replace( 'person=', '' );
-					if( data[ person_id ] )
+					sPersonId = sPersonId[ 0 ].replace( 'person=', '' );
+					if( data[ sPersonId ] )
 					{
-						startingPerson = person_id;
+						oStartingPerson = sPersonId;
 					}
 				}
-				return startingPerson;
+				return oStartingPerson;
 			}
-
-
 		</script>
 		<script id="meeting_and_notes_link_generation"  async="async">
-
 			function getLinkToNotes( person )
 			{
 				const sName = getNotesName( person );
-				return `<span class="link" onclick="window.open( ${ notes + '#' + sName } )">Notes</span>`;
+				return `<span class="link" onclick="window.open( ${ sNotes + '#' + sName } )">Notes</span>`;
 			}
 
 			function getMeetingLink( person )
@@ -1987,15 +1983,14 @@
 				const sBody = `Hello ${ person.name.split( ' ' )[ 0 ] }, I set up some time for us to talk.  Please let me know if this time doesn't work for you.
 				P.S. I was able to add this meeting directly from the OrgChart - it's awesome!  You should check it out: /config/meetings.html`;
 				const sMeetingUrl = 'https://outlook.office.com/calendar/0/deeplink/compose?rru=addevent&path=/calendar/action/compose&';
-				return `${ sMeetingUrl }startdt=${ sStartTime }&enddt=${ sEndTime }&ctz=(GMT${ person.offset / 3600 }) ${ person.tz_region }&to=${ person.email }&location=${ meetingLink }&subject=Let's meet!&body=${ sBody }`;
+				return `${ sMeetingUrl }startdt=${ sStartTime }&enddt=${ sEndTime }&ctz=(GMT${ person.offset / 3600 }) ${ person.tz_region }&to=${ person.email }&location=${ sMeetingLink }&subject=Let's meet!&body=${ sBody }`;
 			}
 		</script>
 		<script id="MAIN_script"  async="async">
-
-			let maxDepth = 3; // todo: fix this. "maxDepth" controls the data retrieval and recursion NOT the display. CSS likely prevents a 4 from not displaying, but processing occurs down to the level specified here!
-			let me = getCookie( 'me' ) || '';
-			let notes = getCookie( 'notes' ) || '/config/notes.html';
-			let meetingLink = getCookie( 'meetingLink' ) || 'Add YOUR Zoom URL to your OrgChart settings so it will appear here!';
+			let iMaxDepth = 3; // todo: fix this. "maxDepth" controls the data retrieval and recursion NOT the display. CSS likely prevents a 4 from not displaying, but processing occurs down to the level specified here!
+			let sMe = getCookie( 'me' ) || '';
+			let sNotes = getCookie( 'notes' ) || '/config/notes.html';
+			let sMeetingLink = getCookie( 'meetingLink' ) || 'Add YOUR Zoom URL to your OrgChart settings so it will appear here!';
 			let aAllSearchTypes;
 
 			function mapData( data )
@@ -2006,7 +2001,6 @@
 					person.name = person[ 'First name' ] + ' ' + person[ 'Last name' ];
 					person.manager = person[ 'Reports To ID' ];
 					person.image = getPhotoUrl( person.id );
-
 					person.first = person[ 'First name' ];
 					person.last = person[ 'Last name' ];
 					person.title = person[ 'Job Title' ];
@@ -2058,7 +2052,7 @@
 				const oStyle = getComputedStyle( document.getElementById( 'UpToManager' ) );
 				if( oStyle.width !== '500px' )
 				{
-					maxDepth = 2;
+					iMaxDepth = 2;
 				}
 				loadPerson();
 				aAllSearchTypes = getAllSearchTypes();
@@ -2074,9 +2068,9 @@
 			function setCookie( sCookieName, sValue )
 			{
 				const iDays = 3650; // 10-ish years
-				const d = new Date();
-				d.setTime( d.getTime() + ( iDays * 24 * 60 * 60 * 1000 ) );
-				let expires = 'expires=' + d.toUTCString();
+				const oDate = new Date();
+				oDate.setTime( oDate.getTime() + ( iDays * 24 * 60 * 60 * 1000 ) );
+				let expires = 'expires=' + oDate.toUTCString();
 				document.cookie = sCookieName + '=' + sValue + ';' + expires + ';path=/';
 			}
 
@@ -2099,7 +2093,6 @@
 				}
 				return '';
 			}
-
 		</script>
 		<script id="Template_literal_functions_(the_magic)" async="async">
 			function htmlTemplate( literals, ...vars )
@@ -2122,26 +2115,26 @@
 				return result;
 			}
 
-			function render( data, template )
+			function render( vData, sTemplate )
 			{
-				if( !template )
+				if( !sTemplate )
 				{
 					return;
 				}
-				if( typeof data === 'string' )
+				if( typeof vData === 'string' )
 				{
 					// Handle primitive type:
-					return template( data );
+					return sTemplate( vData );
 				}
-				else if( typeof data === 'object' && !Array.isArray( data ) )
+				else if( typeof vData === 'object' && !Array.isArray( vData ) )
 				{
 					// Handle object:
-					return template( data );
+					return sTemplate( vData );
 				}
-				else if( Array.isArray( data ) )
+				else if( Array.isArray( vData ) )
 				{
 					// Handle array:
-					return data.map( item => template( item ) ).join( '' );
+					return vData.map( item => sTemplate( item ) ).join( '' );
 				}
 			}
 		</script>
@@ -2149,16 +2142,16 @@
 			const upTemplate = ( person ) => htmlTemplate`<div class="manager" onclick="makeRoot( '${ person.manager }' )" ondblclick="event.preventDefault();return false;">${ getFullName( person.manager ) }</div>`;
 		</script >
 		<script id="TEMPLATE_ish_reusableSimpleDataFunction" async="async">
-			function simpleData( person, sProperty )
+			function simpleData( oPerson, sProperty )
 			{
 				let oHtmlData = '';
-				if( person[ sProperty ] )
+				if( oPerson[ sProperty ] )
 				{
 					oHtmlData = `
 						<div class="item_${ sProperty }">
 							<label class="itemName">${ capitalizeFirstLetter( sProperty ) }: </label>
 							<span class="itemValue">
-								 ${ person[ sProperty ] }
+								 ${ oPerson[ sProperty ] }
 							</span>
 						</div>
 					`;
@@ -2301,7 +2294,7 @@ ${ person.start ? `
 ` : `` }
 ${ person ? `
 												<li>
-													<a target="notes" onclick="navigator.clipboard.writeText( '${ getNotesName( person ) }' );" href="${ notes + '#' + getNotesName( person ) }" >Notes</a>
+													<a target="notes" onclick="navigator.clipboard.writeText( '${ getNotesName( person ) }' );" href="${ sNotes + '#' + getNotesName( person ) }" >Notes</a>
 												</li>
 ` : `
 												<li>${ getLinkToNotes( person ) }asdasd</li>
@@ -2322,7 +2315,7 @@ ${ person.email ? `
 									</tbody>
 								</table>
 							</div>
-							${ person.directs && person.level < maxDepth ? `<ol class="level_${ person.level }"> ${ render( spreadDirects( organizeContractors( person ) ).map( person_id => data[ person_id ] ), nestedPersonTemplate ) } </ol>` : '' }
+							${ person.directs && person.level < iMaxDepth ? `<ol class="level_${ person.level }"> ${ render( spreadDirects( organizeContractors( person ) ).map( person_id => data[ person_id ] ), nestedPersonTemplate ) } </ol>` : '' }
 						</li>
 					`;
 		</script>
@@ -2345,21 +2338,20 @@ ${ person.email ? `
 								<br/>
 								<span class="jobTitle" title="${ person.indirects || '' }">${ person.title }</span>
 								<div class="Organization" title="${ person.directs?.length || 0 }/${ person.indirects || 0 }">
-                                    ${ ( person.department === 'Executive' || person.manager === defaultPerson ) ? '' : getTeam( person ) }
+                                    ${ ( person.department === 'Executive' || person.manager === sDefaultPerson ) ? '' : getTeam( person ) }
                                 </div>
 								<span class="numberOfDirects">${ person.directs?.length || '' }</span>
 							</div>
-							${ person.directs && person.level < maxDepth ? `<ol class="level_${ person.level }"> ${ render( person.directs.map( person_id => data[ person_id ] ), nestedPersonTemplate ) } </ol>` : '' }
+							${ person.directs && person.level < iMaxDepth ? `<ol class="level_${ person.level }"> ${ render( person.directs.map( person_id => data[ person_id ] ), nestedPersonTemplate ) } </ol>` : '' }
 						</li>
 					`;
-			function getTeam( person )
+			function getTeam( oPerson )
 			{
 				let sTeam = '';
-				if( person.level === 2 )
+				if( oPerson.level === 2 )
 				{
-
-					const myTeam = person.team || person.alias || person.vertical || person.domain || person.department || '';
-					sTeam = person.alias || myTeam;
+					const myTeam = oPerson.team || oPerson.alias || oPerson.vertical || oPerson.domain || oPerson.department || '';
+					sTeam = oPerson.alias || myTeam;
 				}
 				return sTeam;
 			}
@@ -2392,30 +2384,32 @@ ${ person.email ? `
 				const aReverse = aDirects.toReversed();  // toReversed is built in.  I don't know why intellij is complaining about it
 				for( let i = 0; aDirects.length > i; i += 2 )
 				{
-					const biggest = aDirects[ i ];
-					const nextBiggest = aDirects[ i + 1 ];
-					const smallest = aReverse[ i ];
-					const nextSmallest = aReverse[ i + 1 ];
-					aSpreadDirects[ i ] = biggest; // always
-					if( biggest !== smallest )
+					const sBiggest = aDirects[ i ];
+					const sNextBiggest = aDirects[ i + 1 ];
+					const sSmallest = aReverse[ i ];
+					const sNextSmallest = aReverse[ i + 1 ];
+					aSpreadDirects[ i ] = sBiggest; // always
+					if( sBiggest !== sSmallest )
 					{
-						aSpreadDirects[ i + 1 ] = smallest;
+						aSpreadDirects[ i + 1 ] = sSmallest;
 					}
 					else
 					{
 						break;
 					}
-					if( nextBiggest !== smallest )
+
+					if( sNextBiggest !== sSmallest )
 					{
-						aSpreadDirects[ aDirects.length - ( i + 1 ) ] = nextBiggest;
+						aSpreadDirects[ aDirects.length - ( i + 1 ) ] = sNextBiggest;
 					}
 					else
 					{
 						break;
 					}
-					if( nextSmallest !== nextBiggest )
+
+					if( sNextSmallest !== sNextBiggest )
 					{
-						aSpreadDirects[ aDirects.length - ( i + 2 ) ] = nextSmallest;
+						aSpreadDirects[ aDirects.length - ( i + 2 ) ] = sNextSmallest;
 					}
 					else
 					{
@@ -2427,9 +2421,9 @@ ${ person.email ? `
 		</script>
 		<script id="templateHelper_common_convenience_functions_for_data_and_navigation" async="async">
 
-			function capitalizeFirstLetter( string )
+			function capitalizeFirstLetter( sString )
 			{
-				return string[ 0 ].toUpperCase() + string.slice( 1 );
+				return sString[ 0 ].toUpperCase() + sString.slice( 1 );
 			}
 
 			function getJson( sPersonId )
@@ -2447,26 +2441,25 @@ ${ person.email ? `
 				}
 			}
 
-			function initializeLevels( person )
+			function initializeLevels( oPerson )
 			{
-				if( !person )
+				if( !oPerson )
 				{
 					return false;
 				}
-				if( !person.level )
+				if( !oPerson.level )
 				{
-					person.level = 1;
+					oPerson.level = 1;
 				}
-				if( person.directs )
+				if( oPerson.directs )
 				{
-					for( let i = 0; person.directs.length > i; i++ )
+					for( let i = 0; oPerson.directs.length > i; i++ )
 					{
-
-						const sDirectName = person.directs[ i ];
-						const directReport = data [ sDirectName ];
-						if( directReport )
+						const sDirectId = oPerson.directs[ i ];
+						const oDirectReport = data [ sDirectId ];
+						if( oDirectReport )
 						{
-							directReport.level = person.level + 1;
+							oDirectReport.level = oPerson.level + 1;
 						}
 					}
 				}
@@ -2475,12 +2468,12 @@ ${ person.email ? `
 
 			const LOG_ME = false;
 
-			function logMe( args, more )
+			function logMe( args, bVerbose )
 			{
 				if( LOG_ME === true )
 				{
 					let sMessage = args.callee.caller.name + '().' + args.callee.name + '( ' + [ ...args ] + ' )';
-					if( more )
+					if( bVerbose )
 					{
 						sMessage += '\n\n';
 						console.log( sMessage, args.callee );
@@ -2492,105 +2485,102 @@ ${ person.email ? `
 				}
 			}
 
-			function makeRoot( person_id, removeFromHistory )
+			function makeRoot( sPersonId, sRemoveFromHistory )
 			{
 				logMe( arguments );
-
-				if( person_id )
+				if( sPersonId )
 				{
-					let root = data[ person_id ];
+					let root = data[ sPersonId ];
 					if( root.level === 1 )
 					{
-						root = data[ data[ person_id ].id ];
+						root = data[ data[ sPersonId ].id ];
 						if( !root )
 						{
-							root = data[ person_id ];
+							root = data[ sPersonId ];
 						}
 					}
 					root.level = null;
-					loadPerson( person_id, removeFromHistory );
+					loadPerson( sPersonId, sRemoveFromHistory );
 					document.body.scrollTop = 0; // For Safari
 					document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 				}
 			}
 
-			function getFullName( person_id )
+			function getFullName( sPersonId )
 			{
-				const person = data[ person_id ];
-				if( !person )
+				const oPerson = data[ sPersonId ];
+				if( !oPerson )
 				{
-
 					return ''; //	unable to find person with the id undefined - this is probably the top most person in the org!
 				}
 				else
 				{
-					return person.name;
+					return oPerson.name;
 				}
 			}
 
-			function getMapLink( person )
+			function getMapLink( oPerson )
 			{
-				const mapLink = person.office || person.location.city || person.location.state || person.location.country || person.tz_region || person;
+				const mapLink = oPerson.office || oPerson.location.city || oPerson.location.state || oPerson.location.country || oPerson.tz_region || oPerson;
 				return 'https://www.google.com/maps/place/' + mapLink;
 			}
 
-			function getWikipediaLink( wikiWord )
+			function getWikipediaLink( sWikiWord )
 			{
-				return 'https://en.wikipedia.org/wiki/' + wikiWord;
+				return 'https://en.wikipedia.org/wiki/' + sWikiWord;
 			}
 
-			function organizeContractors( person )
+			function organizeContractors( oPerson )
 			{
-
 				let aDirects = [];
-				const sDomain = person.id?.split( '@' )[ 1 ];
+				const sDomain = oPerson.id?.split( '@' )[ 1 ];
 				if( sDomain )
 				{
-					for( let i = 0; person.directs.length > i; i++ )
+					for( let i = 0; oPerson.directs.length > i; i++ )
 					{
-						const sDirect = person.directs[ i ];
+						const sDirect = oPerson.directs[ i ];
 						const sDirectDomain = sDirect.split( '@' )[ 1 ];
 						if( sDirectDomain === sDomain )
 						{
 							aDirects.push( sDirect );
 						}
-						else if( person.isPseudoManager )
+						else if( oPerson.isPseudoManager )
 						{
 							aDirects.push( sDirect );
 						}
 						else
 						{
-							let pseudoManager = sDirectDomain + '-' + person.id;
-							data[ sDirect ].manager = pseudoManager;
-							if( !data[ pseudoManager ] )
+							let sPseudoManager = sDirectDomain + '-' + oPerson.id;
+							data[ sDirect ].manager = sPseudoManager;
+							if( !data[ sPseudoManager ] )
 							{
-								data[ pseudoManager ] =
+								data[ sPseudoManager ] =
 										{
-											id: pseudoManager,
+											id: sPseudoManager,
 											isPseudoManager: true,
 											thirdParty: sDirectDomain,
-											manager: person.id,
+											manager: oPerson.id,
 											title: '3rd Party / Vendor',
 											name: sDirectDomain,
-											email: person.email,
-											level: person.level + 1,
+											email: oPerson.email,
+											level: oPerson.level + 1,
 											directs: []
 										};
-								data[ pseudoManager ] = fixThirdParty( data[ pseudoManager ] );
-								aDirects.push( pseudoManager );
+								data[ sPseudoManager ] = fixThirdParty( data[ sPseudoManager ] );
+								aDirects.push( sPseudoManager );
 							}
-							if( !data[ pseudoManager ].directs.includes( sDirect ) )
+							if( !data[ sPseudoManager ].directs.includes( sDirect ) )
 							{
-								data[ pseudoManager ].directs.push( sDirect );
+								data[ sPseudoManager ].directs.push( sDirect );
 							}
 						}
 					}
 				}
 				else
 				{
-					aDirects = person.directs;
+					aDirects = oPerson.directs;
 				}
-				person.directs = aDirects;
+				oPerson.directs = aDirects;
 				return aDirects;
 			}
 
@@ -2608,82 +2598,81 @@ ${ person.email ? `
 									}
 
 						};
-				const details = oKnownThirdParties[ oThirdParty.thirdParty ];
-				if( details )
+				const oDetails = oKnownThirdParties[ oThirdParty.thirdParty ];
+				if( oDetails )
 				{
-					oThirdParty.name = details.name;
-					oThirdParty.image = details.image;
+					oThirdParty.name = oDetails.name;
+					oThirdParty.image = oDetails.image;
 				}
 				return oThirdParty;
 			}
 
-			function getPersonsLocalTimeZone( person )
+			function getPersonsLocalTimeZone( oPerson )
 			{
-				const sTimezoneRegion = person.tz_region;
-				const localDateTime = new Date();
+				const sTimezoneRegion = oPerson.tz_region;
+				const oLocalDateTime = new Date();
 
-				const theirDateTime = new Date( localDateTime.toLocaleString( 'en-US', { timeZone: sTimezoneRegion } ) );
-				const timeDifference = `${ Math.ceil( ( theirDateTime - localDateTime ) / 3600000 ) }`;
-				let offset = 'same timezone as you';
-				if( timeDifference > 0 )
+				const oTheirDateTime = new Date( oLocalDateTime.toLocaleString( 'en-US', { timeZone: sTimezoneRegion } ) );
+				const iTimeDifference = `${ Math.ceil( ( oTheirDateTime - oLocalDateTime ) / 3600000 ) }`;
+				let iOffset = 'same timezone as you';
+				if( iTimeDifference > 0 )
 				{
-					offset = `${ timeDifference } hours ahead of you`;
+					iOffset = `${ iTimeDifference } hours ahead of you`;
 				}
-				else if( timeDifference < 0 )
+				else if( iTimeDifference < 0 )
 				{
-					offset = `${ timeDifference } hours behind you`;
+					iOffset = `${ iTimeDifference } hours behind you`;
 				}
-				return `${ offset } \n${ sTimezoneRegion } \n${ person.tz_label }`;
+				return `${ iOffset } \n${ sTimezoneRegion } \n${ oPerson.tz_label }`;
 			}
 
 			function getPersonsLocalTime( sTimezoneRegion )
 			{
-				const localDateTime = new Date();
+				const oLocalDateTime = new Date();
+				const oTheirDateTime = new Date( oLocalDateTime.toLocaleString( 'en-US', { timeZone: sTimezoneRegion } ) );
+				return formatTime( oTheirDateTime );
 
-				const theirDateTime = new Date( localDateTime.toLocaleString( 'en-US', { timeZone: sTimezoneRegion } ) );
-				return formatTime( theirDateTime );
-
-				function formatTime( date )
+				function formatTime( oDate )
 				{
-					let hours = date.getHours();
-					let minutes = date.getMinutes();
-					const meridian = hours >= 12 ? 'PM' : 'AM';
-					hours = hours % 12;
-					hours = hours ? hours : 12; /* the hour 0 should be 12 */
-					minutes = minutes < 10 ? '0' + minutes : minutes;
-					return hours + ':' + minutes + ' ' + meridian;
+					let iHours = oDate.getHours();
+					let iMinutes = oDate.getMinutes();
+					const iMeridian = iHours >= 12 ? 'PM' : 'AM';
+					iHours = iHours % 12;
+					iHours = iHours ? iHours : 12; /* the hour 0 should be 12 */
+					iMinutes = iMinutes < 10 ? '0' + iMinutes : iMinutes;
+					return iHours + ':' + iMinutes + ' ' + iMeridian;
 				}
 			}
 
-			function getPhotoUrl( person_id, sSize )
+			function getPhotoUrl( sPersonId, sSize )
 			{
 				const sSizeDirectory = sSize ? ( "./photos/" + sSize + "/" ) : "./photos/";
-				return sSizeDirectory + person_id  + ".webp";
+				return sSizeDirectory + sPersonId  + ".webp";
 			}
 
-			function isContractor( person_id )
+			function isContractor( sPersonId )
 			{
-				let isCurrentEmployee = false;
-				const person = data[ person_id ];
-				const type = person[ 'Employee type' ];
-				if( type === 'Contractor' )
+				let bIsCurrentEmployee = false;
+				const oPerson = data[ sPersonId ];
+				const oType = oPerson[ 'Employee type' ];
+				if( oType === 'Contractor' )
 				{
-					isCurrentEmployee = true;
+					bIsCurrentEmployee = true;
 				}
-				return isCurrentEmployee;
+				return bIsCurrentEmployee;
 			}
 
-			function getNotesName( person )
+			function getNotesName( oPerson )
 			{
 				let sName;
-				if( person.name )
+				if( oPerson.name )
 				{
-					sName = encodeURIComponent( person.name.replace( ' ', '-' ) || '' );
+					sName = encodeURIComponent( oPerson.name.replace( ' ', '-' ) || '' );
 				}
 				else
 				{
-					sName = encodeURIComponent( person.thirdParty ) || '';
-					person.name = sName;
+					sName = encodeURIComponent( oPerson.thirdParty ) || '';
+					oPerson.name = sName;
 				}
 				return sName;
 			}
@@ -2999,58 +2988,58 @@ ${ person.email ? `
 				'ZW': 'Zimbabwe'
 			};
 
-			function addCommasBetween( city, state, country )
+			function addCommasBetween( sCity, sState, sCountry )
 			{
 				let sLocation = '';
-				if( city )
+				if( sCity )
 				{
-					sLocation += city;
+					sLocation += sCity;
 				}
-				if( state )
+				if( sState )
 				{
 					if( sLocation.length > 0 )
 					{
 						sLocation += ', ';
 					}
-					sLocation += oStates [ state ] || state;
+					sLocation += oStates [ sState ] || sState;
 				}
-				if( country )
+				if( sCountry )
 				{
 					if( sLocation.length > 0 )
 					{
 						sLocation += ', ';
 					}
-					sLocation += country;
+					sLocation += sCountry;
 				}
 				return sLocation;
 			}
 
-			function getRelativeTime( date )
+			function getRelativeTime( sDate )
 			{
-				const startDate = new Date( date );
-				const ago = ( new Date() - startDate ) / 2629800000; // 2629800000 ms in a month
-				let yearsAgo = ago / 12;  // 2629800000 ms in a month
+				const oStartDate = new Date( sDate );
+				const iAgo = ( new Date() - oStartDate ) / 2629800000; // 2629800000 ms in a month
+				let iYearsAgo = iAgo / 12;  // 2629800000 ms in a month
 				let sYearsAgo = '';
 
-				if( yearsAgo >= 1 )
+				if( iYearsAgo >= 1 )
 				{
-					sYearsAgo = Math.floor( yearsAgo ) + ' Year';
+					sYearsAgo = Math.floor( iYearsAgo ) + ' Year';
 					if( sYearsAgo !== '1 Year' )
 					{
 						sYearsAgo += 's';
 					}
-					let monthsAgo = Math.floor( ( ago % 12 ) ) + ' month';  // 2880000ms in a month
-					if( monthsAgo !== '1 month' )
+					let iMonthsAgo = Math.floor( ( iAgo % 12 ) ) + ' month';  // 2880000ms in a month
+					if( iMonthsAgo !== '1 month' )
 					{
-						monthsAgo += 's';
+						iMonthsAgo += 's';
 					}
-					sYearsAgo += ' ' + monthsAgo;
+					sYearsAgo += ' ' + iMonthsAgo;
 				}
 				else
 				{
-					let monthsAgo = ( ago % 12 );  // 2880000ms in a month
-					let sMonthsAgo = Math.floor( monthsAgo ) + ' month';  // 2880000ms in a month
-					if( monthsAgo >= 1 )
+					let iMonthsAgo = ( iAgo % 12 );  // 2880000ms in a month
+					let sMonthsAgo = Math.floor( iMonthsAgo ) + ' month';  // 2880000ms in a month
+					if( iMonthsAgo >= 1 )
 					{
 						if( sMonthsAgo !== '1 month' )
 						{
@@ -3060,17 +3049,15 @@ ${ person.email ? `
 					}
 					else
 					{
-						let daysAgo = ( new Date() - startDate ) / 86400000; // / 8640000ms/day = (1000ms * 60s * 60h * 24d)
-						let sDaysAgo = Math.ceil( daysAgo ) + ' day';
+						let iDaysAgo = ( new Date() - oStartDate ) / 86400000; // / 8640000ms/day = (1000ms * 60s * 60h * 24d)
+						let sDaysAgo = Math.ceil( iDaysAgo ) + ' day';
 						if( sDaysAgo !== '1 day' )
 						{
 							sDaysAgo += 's';
 						}
 						sYearsAgo += sDaysAgo;
 					}
-
 				}
-
 				return sYearsAgo;
 			}
 
@@ -3079,20 +3066,19 @@ ${ person.email ? `
 				document.getElementById( 'detailView' ).style.display = 'none';
 			}
 
-			function showDetails( person_id )
+			function showDetails( sPersonId )
 			{
-				let oldMaxDepth = maxDepth;
-				maxDepth = 1;
+				let iOldMaxDepth = iMaxDepth;
+				iMaxDepth = 1;
 				document.getElementById( 'detailView' ).style.display = 'block';
-				document.getElementById( 'detailView' ).innerHTML = render( data[ person_id ], personTemplate );
-				maxDepth = oldMaxDepth;
+				document.getElementById( 'detailView' ).innerHTML = render( data[ sPersonId ], personTemplate );
+				iMaxDepth = iOldMaxDepth;
 			}
-
 		</script>
 		<script id="search_functions" async="async">
 			let oSearchResults = {};
 			let bUseFilteredList = false;
-			let currentFilter = '';
+			let sCurrentFilter = '';
 			let sFirstFilter = '';
 			let sCombinedFilter = '';
 			let iFirstCount;
@@ -3104,33 +3090,32 @@ ${ person.email ? `
 				bUseFilteredList = !bUseFilteredList;
 				if( bUseFilteredList )
 				{
-					const searchTextInputField = document.getElementById( 'searchText' );
-					searchTextInputField.value = '';
-					searchTextInputField.focus();
+					const sSearchTextInputField = document.getElementById( 'searchText' );
+					sSearchTextInputField.value = '';
+					sSearchTextInputField.focus();
 					const AndSearchButton = document.getElementById( 'AndSearchButton' );
-					AndSearchButton.title = currentFilter;
+					AndSearchButton.title = sCurrentFilter;
 				}
 			}
 
 			function clearFilter()
 			{
 				bUseFilteredList = false;
-				const AndSearchButton = document.getElementById( 'AndSearchButton' );
-				AndSearchButton.style.visibility = 'hidden';
+				const eAndSearchButton = document.getElementById( 'AndSearchButton' );
+				eAndSearchButton.style.visibility = 'hidden';
 			}
 
 			function search( sText, sType, sComparison )
 			{
-				const filterIcon = 'data:image/png;base64,R0lGODlhEAAQAIABAAAAAP///yH5BAEKAAEALAAAAAAQABAAAAIkjIGpdsDPUHCwNmmv2tz1Hn0JJFIkmHFZiK3T6L7tusS1ezMFADs=';
-
+				const sFilterIcon = 'data:image/png;base64,R0lGODlhEAAQAIABAAAAAP///yH5BAEKAAEALAAAAAAQABAAAAIkjIGpdsDPUHCwNmmv2tz1Hn0JJFIkmHFZiK3T6L7tusS1ezMFADs=';
 				if( sText.length === 0 )
 				{
 					return;
 				}
-				let people = data;
+				let oPeople = data;
 				if( bUseFilteredList )
 				{
-					people = oSearchResults || data; //actually use the previous results as the entire dataset... unless there is none
+					oPeople = oSearchResults || data; //actually use the previous results as the entire dataset... unless there is none
 				}
 				const searchString = new RegExp( sText, 'i' );
 				const oMatches = {};
@@ -3139,7 +3124,6 @@ ${ person.email ? `
 				switch( sType )
 				{
 					case 'any' :
-						'any';
 						iResultCount = searchByTypes( searchString, aAllSearchTypes );
 						break;
 
@@ -3168,20 +3152,20 @@ ${ person.email ? `
 						break;
 				}
 
-				const AndSearchButton = document.getElementById( 'AndSearchButton' );
+				const eAndSearchButton = document.getElementById( 'AndSearchButton' );
 
 				if( iResultCount >= 1 )
 				{
 					sCombinedFilter = iResultCount;
-					AndSearchButton.innerHTML = `<img src="${ filterIcon }" alt="filter" height="16" style="margin:-3px;padding:0;" /> ${ sCombinedFilter }`;
-					AndSearchButton.style.visibility = 'visible';
+					eAndSearchButton.innerHTML = `<img src="${ sFilterIcon }" alt="filter" height="16" style="margin:-3px;padding:0;" /> ${ sCombinedFilter }`;
+					eAndSearchButton.style.visibility = 'visible';
 					if( !bUseFilteredList )
 					{
 						iFirstCount = iResultCount;
 						iFirstSearchType = sType;
 						iFirstSearchText = sText;
 						sFirstFilter = `Searching through ${ iFirstCount } people \nthat first matched ${ iFirstSearchType } = ${ iFirstSearchText }`;
-						currentFilter = sFirstFilter;
+						sCurrentFilter = sFirstFilter;
 					}
 
 					let aObjectsMatchingText = objectToArray( oMatches );
@@ -3203,14 +3187,14 @@ ${ person.email ? `
 					}
 					let aUniqueMatches = [ ...new Set( aTypeMatches ) ];
 
-					aUniqueMatches.forEach( function( item )
+					aUniqueMatches.forEach( function( oItem )
 					{
-						const option = document.createElement( 'option' );
-						option.value = item;
-						option.text = item;
-						if( option.value !== undefined && option.value !== 'undefined' )
+						const eOption = document.createElement( 'option' );
+						eOption.value = oItem;
+						eOption.text = oItem;
+						if( eOption.value !== undefined && eOption.value !== 'undefined' )
 						{
-							//list.appendChild( option );
+							//list.appendChild( option );  // todo: what does this exist at all?
 						}
 					} );
 
@@ -3228,10 +3212,10 @@ ${ person.email ? `
 
 				if( bUseFilteredList )
 				{
-					currentFilter = `Searching through ${ iFirstCount } people \nthat first matched ${ iFirstSearchType } = ${ iFirstSearchText } \nand now also match ${ sType } = ${ sText }`;
-					AndSearchButton.title = currentFilter;
-					AndSearchButton.innerHTML = `<img src="${ filterIcon }" alt="filter" height="16" style="margin:-3px;padding:0;" /> ${ iResultCount }/${ iFirstCount }`;
-					AndSearchButton.style.visibility = 'visible';
+					sCurrentFilter = `Searching through ${ iFirstCount } people \nthat first matched ${ iFirstSearchType } = ${ iFirstSearchText } \nand now also match ${ sType } = ${ sText }`;
+					eAndSearchButton.title = sCurrentFilter;
+					eAndSearchButton.innerHTML = `<img src="${ sFilterIcon }" alt="filter" height="16" style="margin:-3px;padding:0;" /> ${ iResultCount }/${ iFirstCount }`;
+					eAndSearchButton.style.visibility = 'visible';
 				}
 
 				showResults();
@@ -3245,11 +3229,11 @@ ${ person.email ? `
 					const iMaxNumberOfResultsToDisplay = 40;
 					let iDisplayedResults = 0;
 					document.getElementById( 'searchResults' ).innerHTML = '';
-					for( let person in oMatches )
+					for( let oPerson in oMatches )
 					{
 						if( iDisplayedResults < iMaxNumberOfResultsToDisplay )
 						{
-							document.getElementById( 'searchResults' ).innerHTML += render( oMatches [ person ], searchResultTemplate );
+							document.getElementById( 'searchResults' ).innerHTML += render( oMatches [ oPerson ], searchResultTemplate );
 							iDisplayedResults++;
 						}
 						else
@@ -3259,17 +3243,17 @@ ${ person.email ? `
 					}
 				}
 
-				function searchByTypes( searchString, aTypes )
+				function searchByTypes( sSearchString, aTypes )
 				{
 					let iMatches = 0;
-					for( const person_id in people )
+					for( const oPeopleKey in oPeople )
 					{
-						const person = people[ person_id ];
+						const person = oPeople[ oPeopleKey ];
 						let bMatchesString = false;
 						let sType;
 						for( sType of aTypes ) // do NOT use 'let' here!!!
 						{
-							if( searchString.test( person[ sType ] ) )
+							if( sSearchString.test( person[ sType ] ) )
 							{
 								bMatchesString = true;
 								break; // stop on the first type that matches (types should be passed in priority order)
@@ -3279,39 +3263,39 @@ ${ person.email ? `
 						if( bMatchesString && sComparison === 'contains' )
 						{
 							iMatches++;
-							oMatches[ person_id ] = person;
+							oMatches[ oPeopleKey ] = person;
 							hiliteMatchingText( person, sType );
 						}
 						else if( !bMatchesString && sComparison !== 'contains' )
 						{
 							iMatches++;
-							oMatches[ person_id ] = person;
+							oMatches[ oPeopleKey ] = person;
 							hiliteMatchingText( person, sType );
 						}
 					}
 					return iMatches;
 				}
 
-				function hiliteMatchingText( person, sProperty )
+				function hiliteMatchingText( oPerson, sProperty )
 				{
-					person.lastMatchedField = sProperty;
-					if( person[ sProperty ] )
+					oPerson.lastMatchedField = sProperty;
+					if( oPerson[ sProperty ] )
 					{
-						const oMatch = searchString.exec( person[ sProperty ] );
+						const oMatch = searchString.exec( oPerson[ sProperty ] );
 						if( oMatch )
 						{
 							const sMatchingPart = oMatch[ 0 ];
-							const sHighlightedText = ( person[ sProperty ] + '' ).replace( sMatchingPart, `<strong class="matchingPart">${ sMatchingPart }</strong>` );
-							person.lastMatch = '<strong>' + capitalizeFirstLetter( sProperty ) + '</strong>: ' + sHighlightedText;
+							const sHighlightedText = ( oPerson[ sProperty ] + '' ).replace( sMatchingPart, `<strong class="matchingPart">${ sMatchingPart }</strong>` );
+							oPerson.lastMatch = '<strong>' + capitalizeFirstLetter( sProperty ) + '</strong>: ' + sHighlightedText;
 						}
-						else // it matched but didn't match??  you need unit tests to validate this condition isn't real so you can remove this!!
+						else // it matched but didn't match??  you need unit tests to validate this condition isn't real, so you can remove this!!
 						{
-							person.lastMatch = capitalizeFirstLetter( sProperty ) + ': ' + person[ sProperty ]; // don't highlight it but at least show the field that matched
+							oPerson.lastMatch = capitalizeFirstLetter( sProperty ) + ': ' + oPerson[ sProperty ]; // don't highlight it but at least show the field that matched
 						}
 					}
 					else
 					{
-						person.lastMatch = '';
+						oPerson.lastMatch = '';
 					}
 				}
 			}
@@ -3327,13 +3311,13 @@ ${ person.email ? `
 				}
 			}
 
-			function previewPerson( person_id )
+			function previewPerson( sPersonId )
 			{
-				const person = data[ person_id ];
-				if( person )
+				const oPerson = data[ sPersonId ];
+				if( oPerson )
 				{
-					initializeLevels( person );
-					makeRoot( person.id, true );
+					initializeLevels( oPerson );
+					makeRoot( oPerson.id, true );
 					hide();
 				}
 			}
@@ -3347,11 +3331,11 @@ ${ person.email ? `
 			{
 				logMe( arguments );
 				document.getElementById( 'searchResults' ).style.display = 'none';
-				const newHash = 'person=' + lastIdNotAdded;
-				if( newHash && newHash !== 'person=null' && ( '#' + newHash ) !== ( document.location.hash ) )
+				const sNewHash = 'person=' + sLastIdNotAdded;
+				if( sNewHash && sNewHash !== 'person=null' && ( '#' + sNewHash ) !== ( document.location.hash ) )
 				{
-					lastHash = '#' + newHash;
-					document.location.hash = newHash;
+					sLastHash = '#' + sNewHash;
+					document.location.hash = sNewHash;
 				}
 				setTimeout( function()
 				{
@@ -3361,27 +3345,23 @@ ${ person.email ? `
 			}
 		</script>
 		<script id="ux_config_save_and_load_settings" async="async">
-			let isFramed = true;
-
 			function loadSettings()
 			{
-				me = getCookie( 'me' ) || '';
-				notes = getCookie( 'notes' ) || '';
-				document.getElementById( 'me' ).value = me;
-				document.getElementById( 'notes' ).value = notes;
-				document.getElementById( 'meetingLink' ).value = meetingLink;
+				sMe = getCookie( 'me' ) || '';
+				sNotes = getCookie( 'notes' ) || '';
+				document.getElementById( 'me' ).value = sMe;
+				document.getElementById( 'notes' ).value = sNotes;
+				document.getElementById( 'meetingLink' ).value = sMeetingLink;
 			}
 
 			function saveSettings()
 			{
-
-				me = document.getElementById( 'me' ).value;
-				notes = document.getElementById( 'notes' ).value;
-				meetingLink = document.getElementById( 'meetingLink' ).value;
-
-				setCookie( 'me', me );
-				setCookie( 'notes', notes );
-				setCookie( 'meetingLink', meetingLink );
+				sMe = document.getElementById( 'me' ).value;
+				sNotes = document.getElementById( 'notes' ).value;
+				sMeetingLink = document.getElementById( 'meetingLink' ).value;
+				setCookie( 'me', sMe );
+				setCookie( 'notes', sNotes );
+				setCookie( 'meetingLink', sMeetingLink );
 			}
 
 			function showMe( oContainer )
@@ -3403,7 +3383,6 @@ ${ person.email ? `
 			{
 				window.open( '/config/help.html' );
 			}
-
 		</script>
 		<script id="UNUSED_currently_not_used_but_probably_will_again" async="async">
 			function htmlEscape( sUnsafeText )
