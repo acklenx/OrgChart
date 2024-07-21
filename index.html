@@ -184,6 +184,11 @@
 				font-weight: normal;
 			}
 
+			#searchResults {
+				max-height: 50em;
+				overflow-y: auto;
+			}
+
 
 		</style>
 		<style id="Org_Chart_Layout_Magic">
@@ -2140,7 +2145,7 @@
 			};
 
 			let sCurrentPersonId; // you haven't loaded the default person yet!
-			const sDefaultPerson = 'quincy.acklen';
+			const sDefaultPersonId = 'quincy.acklen';
 			let sLastIdNotAdded = null;
 			let sLastHash;
 
@@ -2148,7 +2153,7 @@
 			{
 				showSearch();
 				document.getElementById( 'orgChartView' ).style.display = 'block';
-				sPersonId = sPersonId || getStartingPersonFromUrl() || sDefaultPerson;
+				sPersonId = sPersonId || getStartingPersonFromUrl() || sDefaultPersonId;
 				if( !bRemoveFromHistory )
 				{
 					document.location.hash = 'person=' + sPersonId;
@@ -2204,7 +2209,26 @@
 			let sNotes = getCookie( 'notes' ) || '/config/notes.html';
 			let sMeetingLink = getCookie( 'meetingLink' ) || 'Add YOUR Zoom URL to your OrgChart settings so it will appear here!';
 			let aAllSearchTypes;
+			function getAncestors( oPerson )
+			{
+				let aAncestors = [oPerson.id];  // include self in ancestry
+				let oAncestor = oPerson;
+				while( oAncestor.manager )
+				{
+					oAncestor = data[ oAncestor.manager ];
+					if( oAncestor.ancestors )
+					{
 
+						aAncestors = aAncestors.concat( oAncestor.ancestors );
+						break;
+					}
+					else
+					{
+						aAncestors.push( oAncestor.id );
+					}
+				}
+				return aAncestors;
+			}
 			function mapData( data )
 			{
 				for( const chump in data )
@@ -2212,6 +2236,7 @@
 					const person = data[ chump ];
 					person.name = person[ 'First name' ] + ' ' + person[ 'Last name' ];
 					person.manager = person[ 'Reports To ID' ];
+					person.ancestors = getAncestors( person );
 					person.image = getPhotoUrl( person.id );
 					person.first = person[ 'First name' ];
 					person.last = person[ 'Last name' ];
@@ -2273,7 +2298,10 @@
 			function getAllSearchTypes()
 			{
 				const oSearchTypesSelect = document.getElementById( 'searchType' );
-				return [ ...oSearchTypesSelect.options ].map( o => o.value );
+				let aSearchTypes = [ ...oSearchTypesSelect.options ].map( o => o.value );
+				const aSortedSearchTypes = aSearchTypes.sort();
+				aSortedSearchTypes.unshift( 'name' );  //
+				return aSortedSearchTypes
 			}
 
 			function setCookie( sCookieName, sValue )
@@ -2549,7 +2577,7 @@ ${ person.email ? `
 								<br/>
 								<span class="jobTitle" title="${ person.indirects || '' }">${ person.title }</span>
 								<div class="Organization" title="${ person.directs?.length || 0 }/${ person.indirects || 0 }">
-                                    ${ ( person.department === 'Executive' || person.manager === sDefaultPerson ) ? '' : getTeam( person ) }
+                                    ${ ( person.department === 'Executive' || person.manager === sDefaultPersonId ) ? '' : getTeam( person ) }
                                 </div>
 								<span class="numberOfDirects">${ person.directs?.length || '' }</span>
 							</div>
@@ -2568,6 +2596,36 @@ ${ person.email ? `
 				return sTeam;
 			}
 		</script>
+		<style>
+			.searchDistanceUp
+			{
+				color:blue;
+			}
+			.searchDistanceDown
+			{
+				color:green;
+			}
+			.searchCommonAncestor
+			{
+				color: black;
+				font-weight: normal;
+				font-style: italic;
+			}
+			.searchDistance
+			{
+				font-size: 80%;
+			}
+			.searchDistanceUpIcon,
+			.searchDistanceDownIcon
+			{
+				font-size: 120%;
+				font-weight: bold;
+			}
+			.defaultTopAncestor
+			{
+				color: gray;
+			}
+		</style>
 		<script id="template_singleSearchResult" async="async">
 			const searchResultTemplate = ( person ) =>
 					htmlTemplate`
@@ -2582,6 +2640,14 @@ ${ person.email ? `
 									  style="margin-right:.5em;"/>
 
 								<strong>${ getFullName( person.id ) }</strong>
+
+								<span class="searchDistance">
+									<span class="searchDistanceUp">${ person.lastMatchUp  }</span><span class="searchDistanceUpIcon">&uarr;</span>
+									<span class="searchCommonAncestor">${ person.lastMatchCommonAncestor ?  person.lastMatchCommonAncestor : '' }</span>
+									<span class="searchCommonAncestor">${ !person.lastMatchCommonAncestor ?  '<span class="defaultTopAncestor">' + sDefaultPersonId + '</span>' : '' }</span>
+									<span class="searchDistanceDown">${ person.lastMatchDown  }</span><span class="searchDistanceDownIcon">&darr;</span>
+								</span>
+
 								<br/>
 								<span class="jobTitle" >${ person[ 'title' ] }</span>
 								<br/>
@@ -3427,7 +3493,6 @@ ${ person.email ? `
 					eAndSearchButton.innerHTML = `<img src="${ sFilterIcon }" alt="filter" height="16" style="margin:-3px;padding:0;" /> ${ iResultCount }/${ iFirstCount }`;
 					eAndSearchButton.style.visibility = 'visible';
 				}
-
 				showResults();
 
 				function showResults()
@@ -3436,19 +3501,89 @@ ${ person.email ? `
 					{
 						oSearchResults = oMatches;
 					}
-					const iMaxNumberOfResultsToDisplay = 40;
+					const iMaxNumberOfResultsToDisplay = 100;
 					let iDisplayedResults = 0;
 					document.getElementById( 'searchResults' ).innerHTML = '';
-					for( let oPerson in oMatches )
+					const aSortedSearchResults = sortSearchResultsByDistance( oMatches );
+					let sSearchResultsHtml = '';
+					for( let sPersonId in aSortedSearchResults )
 					{
-						if( iDisplayedResults < iMaxNumberOfResultsToDisplay )
+						const oPerson = aSortedSearchResults[ sPersonId ];
+						if( iDisplayedResults < iMaxNumberOfResultsToDisplay )  // show only the most relevant people
 						{
-							document.getElementById( 'searchResults' ).innerHTML += render( oMatches [ oPerson ], searchResultTemplate );
+							sSearchResultsHtml += render( oPerson, searchResultTemplate );
 							iDisplayedResults++;
 						}
 						else
 						{
 							break;
+						}
+					}
+					document.getElementById( 'searchResults' ).innerHTML += sSearchResultsHtml
+
+					function sortSearchResultsByDistance( oMatches )
+					{
+
+						let oReferencePerson = data[ sCurrentPersonId ];
+						if( sCurrentPersonId === sDefaultPersonId )
+						{
+							oReferencePerson = data[ sMe ];
+						}
+
+						for( let sPersonId in oMatches )
+						{
+							const oSearchResultPerson = oMatches[ sPersonId ];
+							findCommonAncestor( oReferencePerson, oSearchResultPerson );
+						}
+						let aMatches = sortObjectByProperty( oMatches, "lastMatchDown" );  // the secondary sort goes first
+						aMatches = sortArrayOfObjectsByProperty( aMatches, "lastMatchUp" );  // primary property goes second - stable sort to preserve previous order
+						return aMatches;
+
+						function sortObjectByProperty( oObject, sProperty )
+						{
+							const aSortedArray = Object.keys( oObject ).map( key => ({
+								personId: key,
+								...oObject[ key ]
+							}));
+							aSortedArray.sort( ( a, b ) => a[ sProperty ] - b[ sProperty ] );
+							return aSortedArray;
+						}
+
+						function sortArrayOfObjectsByProperty( aArray, sProperty )
+						{
+							aArray.sort( ( a, b ) => a[ sProperty ] - b[ sProperty ] );
+							return aArray;
+						}
+
+						function findCommonAncestor( oReferencePerson, oSearchResultPerson )
+						{
+							let sCommonAncestorId = null;
+
+							let aReferencePersonAncestors = oReferencePerson.ancestors || getAncestors( oReferencePerson );
+							let aSearchResultPersonAncestors = oSearchResultPerson.ancestors || getAncestors( oSearchResultPerson );
+							let iStepsUp;
+							let iStepsDown;
+							for( iStepsUp = 0; iStepsUp < aReferencePersonAncestors.length; iStepsUp++ )
+							{
+								for( iStepsDown = 0; iStepsDown < aSearchResultPersonAncestors.length; iStepsDown++ )
+								{
+									if( aReferencePersonAncestors[ iStepsUp ] === aSearchResultPersonAncestors[ iStepsDown ] && aReferencePersonAncestors[ iStepsUp ] !== sDefaultPersonId )
+									{
+										sCommonAncestorId = aReferencePersonAncestors[ iStepsUp ];
+										break;
+									}
+								}
+								if( sCommonAncestorId )
+								{
+									break;
+								}
+							}
+
+							oSearchResultPerson.lastMatchUp = iStepsUp;
+							oSearchResultPerson.lastMatchDown = iStepsDown;
+							oSearchResultPerson.lastMatchDistance = iStepsDown + iStepsUp;
+							oSearchResultPerson.lastMatchCommonAncestor = sCommonAncestorId;
+							return sCommonAncestorId;
 						}
 					}
 				}
@@ -3458,12 +3593,12 @@ ${ person.email ? `
 					let iMatches = 0;
 					for( const oPeopleKey in oPeople )
 					{
-						const person = oPeople[ oPeopleKey ];
+						const oPerson = oPeople[ oPeopleKey ];
 						let bMatchesString = false;
 						let sType;
 						for( sType of aTypes ) // do NOT use 'let' here!!!
 						{
-							if( sSearchString.test( person[ sType ] ) )
+							if( sSearchString.test( oPerson[ sType ] ) )
 							{
 								bMatchesString = true;
 								break; // stop on the first type that matches (types should be passed in priority order)
@@ -3473,14 +3608,14 @@ ${ person.email ? `
 						if( bMatchesString && sComparison === 'contains' )
 						{
 							iMatches++;
-							oMatches[ oPeopleKey ] = person;
-							hiliteMatchingText( person, sType );
+							oMatches[ oPeopleKey ] = oPerson;
+							hiliteMatchingText( oPerson, sType );
 						}
 						else if( !bMatchesString && sComparison !== 'contains' )
 						{
 							iMatches++;
-							oMatches[ oPeopleKey ] = person;
-							hiliteMatchingText( person, sType );
+							oMatches[ oPeopleKey ] = oPerson;
+							hiliteMatchingText( oPerson, sType );
 						}
 					}
 					return iMatches;
@@ -3512,11 +3647,11 @@ ${ person.email ? `
 
 			function showSearchResults()
 			{
-				const oSearchResults = document.getElementById( 'searchResults' );
-				oSearchResults.style.display = 'block';
+				const eSearchResults = document.getElementById( 'searchResults' );
+				eSearchResults.style.display = 'block';
 				if( event.keyCode === 13 )
 				{
-					oSearchResults.children[ 0 ].onmouseover( null );
+					eSearchResults.children[ 0 ].onmouseover( null );
 					hideSearchResults();
 				}
 			}
@@ -3552,6 +3687,50 @@ ${ person.email ? `
 					document.getElementById( 'searchResults' ).style.display = 'none';
 					clearFilter();
 				}, 10 );  // does this need to be async?
+			}
+
+			function exportSearchResults()
+			{
+				//				const aDataFields = [ 'email', 'phone', 'mobile', 'slack', 'skype', 'twitter', 'linkedin', 'github', 'website' ];
+				const aDataFields = [ "name", 'email', "title" ];
+				const sEmailAddresses = getDataElements( oSearchResults, aDataFields, "," );
+				navigator.clipboard.writeText( sEmailAddresses );
+			}
+
+			function getDataElements( oSearchResults, aDataFields, sDelimiter = '\t' )
+			{
+				let sData = aDataFields.join( '\t' ) + '\n';
+				let iRowsCreated = 0;
+				for( let sPersonId in oSearchResults )
+				{
+					iRowsCreated++;
+					let sCurrentPerson = '';
+					const oPerson = oSearchResults[ sPersonId ];
+					for( let sDataField of aDataFields )
+					{
+						if( oPerson[ sDataField ] )
+						{
+							sCurrentPerson += oPerson[ sDataField ];
+						}
+						sCurrentPerson += sDelimiter;
+					}
+					sData += sCurrentPerson + '\n';
+				}
+				flashTitle( iRowsCreated + ' rows exported' );
+
+				function flashTitle( sMessage )
+				{
+					const sOriginalTitle = document.title;
+					document.title = sMessage;
+					setTimeout( function()
+					{
+						if( document.title === sMessage )
+						{
+							document.title = sOriginalTitle;
+						}
+					}, 2000 );
+				}
+				return sData;
 			}
 		</script>
 		<script id="ux_config_save_and_load_settings" async="async">
@@ -3737,7 +3916,7 @@ ${ person.email ? `
 				</label>
 
 				<button id="AndSearchButton" onclick="andSearch(); return false;" style="visibility: hidden"></button>
-				<div id="searchResults">
+				<div id="searchResults" ondblclick="exportSearchResults()">
 					<div></div>
 				</div>
 			</form>
