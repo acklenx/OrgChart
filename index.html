@@ -3527,7 +3527,7 @@ ${ person.email ? `
 						let oReferencePerson = data[ sCurrentPersonId ];
 						if( sCurrentPersonId === sDefaultPersonId )
 						{
-							oReferencePerson = data[ sMe ];
+							oReferencePerson = data[ sMe ] || sDefaultPersonId;
 						}
 
 						for( let sPersonId in oMatches )
