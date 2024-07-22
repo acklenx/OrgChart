@@ -2296,6 +2296,22 @@
 				loadPerson();
 				aAllSearchTypes = getAllSearchTypes();
 				document.getElementById( 'searchText' ).focus();
+
+
+				document.body.addEventListener('keydown', function(e) {
+					if (e.key === "Escape") {
+						cancelSearch();
+					}
+				});
+			}
+
+			function cancelSearch()
+			{
+				document.getElementById( 'searchText' ).value = '';
+				document.getElementById( 'searchResults' ).innerHTML = '';
+				document.getElementById( 'searchResults' ).style.display = 'none';
+				document.getElementById( 'searchText' ).focus();
+				loadPerson( sCurrentPersonId);
 			}
 
 			function getAllSearchTypes()
