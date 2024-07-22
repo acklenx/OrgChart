@@ -2218,7 +2218,6 @@
 					oAncestor = data[ oAncestor.manager ];
 					if( oAncestor.ancestors )
 					{
-
 						aAncestors = aAncestors.concat( oAncestor.ancestors );
 						break;
 					}
@@ -2236,7 +2235,6 @@
 					const person = data[ chump ];
 					person.name = person[ 'First name' ] + ' ' + person[ 'Last name' ];
 					person.manager = person[ 'Reports To ID' ];
-					person.ancestors = getAncestors( person );
 					person.image = getPhotoUrl( person.id );
 					person.first = person[ 'First name' ];
 					person.last = person[ 'Last name' ];
@@ -2264,6 +2262,11 @@
 					person.teamName = person[ 'teamName' ];
 					person.slack = person[ 'slack' ];
 					person.location = person.location.postcode;
+				}
+				for( const chump in data ) // you have to wait until all the managers have been attached before you can get ancestors
+				{
+					const person = data[ chump ];
+					person.ancestors = getAncestors( person );
 				}
 			}
 
@@ -3527,7 +3530,7 @@ ${ person.email ? `
 						let oReferencePerson = data[ sCurrentPersonId ];
 						if( sCurrentPersonId === sDefaultPersonId )
 						{
-							oReferencePerson = data[ sMe ] || sDefaultPersonId;
+							oReferencePerson = data[ sMe ] || data[sDefaultPersonId];
 						}
 
 						for( let sPersonId in oMatches )
@@ -3558,18 +3561,23 @@ ${ person.email ? `
 						function findCommonAncestor( oReferencePerson, oSearchResultPerson )
 						{
 							let sCommonAncestorId = null;
-
-							let aReferencePersonAncestors = oReferencePerson.ancestors || getAncestors( oReferencePerson );
-							let aSearchResultPersonAncestors = oSearchResultPerson.ancestors || getAncestors( oSearchResultPerson );
-							let iStepsUp;
-							let iStepsDown;
-							for( iStepsUp = 0; iStepsUp < aReferencePersonAncestors.length; iStepsUp++ )
+							let aReferencePersonAncestors = oReferencePerson.ancestors;// || getAncestors( oReferencePerson );
+							let aSearchResultPersonAncestors = oSearchResultPerson.ancestors;// || getAncestors( oSearchResultPerson );
+							oSearchResultPerson.lastMatchUp = 99;
+							oSearchResultPerson.lastMatchDown = 99;
+							oSearchResultPerson.lastMatchDistance = 99 ;
+							oSearchResultPerson.lastMatchCommonAncestor = oReferencePerson.id;
+							for( let iStepsUp = 0; iStepsUp < aReferencePersonAncestors.length; iStepsUp++ )
 							{
-								for( iStepsDown = 0; iStepsDown < aSearchResultPersonAncestors.length; iStepsDown++ )
+								for( let iStepsDown = 0; iStepsDown < aSearchResultPersonAncestors.length; iStepsDown++ )
 								{
-									if( aReferencePersonAncestors[ iStepsUp ] === aSearchResultPersonAncestors[ iStepsDown ] && aReferencePersonAncestors[ iStepsUp ] !== sDefaultPersonId )
+									if( aReferencePersonAncestors[ iStepsUp ] === aSearchResultPersonAncestors[ iStepsDown ] )
 									{
 										sCommonAncestorId = aReferencePersonAncestors[ iStepsUp ];
+										oSearchResultPerson.lastMatchUp = iStepsUp +"";
+										oSearchResultPerson.lastMatchDown = iStepsDown+"";
+										oSearchResultPerson.lastMatchDistance = iStepsDown + iStepsUp +"" ;
+										oSearchResultPerson.lastMatchCommonAncestor = sCommonAncestorId;
 										break;
 									}
 								}
@@ -3578,11 +3586,6 @@ ${ person.email ? `
 									break;
 								}
 							}
-
-							oSearchResultPerson.lastMatchUp = iStepsUp;
-							oSearchResultPerson.lastMatchDown = iStepsDown;
-							oSearchResultPerson.lastMatchDistance = iStepsDown + iStepsUp;
-							oSearchResultPerson.lastMatchCommonAncestor = sCommonAncestorId;
 							return sCommonAncestorId;
 						}
 					}
