@@ -1,2 +1,4 @@
 User-agent: *
-Disallow: /
+Disallow:
+# Do NOT use in production!
+# delete this file and use robots.production.txt as robots.txt in a production environment ( or just add a /  --> Disallow: / )

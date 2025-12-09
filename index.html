@@ -2069,6 +2069,7 @@
 		</style>
 		<!-- End STYLESHEET Section -->
 
+		<link id="LcpLink" rel="prefetch" href="" as="image" />
 		<!-- Begin JAVASCRIPT Section -->
 		<script>
 			function prefetchLargeImage()
@@ -2079,15 +2080,13 @@
 				if( sPersonId && sPersonId [ 0 ] )
 				{
 					sPersonId = sPersonId[ 0 ].replace( 'person=', '' );
-					if( data[ sPersonId ] )
-					{
-						oStartingPerson = sPersonId;
-					}
+					const link = document.getElementById("LcpLink");
+					link.href = `photos/${ sPersonId }.webp`
+					link.rel = "preload";
 				}
-				return `photos/${sPersonId}.webp`;
 			}
 	</script>
-		<link rel="preload" href="photos/quincy.acklen.webp" as="image" />
+
 		<script id="serviceworker_for_PWA">
 			const PROGRESSIVE_WEB_APP = true;  // Default TRUE - set to FALSE is you want to disable the serviceworker / PWA because it can be a pain to develop with PWA mode active
 			if( PROGRESSIVE_WEB_APP && 'serviceWorker' in navigator )
