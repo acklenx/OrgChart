@@ -2077,11 +2077,10 @@
 			function preloadLargeImage()
 			{
 				const link = document.getElementById("LcpLink");
-				const regex = /\/([^\/]+)\.[^\.]+$/;
+				const regex = /\/([^\/]+)\.[^.]+$/;
 				const match = link.href.match(regex);
-				console.log(match[1])
-				if (match[1]) {
-					sDefaultPersonId = match[1];
+				if (match[ 1 ]) {
+					sDefaultPersonId = match[ 1 ];
 				}
 			}
 			preloadLargeImage();
