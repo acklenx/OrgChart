@@ -4,6 +4,8 @@
 	<head>
 		<title>Organization Chart (js only)</title>
 
+
+
 		<!-- Begin META-TAG Section -->
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'"/>
@@ -20,8 +22,6 @@
 		<!-- End META-TAG Section -->
 
 		<!-- Begin LINK Section -->
-		<link rel="preconnect" href="https://www.netlify.com"/>
-		<link rel="dns-prefetch" href="https://www.netlify.com"/>
 		<link href="images/orgchart_192x192.png" rel="apple-touch-icon" type="image/png"/>
 		<link rel="icon" type="image/x-icon" href="favicon.ico"/>
 		<link rel="manifest" id="orgchart_manifest" crossorigin="use-credentials" href="manifest.json"/>
@@ -2070,6 +2070,24 @@
 		<!-- End STYLESHEET Section -->
 
 		<!-- Begin JAVASCRIPT Section -->
+		<script>
+			function prefetchLargeImage()
+			{
+				let oStartingPerson = null;
+				let sUrl = document.location.hash;
+				let sPersonId = sUrl.match( /person=([^&]*)/gi );
+				if( sPersonId && sPersonId [ 0 ] )
+				{
+					sPersonId = sPersonId[ 0 ].replace( 'person=', '' );
+					if( data[ sPersonId ] )
+					{
+						oStartingPerson = sPersonId;
+					}
+				}
+				return `photos/${sPersonId}.webp`;
+			}
+	</script>
+		<link rel="preload" href="photos/quincy.acklen.webp" as="image" />
 		<script id="serviceworker_for_PWA">
 			const PROGRESSIVE_WEB_APP = true;  // Default TRUE - set to FALSE is you want to disable the serviceworker / PWA because it can be a pain to develop with PWA mode active
 			if( PROGRESSIVE_WEB_APP && 'serviceWorker' in navigator )
@@ -2446,9 +2464,9 @@
 										</tr>
 										<tr>
 											<td colspan="3" class="center" class="center" title="${ person.indirects || '' }">
-												${ person.title }!
+												${ person.title }
 												<span>
- ${ person.team ? ( '<br />' + person.team ) : '!!' }!!!
+ ${ person.team ? ( '<br />' + person.team ) : '' }
 												</span>
 											</td>
 										</tr>
