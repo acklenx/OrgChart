@@ -22,6 +22,7 @@
 		<!-- End META-TAG Section -->
 
 		<!-- Begin LINK Section -->
+		<link id="LcpLink" rel="preload" href="photos/quincy.acklen.webp" as="image" fetchpriority="high"/>
 		<link href="images/orgchart_192x192.png" rel="apple-touch-icon" type="image/png"/>
 		<link rel="icon" type="image/x-icon" href="favicon.ico"/>
 		<link rel="manifest" id="orgchart_manifest" crossorigin="use-credentials" href="manifest.json"/>
@@ -2069,26 +2070,21 @@
 		</style>
 		<!-- End STYLESHEET Section -->
 
-		<link id="LcpLink" rel="prefetch" href="" as="image" />
+
 		<!-- Begin JAVASCRIPT Section -->
 		<script>
-			const sDefaultPersonId = 'quincy.acklen';
-			function prefetchLargeImage()
+			let sDefaultPersonId = 'quincy.acklen';
+			function preloadLargeImage()
 			{
-				let oStartingPerson = null;
-				let sUrl = document.location.hash;
-				let sPersonId = sUrl.match( /person=([^&]*)/gi );
 				const link = document.getElementById("LcpLink");
-				if( sPersonId && sPersonId [ 0 ] )
-				{
-					sPersonId = sPersonId[ 0 ].replace( 'person=', '' );
+				const regex = /\/([^\/]+)\.[^\.]+$/;
+				const match = link.href.match(regex);
+				console.log(match[1])
+				if (match[1]) {
+					sDefaultPersonId = match[1];
 				}
-				else{
-					sPersonId = sDefaultPersonId;
-		}
-				link.href = `photos/${ sPersonId }.webp`
-				link.rel = "preload";
 			}
+			preloadLargeImage();
 	</script>
 
 		<script id="serviceworker_for_PWA">
