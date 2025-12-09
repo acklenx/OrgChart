@@ -2072,18 +2072,22 @@
 		<link id="LcpLink" rel="prefetch" href="" as="image" />
 		<!-- Begin JAVASCRIPT Section -->
 		<script>
+			const sDefaultPersonId = 'quincy.acklen';
 			function prefetchLargeImage()
 			{
 				let oStartingPerson = null;
 				let sUrl = document.location.hash;
 				let sPersonId = sUrl.match( /person=([^&]*)/gi );
+				const link = document.getElementById("LcpLink");
 				if( sPersonId && sPersonId [ 0 ] )
 				{
 					sPersonId = sPersonId[ 0 ].replace( 'person=', '' );
-					const link = document.getElementById("LcpLink");
-					link.href = `photos/${ sPersonId }.webp`
-					link.rel = "preload";
 				}
+				else{
+					sPersonId = sDefaultPersonId;
+		}
+				link.href = `photos/${ sPersonId }.webp`
+				link.rel = "preload";
 			}
 	</script>
 
@@ -2161,7 +2165,7 @@
 			};
 
 			let sCurrentPersonId; // you haven't loaded the default person yet!
-			const sDefaultPersonId = 'quincy.acklen';
+
 			let sLastIdNotAdded = null;
 			let sLastHash;
 
